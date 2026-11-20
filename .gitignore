@@ -1,0 +1,23 @@
+# secrets
+.mcp.json
+.env
+.env.*
+!.env.example
+
+# deps and build
+node_modules/
+dist/
+.turbo/
+.next/
+.expo/
+.vercel/
+coverage/
+
+# editors / OS
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+
+# local Claude settings
+.claude/settings.local.json
