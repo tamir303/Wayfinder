@@ -1,0 +1,38 @@
+{
+  "search_parameters": {
+    "engine": "google_flights_autocomplete",
+    "q": "tel aviv",
+    "hl": "en",
+    "gl": "us"
+  },
+  "suggestions": [
+    {
+      "position": 1,
+      "name": "Tel Aviv-Yafo, Israel",
+      "type": "city",
+      "description": "City in Israel",
+      "id": "/m/07qzv",
+      "airports": [
+        {
+          "name": "Ben Gurion Airport",
+          "id": "TLV",
+          "city": "Tel Aviv-Yafo",
+          "city_id": "/m/07qzv",
+          "distance": "7 mi"
+        }
+      ]
+    },
+    {
+      "position": 2,
+      "name": "Tel Aviv District, Israel",
+      "type": "region",
+      "id": "/m/03gcy2"
+    },
+    {
+      "position": 3,
+      "name": "Tel Aviv Metropolitan Area, Israel",
+      "type": "region",
+      "id": "/m/01tjdt"
+    }
+  ]
+}
