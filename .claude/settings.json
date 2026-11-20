@@ -1,0 +1,18 @@
+{
+  "enableAllProjectMcpServers": false,
+  "enabledMcpjsonServers": [
+    "serpapi"
+  ],
+  "enabledPlugins": {
+    "superpowers@anthropic-plugin-directory": true,
+    "frontend-design@anthropic-plugin-directory": true,
+    "context7@anthropic-plugin-directory": true,
+    "typescript-lsp@claude-plugins-official": true,
+    "claude-code-setup@anthropic-plugin-directory": true,
+    "supabase@anthropic-plugin-directory": true,
+    "figma@claude-plugins-official": true,
+    "skills-for-real-react-react-native-engineers@anthropic-plugin-directory": true,
+    "ponytail@ponytail": true,
+    "ui-ux-pro-max@ui-ux-pro-max-skill": true
+  }
+}

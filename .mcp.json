@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "serpapi": {
+      "type": "http",
+      "url": "https://mcp.serpapi.com/9371dd961c93e28ea4ea0b8dc4fad43de54a51d33faf010274e4e99f7dccf452/mcp"
+    }
+  }
+}
