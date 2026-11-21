@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { ApiClientError, apiFetch } from './api';
+import { ApiClientError, apiFetch, apiSend } from './api';
 
 const mockGetSession = jest.fn();
 const mockRefresh = jest.fn();
@@ -74,5 +74,24 @@ describe('apiFetch', () => {
     mockGetSession.mockResolvedValue(null);
     await expect(apiFetch('/x', Schema)).rejects.toMatchObject({ code: 'UNAUTHENTICATED' });
     expect(fetchMock).not.toHaveBeenCalled();
+  });
+
+  it('sends a JSON body with a content type for writes', async () => {
+    fetchMock.mockResolvedValue(json({ ok: true }));
+    await expect(apiFetch('/x', Schema, { method: 'PUT', body: { a: 1 } })).resolves.toEqual({ ok: true });
+    const [, init] = fetchMock.mock.calls[0];
+    expect(init.method).toBe('PUT');
+    expect(init.body).toBe('{"a":1}');
+    expect(init.headers['Content-Type']).toBe('application/json');
+  });
+
+  it('apiSend accepts an empty 204 response and still surfaces API errors', async () => {
+    fetchMock.mockResolvedValueOnce(new Response(null, { status: 204 }));
+    await expect(apiSend('/x', { method: 'DELETE' })).resolves.toBeUndefined();
+    expect(fetchMock.mock.calls[0][1].method).toBe('DELETE');
+    expect(fetchMock.mock.calls[0][1].body).toBeUndefined();
+
+    fetchMock.mockResolvedValueOnce(json({ code: 'NOT_FOUND', message: 'Favorite not found' }, 404));
+    await expect(apiSend('/x', { method: 'DELETE' })).rejects.toMatchObject({ code: 'NOT_FOUND', status: 404 });
   });
 });

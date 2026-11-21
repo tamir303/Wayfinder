@@ -1,16 +1,39 @@
+import type { ApiInit } from '../api';
 import { ApiClientError } from '../api-error';
+import { buildStayDetail, listFavorites, putFavorite, removeFavorite, resetFavorites, stayCalendar, stayReviews, suggestStays } from './stays';
 import { AIRPORTS, ATTRACTIONS, buildCalendar, buildFlights, buildOutbound, buildReturn, STAYS, TRIPS } from './data';
 
 const LATENCY_MS = 250;
 const sleep = (ms: number) => new Promise<void>((resolve) => setTimeout(resolve, ms));
 
 // dev only. Special queries make error states easy to see: q=limit (rate limited), q=down (provider down), q=zzz (empty).
-export const mockRequest = async (path: string): Promise<unknown> => {
+export const resetMockState = (): void => resetFavorites();
+
+export const mockRequest = async (path: string, init?: ApiInit): Promise<unknown> => {
   await sleep(LATENCY_MS);
   const url = new URL(path, 'http://mock.local');
   const q = (url.searchParams.get('q') ?? '').trim().toLowerCase();
 
+  // Stays and favorites use path parameters, so match them before the fixed routes.
+  const stayMatch = /^\/stays\/([^/]+)(?:\/(calendar|reviews))?$/.exec(url.pathname);
+  if (stayMatch && !['search', 'suggest', 'handoff'].includes(stayMatch[1]!)) {
+    const id = decodeURIComponent(stayMatch[1]!);
+    if (stayMatch[2] === 'reviews') return stayReviews(url.searchParams.get('pageToken') ?? '');
+    if (stayMatch[2] === 'calendar') return stayCalendar(id, url.searchParams.get('start') ?? '', url.searchParams.get('end') ?? '');
+    return buildStayDetail(id);
+  }
+  const favMatch = /^\/me\/favorites\/stays\/([^/]+)$/.exec(url.pathname);
+  if (favMatch) {
+    const id = decodeURIComponent(favMatch[1]!);
+    if (init?.method === 'PUT') return putFavorite(id, init.body as never);
+    if (init?.method === 'DELETE') return removeFavorite(id);
+  }
+
   switch (url.pathname) {
+    case '/stays/suggest':
+      return suggestStays(q);
+    case '/me/favorites/stays':
+      return listFavorites();
     case '/geo/suggest': {
       if (q === 'limit') throw new ApiClientError('RATE_LIMITED', 'Daily search limit reached', 429);
       if (q === 'down') throw new ApiClientError('PROVIDER_DOWN', 'Provider request failed', 502);
@@ -39,7 +62,7 @@ export const mockRequest = async (path: string): Promise<unknown> => {
       return { currency: 'USD', prices: buildCalendar(p.get('start') ?? '', p.get('end') ?? '') };
     }
     case '/stays/search':
-      return { stays: STAYS };
+      return { stays: q === 'zzz' ? [] : STAYS, nextPageToken: null };
     case '/attractions':
       return { attractions: ATTRACTIONS };
     case '/trips':
