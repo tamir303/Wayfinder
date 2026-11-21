@@ -13,6 +13,8 @@
     "figma@claude-plugins-official": true,
     "skills-for-real-react-react-native-engineers@anthropic-plugin-directory": true,
     "ponytail@ponytail": true,
-    "ui-ux-pro-max@ui-ux-pro-max-skill": true
+    "ui-ux-pro-max@ui-ux-pro-max-skill": true,
+    "typescript-native-lsp@anthropic-plugin-directory": true,
+    "playwright@anthropic-plugin-directory": true
   }
 }
