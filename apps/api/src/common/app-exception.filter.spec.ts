@@ -1,4 +1,4 @@
-import { ArgumentsHost, BadRequestException, NotFoundException } from '@nestjs/common';
+import { ArgumentsHost, BadRequestException, HttpException, NotFoundException } from '@nestjs/common';
 import { AppError } from './app-error';
 import { AppExceptionFilter } from './app-exception.filter';
 
@@ -25,8 +25,15 @@ describe('AppExceptionFilter', () => {
     expect(run(new BadRequestException('bad')).status).toBe(400);
   });
 
-  it('maps a 404 HttpException to BAD_QUERY with status 404', () => {
-    expect(run(new NotFoundException()).status).toBe(404);
+  it('maps a 404 HttpException to NOT_FOUND', () => {
+    expect(run(new NotFoundException())).toEqual({ status: 404, body: { code: 'NOT_FOUND', message: 'Not found' } });
+  });
+
+  it('maps a 429 HttpException (throttling) to RATE_LIMITED', () => {
+    expect(run(new HttpException('Too Many Requests', 429))).toEqual({
+      status: 429,
+      body: { code: 'RATE_LIMITED', message: 'Too many requests' },
+    });
   });
 
   it('maps an unknown error to 500 PROVIDER_DOWN with a generic message', () => {

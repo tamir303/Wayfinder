@@ -22,8 +22,11 @@ export class AppExceptionFilter implements ExceptionFilter {
     }
     if (exception instanceof HttpException) {
       const status = exception.getStatus();
-      const code = status === 401 ? 'UNAUTHENTICATED' : status < 500 ? 'BAD_QUERY' : 'PROVIDER_DOWN';
-      return { status, body: { code, message: status < 500 ? 'Invalid request' : 'Unexpected error' } };
+      if (status === 401) return { status, body: { code: 'UNAUTHENTICATED', message: 'Authentication required' } };
+      if (status === 404) return { status, body: { code: 'NOT_FOUND', message: 'Not found' } };
+      if (status === 429) return { status, body: { code: 'RATE_LIMITED', message: 'Too many requests' } };
+      if (status < 500) return { status, body: { code: 'BAD_QUERY', message: 'Invalid request' } };
+      return { status, body: { code: 'PROVIDER_DOWN', message: 'Unexpected error' } };
     }
     this.logger.error(exception instanceof Error ? (exception.stack ?? exception.message) : String(exception));
     return { status: 500, body: { code: 'PROVIDER_DOWN', message: 'Unexpected error' } };

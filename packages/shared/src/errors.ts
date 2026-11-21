@@ -6,6 +6,7 @@ export const ERROR_CODES = [
   'PROVIDER_DOWN',
   'BAD_QUERY',
   'UNAUTHENTICATED',
+  'NOT_FOUND',
 ] as const;
 
 export const ErrorCodeSchema = z.enum(ERROR_CODES);
@@ -20,4 +21,5 @@ export const HTTP_STATUS_BY_CODE: Record<ErrorCode, number> = {
   PROVIDER_DOWN: 502,
   BAD_QUERY: 400,
   UNAUTHENTICATED: 401,
+  NOT_FOUND: 404,
 };

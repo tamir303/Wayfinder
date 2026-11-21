@@ -7,6 +7,7 @@ export const en = {
     BAD_QUERY: 'Please enter a valid search.',
     NO_RESULTS: 'No matches found.',
     UNAUTHENTICATED: 'Please sign in again.',
+    NOT_FOUND: 'We could not find that.',
     crashTitle: 'Something went wrong',
     crashBody: 'Please try again.',
     notFoundTitle: 'Page not found',

@@ -1,13 +1,14 @@
 import { ApiErrorSchema, ERROR_CODES, HTTP_STATUS_BY_CODE } from './errors';
 
 describe('errors', () => {
-  it('lists exactly the five agreed codes', () => {
+  it('lists exactly the six agreed codes', () => {
     expect([...ERROR_CODES]).toEqual([
       'NO_RESULTS',
       'RATE_LIMITED',
       'PROVIDER_DOWN',
       'BAD_QUERY',
       'UNAUTHENTICATED',
+      'NOT_FOUND',
     ]);
   });
 
@@ -18,6 +19,7 @@ describe('errors', () => {
       PROVIDER_DOWN: 502,
       BAD_QUERY: 400,
       UNAUTHENTICATED: 401,
+      NOT_FOUND: 404,
     });
   });
 

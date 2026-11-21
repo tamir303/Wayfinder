@@ -9,6 +9,7 @@ export const he: Translations = {
     BAD_QUERY: 'הזינו חיפוש תקין.',
     NO_RESULTS: 'לא נמצאו תוצאות.',
     UNAUTHENTICATED: 'יש להתחבר מחדש.',
+    NOT_FOUND: 'לא הצלחנו למצוא את זה.',
     crashTitle: 'משהו השתבש',
     crashBody: 'נסו שוב.',
     notFoundTitle: 'הדף לא נמצא',
