@@ -2,13 +2,17 @@ import 'dotenv/config';
 import 'reflect-metadata';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
+import { logLevelsFor, requestLogger } from './common/logging';
+import { parseEnv } from './config/env';
 import { applyCors } from './common/cors';
 import { applySwagger } from './common/swagger';
 import { ENV } from './common/tokens';
 import type { Env } from './config/env';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const env = parseEnv(process.env);
+  const app = await NestFactory.create(AppModule, { logger: logLevelsFor(env.APP_ENV) });
+  app.use(requestLogger(env.APP_ENV));
   app.enableShutdownHooks();
   applyCors(app, app.get<Env>(ENV));
   applySwagger(app);

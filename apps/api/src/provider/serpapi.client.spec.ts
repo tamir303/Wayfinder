@@ -1,3 +1,4 @@
+import { Logger } from '@nestjs/common';
 import type Redis from 'ioredis';
 import { FakeRedis } from '../../test/fake-redis';
 import { testEnv } from '../../test/test-env';
@@ -9,9 +10,9 @@ import type { SearchLogService } from './search-log.service';
 const ok = (body: unknown) => new Response(JSON.stringify(body), { status: 200 });
 const status = (code: number) => new Response('{}', { status: code });
 
-const setup = (cap = 200) => {
+const setup = (cap = 200, appEnv: 'dev' | 'staging' | 'prod' = 'dev') => {
   const redis = new FakeRedis();
-  const env = { ...testEnv, DAILY_CREDIT_CAP: cap };
+  const env = { ...testEnv, DAILY_CREDIT_CAP: cap, APP_ENV: appEnv };
   const ledger = new CreditLedger(env, redis as unknown as Redis);
   const searchLog = { record: jest.fn().mockResolvedValue(undefined) };
   const client = new SerpApiClient(
@@ -159,6 +160,24 @@ describe('SerpApiClient', () => {
     expect(entries.filter(([k]) => !k.startsWith('credits:'))).toEqual([]);
     expect(entries.filter(([k]) => k.startsWith('credits:')).map(([, v]) => v)).toEqual(['0']);
     expect(searchLog.record).not.toHaveBeenCalled();
+  });
+
+  it('logs the payload snippet outside prod but never in prod', async () => {
+    const run = async (appEnv: 'staging' | 'prod') => {
+      const spy = jest.spyOn(Logger.prototype, 'error').mockImplementation(() => undefined);
+      const { client } = setup(200, appEnv);
+      fetchSpy.mockResolvedValue(ok({ secretField: 'SENSITIVE-VALUE' }));
+      await call(client, 'tel aviv', () => {
+        throw new Error('bad shape');
+      }).catch(() => undefined);
+      const out = spy.mock.calls.map((c) => String(c[0])).join('\n');
+      spy.mockRestore();
+      return out;
+    };
+    expect(await run('staging')).toContain('SENSITIVE-VALUE');
+    const prod = await run('prod');
+    expect(prod).not.toContain('SENSITIVE-VALUE');
+    expect(prod).toContain('google_flights_autocomplete');
   });
 
   it('waits for a concurrent holder of the lock and reuses its cached result', async () => {

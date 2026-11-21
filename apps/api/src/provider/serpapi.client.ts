@@ -123,10 +123,13 @@ export class SerpApiClient {
     try {
       return opts.map(raw);
     } catch (error) {
-      // Log a bounded snippet of the payload to debug shape changes. The API key is never in the body.
-      this.logger.error(
-        `mapper failed for ${opts.engine}: ${JSON.stringify(raw).slice(0, 1000)}`,
-      );
+      // Outside prod, log a bounded payload snippet to debug shape changes (the API key is never in the body).
+      // In prod log only the engine and the top-level field names, never values.
+      const detail =
+        this.env.APP_ENV === 'prod'
+          ? `fields: ${raw && typeof raw === 'object' ? Object.keys(raw).join(',') : typeof raw}`
+          : JSON.stringify(raw).slice(0, 1000);
+      this.logger.error(`mapper failed for ${opts.engine}: ${detail}`);
       throw error;
     }
   }

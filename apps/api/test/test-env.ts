@@ -6,5 +6,6 @@ export const testEnv: Env = {
   DATABASE_URL: 'postgresql://test',
   REDIS_URL: 'redis://test',
   DAILY_CREDIT_CAP: 200,
+  APP_ENV: 'dev',
   NODE_ENV: 'test',
 };

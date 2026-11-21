@@ -4,6 +4,8 @@ import { ExpressAdapter } from '@nestjs/platform-express';
 import express from 'express';
 import type { IncomingMessage, ServerResponse } from 'node:http';
 import { AppModule } from '../src/app.module';
+import { logLevelsFor, requestLogger } from '../src/common/logging';
+import { parseEnv } from '../src/config/env';
 import { applyCors } from '../src/common/cors';
 import { applySwagger } from '../src/common/swagger';
 import { ENV } from '../src/common/tokens';
@@ -14,9 +16,11 @@ let cached: Promise<express.Express> | undefined;
 
 const createServer = async (): Promise<express.Express> => {
   const server = express();
+  const env = parseEnv(process.env);
   const app = await NestFactory.create(AppModule, new ExpressAdapter(server), {
-    logger: ['error', 'warn'],
+    logger: logLevelsFor(env.APP_ENV),
   });
+  app.use(requestLogger(env.APP_ENV));
   applyCors(app, app.get<Env>(ENV));
   applySwagger(app);
   await app.init();

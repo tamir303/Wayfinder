@@ -5,6 +5,8 @@ const EnvSchema = z.object({
   SUPABASE_URL: z.string().url(),
   DATABASE_URL: z.string().min(1),
   REDIS_URL: z.string().min(1),
+  // dev/staging log at debug with nothing hidden; prod logs at info with request payloads and query strings left out.
+  APP_ENV: z.enum(['dev', 'staging', 'prod']).default('dev'),
   // Comma-separated browser origins allowed to call the API (web build). Defaults to Expo web dev.
   CORS_ORIGINS: z.string().optional(),
   DAILY_CREDIT_CAP: z.coerce.number().int().positive().default(200),
