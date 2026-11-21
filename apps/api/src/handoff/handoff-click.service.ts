@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 
-export type HandoffClickEntry = { userId: string; kind: 'flight'; provider: string; price: number | null; currency: string | null };
+export type HandoffClickEntry = { userId: string; kind: 'flight' | 'stay'; provider: string; price: number | null; currency: string | null };
 
 @Injectable()
 export class HandoffClickService {

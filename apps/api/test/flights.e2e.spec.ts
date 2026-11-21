@@ -92,7 +92,7 @@ describe('GET /flights/search (e2e)', () => {
 
     const url = new URL(res.body.offers[0].handoffUrl);
     expect(url.origin + url.pathname).toBe('http://api.test/flights/handoff');
-    const payload = new HandoffSigner(testEnv.HANDOFF_SECRET).verify(url.searchParams.get('ref')!, Math.floor(Date.now() / 1000));
+    const payload = new HandoffSigner(testEnv.HANDOFF_SECRET).verify(url.searchParams.get('ref')!, Math.floor(Date.now() / 1000), 'flight');
     expect(payload).toMatchObject({ userId: USER_ID, from: 'TLV', to: 'CDG', date: FUTURE, adults: 2, cabin: 'business' });
 
     const called = new URL(String(fetchSpy.mock.calls[0][0]));
@@ -180,7 +180,7 @@ describe('GET /flights/search (e2e)', () => {
     it.each([
       ['a missing ref', '/flights/handoff'],
       ['a garbage ref', '/flights/handoff?ref=nonsense'],
-      ['a tampered ref', `/flights/handoff?ref=${signer.sign(refPayload, now(), 600).split('.')[0]}.AAAA`],
+      ['a tampered ref', `/flights/handoff?ref=${signer.sign('flight', refPayload, now(), 600).split('.')[0]}.AAAA`],
     ])('rejects %s with an HTML 400 and spends nothing', async (_n, path) => {
       const before = await used();
       const res = await get(path, false).expect(400);
@@ -191,7 +191,7 @@ describe('GET /flights/search (e2e)', () => {
     });
 
     it('rejects an expired ref', async () => {
-      const expired = signer.sign(refPayload, now() - 10_000, 60);
+      const expired = signer.sign('flight', refPayload, now() - 10_000, 60);
       await get(`/flights/handoff?ref=${expired}`, false).expect(400);
     });
 

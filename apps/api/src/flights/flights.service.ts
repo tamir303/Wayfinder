@@ -15,6 +15,8 @@ const TRAVEL_CLASS = { economy: '1', premium: '2', business: '3', first: '4' } a
 const BOOKING_TTL_SECONDS = 10 * 60; // booking requests are short-lived on the provider side
 const CURRENCY = 'USD';
 
+type FlightHandoff = { userId: string; bookingToken: string; from: string; to: string; date: string; adults: number; cabin: string };
+
 @Injectable()
 export class FlightsService {
   constructor(
@@ -49,6 +51,7 @@ export class FlightsService {
       insights: mapped.insights,
       offers: mapped.offers.map(({ bookingToken, ...offer }) => {
         const ref = this.signer.sign(
+          'flight',
           { userId, bookingToken, from: q.from, to: q.to, date: q.date, adults: q.adults, cabin: q.cabin },
           now,
           HANDOFF_TTL_SECONDS,
@@ -63,7 +66,7 @@ export class FlightsService {
    * The user comes from the signed ref (the system browser sends no token); the lookup costs that user 1 credit.
    */
   async handoff(ref: string): Promise<RenderedPage> {
-    const p = this.signer.verify(ref, Math.floor(Date.now() / 1000));
+    const p = this.signer.verify<FlightHandoff>(ref, Math.floor(Date.now() / 1000), 'flight');
     const options = await this.serpApi.call({
       engine: 'google_flights',
       params: {

@@ -1,3 +1,4 @@
+import type { Response } from 'express';
 import { AppError } from '../common/app-error';
 import type { BookingOption } from '../flights/flights.mapper';
 
@@ -75,3 +76,17 @@ export const renderErrorPage = (message: string): RenderedPage => ({
   html: shell(`<h1>We could not open that booking page</h1><p>${escapeHtml(message)}</p>`),
   csp: baseCsp("'none'"),
 });
+
+/** Sends a handoff/error page with the security headers every handoff response needs. */
+export const sendPage = (res: Response, status: number, page: RenderedPage): void => {
+  res
+    .status(status)
+    .set({
+      'Content-Type': 'text/html; charset=utf-8',
+      'Content-Security-Policy': page.csp,
+      'Cache-Control': 'no-store',
+      'Referrer-Policy': 'no-referrer',
+      'X-Content-Type-Options': 'nosniff',
+    })
+    .send(page.html);
+};

@@ -6,7 +6,7 @@ import type { Response } from 'express';
 import { type AuthUser, CurrentUser } from '../auth/current-user.decorator';
 import { Public } from '../auth/public.decorator';
 import { AppError } from '../common/app-error';
-import { renderErrorPage, type RenderedPage } from '../handoff/handoff-page';
+import { renderErrorPage, sendPage, type RenderedPage } from '../handoff/handoff-page';
 import { FlightSearchQueryDto } from './flights.dto';
 import { FlightsService } from './flights.service';
 
@@ -46,15 +46,6 @@ export class FlightsController {
       status = known ? HTTP_STATUS_BY_CODE[error.code] : 502;
       page = renderErrorPage(known ? error.message : 'Something went wrong. Please try again.');
     }
-    res
-      .status(status)
-      .set({
-        'Content-Type': 'text/html; charset=utf-8',
-        'Content-Security-Policy': page.csp,
-        'Cache-Control': 'no-store',
-        'Referrer-Policy': 'no-referrer',
-        'X-Content-Type-Options': 'nosniff',
-      })
-      .send(page.html);
+    sendPage(res, status, page);
   }
 }

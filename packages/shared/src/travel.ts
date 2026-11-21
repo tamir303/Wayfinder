@@ -51,22 +51,57 @@ export const FlightSearchResponseSchema = z.object({
 });
 export type FlightSearchResponse = z.infer<typeof FlightSearchResponseSchema>;
 
+export const StaySearchQuerySchema = z
+  .object({
+    q: z.string().trim().min(2).max(80),
+    checkIn: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
+    checkOut: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
+    adults: z.coerce.number().int().min(1).max(9).default(2),
+    pageToken: z.string().max(200).optional(),
+  })
+  .refine((v) => !Number.isNaN(Date.parse(v.checkIn)) && v.checkIn >= new Date().toISOString().slice(0, 10), {
+    message: 'checkIn must be today or later',
+    path: ['checkIn'],
+  })
+  .refine((v) => v.checkOut > v.checkIn, { message: 'checkOut must be after checkIn', path: ['checkOut'] })
+  .refine((v) => (Date.parse(v.checkOut) - Date.parse(v.checkIn)) / 86_400_000 <= 30, {
+    message: 'stays are limited to 30 nights',
+    path: ['checkOut'],
+  });
+export type StaySearchQuery = z.infer<typeof StaySearchQuerySchema>;
+
 export const StaySchema = z.object({
+  /** Provider property token; stable per property. */
   id: z.string(),
   name: z.string(),
-  rating: z.number(),
-  ratingLabel: z.string(),
-  distance: z.string(),
+  type: z.string().default('hotel'),
+  stars: z.number().nullable().default(null),
+  /** 0-5 guest rating. */
+  rating: z.number().nullable().default(null),
+  reviewCount: z.number().default(0),
+  /** Optional human label such as "Excellent"; the real API leaves wording to the client. */
+  ratingLabel: z.string().optional(),
+  distance: z.string().optional(),
   pricePerNight: z.number(),
+  /** Total for the whole stay, when the provider gives one. */
+  totalPrice: z.number().nullable().default(null),
   currency: z.string(),
-  // 0-100 position on the map placeholder until a real map is wired in.
-  mapX: z.number(),
-  mapY: z.number(),
+  lat: z.number(),
+  lng: z.number(),
+  /** 0-100 position for the placeholder map, until a real map is wired in. */
+  mapX: z.number().optional(),
+  mapY: z.number().optional(),
   amenities: z.array(z.string()),
+  thumbnail: z.string().nullable().default(null),
+  deal: z.string().nullable().default(null),
+  /** Signed handoff link (logs the click, then redirects to the provider). */
   dealUrl: z.string(),
 });
 export type Stay = z.infer<typeof StaySchema>;
-export const StaySearchResponseSchema = z.object({ stays: z.array(StaySchema) });
+export const StaySearchResponseSchema = z.object({
+  stays: z.array(StaySchema),
+  nextPageToken: z.string().nullable().default(null),
+});
 export type StaySearchResponse = z.infer<typeof StaySearchResponseSchema>;
 
 export const AttractionSchema = z.object({
