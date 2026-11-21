@@ -18,3 +18,5 @@ jobs:
       - run: pnpm lint
       - run: pnpm typecheck
       - run: pnpm test
+      - run: pnpm --filter @wayfinder/mobile exec playwright install --with-deps chromium
+      - run: pnpm --filter @wayfinder/mobile e2e

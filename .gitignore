@@ -25,3 +25,5 @@ Thumbs.db
 # SDD scratch
 .superpowers/
 .playwright-mcp/
+apps/mobile/test-results/
+apps/mobile/playwright-report/
