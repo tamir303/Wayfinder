@@ -43,6 +43,35 @@ export const buildFlights = (from: string, to: string, date: string, adults: num
     };
   });
 
+// Round trip: the first step lists outbound options priced as the whole trip, each with a returnToken.
+export const buildOutbound = (from: string, to: string, date: string, adults: number): FlightOffer[] =>
+  buildFlights(from, to, date, adults).map((o, i) => ({
+    ...o,
+    id: `${o.id}-rt`,
+    price: Math.round(o.price * 1.8),
+    returnToken: `rt-${i}`,
+    handoffUrl: null,
+  }));
+
+// Second step: return flights for the chosen outbound, bookable, priced as the whole trip.
+export const buildReturn = (from: string, to: string, returnDate: string, adults: number): FlightOffer[] =>
+  buildFlights(to, from, returnDate, adults).map((o, i) => ({
+    ...o,
+    id: `${to}-${from}-${returnDate}-r${i}`,
+    price: Math.round(o.price * 1.8) + i * 7,
+    handoffUrl: `https://example.com/mock-handoff?offer=r${i}`,
+  }));
+
+export const buildCalendar = (start: string, end: string): { date: string; price: number }[] => {
+  const prices: { date: string; price: number }[] = [];
+  const last = new Date(`${end}T00:00:00Z`).getTime();
+  for (let t = new Date(`${start}T00:00:00Z`).getTime(), n = 0; t <= last && n < 62; t += 86_400_000, n++) {
+    const date = new Date(t).toISOString().slice(0, 10);
+    prices.push({ date, price: 120 + ((n * 37 + 11) % 140) });
+  }
+  return prices;
+};
+
 const RAW_STAYS = [
   { id: 's1', name: 'Hotel Eden', rating: 8.9, ratingLabel: 'Excellent', distance: '1.2 km from centre', pricePerNight: 540, currency: 'ILS', mapX: 30, mapY: 35, amenities: ['Wi-Fi', 'Breakfast', 'Pool'], dealUrl: 'https://example.com/mock-stay?id=s1' },
   { id: 's2', name: 'Casa Rossa', rating: 8.4, ratingLabel: 'Very good', distance: '0.4 km from centre', pricePerNight: 610, currency: 'ILS', mapX: 55, mapY: 50, amenities: ['Wi-Fi', 'Free cancellation'], dealUrl: 'https://example.com/mock-stay?id=s2' },

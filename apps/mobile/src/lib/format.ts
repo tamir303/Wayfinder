@@ -12,3 +12,10 @@ export const isoDate = (d: Date): string => d.toISOString().slice(0, 10);
 export const defaultTripDate = (): string => isoDate(new Date(Date.now() + 30 * 86_400_000));
 export const isValidFutureDate = (s: string): boolean =>
   /^\d{4}-\d{2}-\d{2}$/.test(s) && !Number.isNaN(Date.parse(s)) && s >= isoDate(new Date());
+
+/** Adds (or subtracts) days from a YYYY-MM-DD date, in UTC so DST never shifts the result. */
+export const addDays = (iso: string, days: number): string => {
+  const d = new Date(`${iso}T00:00:00Z`);
+  d.setUTCDate(d.getUTCDate() + days);
+  return isoDate(d);
+};

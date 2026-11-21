@@ -1,22 +1,38 @@
 import {
   AttractionListResponseSchema,
+  FlightCalendarResponseSchema,
   FlightSearchResponseSchema,
   StaySearchResponseSchema,
   TripListResponseSchema,
   UsageResponseSchema,
+  type FlightCalendarQuery,
   type FlightSearchQuery,
 } from '@wayfinder/shared';
 import { useQuery } from '@tanstack/react-query';
 import { apiFetch } from '../../lib/api';
 
 const FIVE_MIN = 5 * 60_000;
-const params = (o: Record<string, string | number>) => new URLSearchParams(Object.entries(o).map(([k, v]) => [k, String(v)])).toString();
+// Undefined values (like an absent returnDate) are left out of the query string.
+const params = (o: Record<string, string | number | undefined>) =>
+  new URLSearchParams(Object.entries(o).flatMap(([k, v]) => (v === undefined ? [] : [[k, String(v)] as [string, string]]))).toString();
 
-export const useFlightSearch = (q: FlightSearchQuery) =>
+/**
+ * One-way: bookable offers. Round trip without a token: outbound options. Round trip with a token
+ * (the chosen outbound's returnToken): the return flights, priced as the whole trip.
+ */
+export const useFlightOffers = (q: FlightSearchQuery & { token?: string }) =>
   useQuery({
     queryKey: ['flights', q],
-    queryFn: () => apiFetch(`/flights/search?${params(q)}`, FlightSearchResponseSchema),
+    queryFn: () => apiFetch(`${q.token ? '/flights/return' : '/flights/search'}?${params(q)}`, FlightSearchResponseSchema),
     staleTime: FIVE_MIN,
+    retry: false,
+  });
+
+export const useFlightCalendar = (q: FlightCalendarQuery) =>
+  useQuery({
+    queryKey: ['flight-calendar', q],
+    queryFn: () => apiFetch(`/flights/calendar?${params(q)}`, FlightCalendarResponseSchema),
+    staleTime: 60 * 60_000,
     retry: false,
   });
 

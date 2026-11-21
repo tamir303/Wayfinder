@@ -2,13 +2,14 @@ import { FlightSearchQuerySchema } from '@wayfinder/shared';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { Text, View } from 'react-native';
-import { FlightCard } from '../../../src/components/cards';
+import { Button } from '../../../src/components/Button';
 import { QueryState } from '../../../src/components/QueryState';
 import { Screen } from '../../../src/components/Screen';
-import { Button } from '../../../src/components/Button';
-import { useFlightSearch } from '../../../src/features/travel/hooks';
+import { FlightList } from '../../../src/features/travel/FlightList';
+import { useFlightOffers } from '../../../src/features/travel/hooks';
 import { arrow } from '../../../src/i18n';
-import { formatPrice } from '../../../src/lib/format';
+
+type Query = ReturnType<typeof FlightSearchQuerySchema.parse>;
 
 export default function FlightResults() {
   const { t } = useTranslation();
@@ -26,33 +27,43 @@ export default function FlightResults() {
   return <Results query={parsed.data} />;
 }
 
-function Results({ query }: { query: ReturnType<typeof FlightSearchQuerySchema.parse> }) {
+const toParams = (q: Query, extra: Record<string, string> = {}): Record<string, string> => ({
+  from: q.from,
+  to: q.to,
+  date: q.date,
+  ...(q.returnDate ? { returnDate: q.returnDate } : {}),
+  adults: String(q.adults),
+  cabin: q.cabin,
+  ...extra,
+});
+
+function Results({ query }: { query: Query }) {
   const { t } = useTranslation();
   const router = useRouter();
-  const result = useFlightSearch(query);
-  const open = (id: string) => router.push({ pathname: '/flights/detail', params: { ...query, adults: String(query.adults), id } });
+  const result = useFlightOffers(query);
+  const roundTrip = !!query.returnDate;
+  const cabin = t(`flights.cabin.${query.cabin}`);
+  const subtitle = t('flights.summary', { date: roundTrip ? `${query.date} – ${query.returnDate}` : query.date, count: query.adults, cabin });
+
   return (
-    <Screen title={`${query.from} ${arrow()} ${query.to}`} subtitle={t('flights.summary', { date: query.date, count: query.adults, cabin: t(`flights.cabin.${query.cabin}`) })}>
-      <Button label={t('flights.changeSearch')} variant="secondary" onPress={() => router.replace('/')} />
+    <Screen title={`${query.from} ${arrow()} ${query.to}`} subtitle={subtitle}>
+      <View className="flex-row gap-2">
+        <View className="flex-1"><Button label={t('flights.changeSearch')} variant="secondary" onPress={() => router.replace('/')} /></View>
+        <View className="flex-1"><Button label={t('flights.flexible')} variant="secondary" onPress={() => router.push({ pathname: '/flights/calendar', params: toParams(query) })} /></View>
+      </View>
+      {roundTrip ? <Text accessibilityRole="header" className="text-base font-semibold text-ink">{t('flights.chooseOutbound')}</Text> : null}
       <QueryState query={result}>
-        {(data) => {
-          if (data.offers.length === 0) return <Text className="py-4 text-ink-muted">{t('flights.none')}</Text>;
-          const best = data.offers.filter((o) => o.group === 'best');
-          const other = data.offers.filter((o) => o.group === 'other');
-          return (
-            <View className="gap-3">
-              {data.insights ? (
-                <View className="rounded-card bg-brand-soft p-3" accessibilityLabel={t('flights.insightLabel')}>
-                  <Text className="text-sm text-ink">{t('flights.insight', { level: t(`flights.level.${data.insights.level}`), price: formatPrice(data.insights.lowestPrice, data.offers[0].currency) })}</Text>
-                </View>
-              ) : null}
-              <Text accessibilityRole="header" className="pt-2 text-lg font-semibold text-ink">{t('flights.best')}</Text>
-              {best.map((o) => <FlightCard key={o.id} offer={o} onPress={() => open(o.id)} />)}
-              {other.length ? <Text accessibilityRole="header" className="pt-2 text-lg font-semibold text-ink">{t('flights.other')}</Text> : null}
-              {other.map((o) => <FlightCard key={o.id} offer={o} onPress={() => open(o.id)} />)}
-            </View>
-          );
-        }}
+        {(data) => (
+          <FlightList
+            data={data}
+            roundTrip={roundTrip}
+            onSelect={(o) =>
+              roundTrip
+                ? router.push({ pathname: '/flights/return', params: toParams(query, { token: o.returnToken ?? '' }) })
+                : router.push({ pathname: '/flights/detail', params: toParams(query, { id: o.id }) })
+            }
+          />
+        )}
       </QueryState>
     </Screen>
   );

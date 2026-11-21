@@ -10,7 +10,7 @@ import { Screen } from '../../../src/components/Screen';
 import { SuggestionRow } from '../../../src/components/SuggestionRow';
 import { toSuggestUiState } from '../../../src/features/geo/suggest-ui-state';
 import { useGeoSuggest } from '../../../src/features/geo/useGeoSuggest';
-import { defaultTripDate, isValidFutureDate } from '../../../src/lib/format';
+import { addDays, defaultTripDate, isValidFutureDate } from '../../../src/lib/format';
 
 const CABINS = ['economy', 'premium', 'business', 'first'] as const;
 
@@ -50,20 +50,31 @@ export default function FlightSearch() {
   const router = useRouter();
   const [from, setFrom] = useState<GeoSuggestion | null>(null);
   const [to, setTo] = useState<GeoSuggestion | null>(null);
+  const [tripType, setTripType] = useState<'oneWay' | 'roundTrip'>('oneWay');
   const [date, setDate] = useState(defaultTripDate());
+  const [returnDate, setReturnDate] = useState(addDays(defaultTripDate(), 7));
   const [adults, setAdults] = useState(1);
   const [cabin, setCabin] = useState<(typeof CABINS)[number]>('economy');
 
   const dateOk = isValidFutureDate(date);
   const sameAirport = !!from && !!to && from.code === to.code;
-  const canSearch = !!from && !!to && dateOk && !sameAirport;
+  const roundTrip = tripType === 'roundTrip';
+  const returnOk = !roundTrip || (isValidFutureDate(returnDate) && returnDate > date);
+  const canSearch = !!from && !!to && dateOk && returnOk && !sameAirport;
 
   return (
     <Screen title={t('flights.title')} subtitle={t('flights.subtitle')}>
+      <View className="flex-row gap-2">
+        {(['oneWay', 'roundTrip'] as const).map((k) => (
+          <Chip key={k} label={t(`flights.tripType.${k}`)} selected={tripType === k} onPress={() => setTripType(k)} />
+        ))}
+      </View>
       <AirportField label={t('flights.from')} value={from} onChange={setFrom} />
       <AirportField label={t('flights.to')} value={to} onChange={setTo} />
       <Input label={t('flights.dateLabel')} value={date} onChangeText={setDate} keyboardType="numbers-and-punctuation" />
       {!dateOk ? <Text className="text-danger">{t('flights.dateInvalid')}</Text> : null}
+      {roundTrip ? <Input label={t('flights.returnLabel')} value={returnDate} onChangeText={setReturnDate} keyboardType="numbers-and-punctuation" /> : null}
+      {roundTrip && dateOk && !returnOk ? <Text className="text-danger">{t('flights.returnInvalid')}</Text> : null}
       {sameAirport ? <Text className="text-danger">{t('flights.sameAirport')}</Text> : null}
       <View className="flex-row items-center justify-between">
         <Text className="text-base text-ink">{t('flights.passengers')}</Text>
@@ -81,7 +92,7 @@ export default function FlightSearch() {
       <Button
         label={t('flights.search')}
         disabled={!canSearch}
-        onPress={() => router.push({ pathname: '/flights/results', params: { from: from!.code, to: to!.code, date, adults: String(adults), cabin } })}
+        onPress={() => router.push({ pathname: '/flights/results', params: { from: from!.code, to: to!.code, date, ...(roundTrip ? { returnDate } : {}), adults: String(adults), cabin } })}
       />
     </Screen>
   );

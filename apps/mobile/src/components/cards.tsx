@@ -7,7 +7,7 @@ import { formatDuration, formatPrice, stopsLabel } from '../lib/format';
 const card = 'rounded-card border border-line bg-surface';
 const timeOf = (s: string) => s.slice(-5);
 
-export const FlightCard = ({ offer, onPress }: { offer: FlightOffer; onPress: () => void }) => {
+export const FlightCard = ({ offer, onPress, roundTrip = false }: { offer: FlightOffer; onPress: () => void; roundTrip?: boolean }) => {
   const { t } = useTranslation();
   const first = offer.legs[0];
   const last = offer.legs[offer.legs.length - 1];
@@ -40,7 +40,7 @@ export const FlightCard = ({ offer, onPress }: { offer: FlightOffer; onPress: ()
       </View>
       <View className="flex-row items-end justify-between">
         <Text className="text-2xl font-bold text-brand-dark">{formatPrice(offer.price, offer.currency)}</Text>
-        <Text className="text-xs text-ink-muted">{t('flights.oneWay')}</Text>
+        <Text className="text-xs text-ink-muted">{roundTrip ? t('flights.roundTripTotal') : t('flights.oneWay')}</Text>
       </View>
     </Pressable>
   );

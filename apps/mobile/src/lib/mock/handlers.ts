@@ -1,5 +1,5 @@
 import { ApiClientError } from '../api-error';
-import { AIRPORTS, ATTRACTIONS, buildFlights, STAYS, TRIPS } from './data';
+import { AIRPORTS, ATTRACTIONS, buildCalendar, buildFlights, buildOutbound, buildReturn, STAYS, TRIPS } from './data';
 
 const LATENCY_MS = 250;
 const sleep = (ms: number) => new Promise<void>((resolve) => setTimeout(resolve, ms));
@@ -22,7 +22,21 @@ export const mockRequest = async (path: string): Promise<unknown> => {
       const p = url.searchParams;
       const [from, to, date] = [p.get('from') ?? '', p.get('to') ?? '', p.get('date') ?? ''];
       if (from === to) return { offers: [], insights: null };
-      return { offers: buildFlights(from, to, date, Number(p.get('adults') ?? 1)), insights: { lowestPrice: 163, level: 'low' } };
+      const adults = Number(p.get('adults') ?? 1);
+      const offers = p.get('returnDate') ? buildOutbound(from, to, date, adults) : buildFlights(from, to, date, adults);
+      return { offers, insights: { lowestPrice: 163, level: 'low' } };
+    }
+    case '/flights/return': {
+      const p = url.searchParams;
+      if (!p.get('token')) throw new ApiClientError('BAD_QUERY', 'Missing token', 400);
+      return {
+        offers: buildReturn(p.get('from') ?? '', p.get('to') ?? '', p.get('returnDate') ?? '', Number(p.get('adults') ?? 1)),
+        insights: null,
+      };
+    }
+    case '/flights/calendar': {
+      const p = url.searchParams;
+      return { currency: 'USD', prices: buildCalendar(p.get('start') ?? '', p.get('end') ?? '') };
     }
     case '/stays/search':
       return { stays: STAYS };
