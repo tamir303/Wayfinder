@@ -24,15 +24,6 @@ test('destination suggestions appear while typing and filling one enables the se
   await expect(page.getByRole('button', { name: 'Search stays' })).toBeEnabled();
 });
 
-test('invalid dates are rejected', async ({ page }) => {
-  await signIn(page);
-  await openTab(page, 'Stays');
-  await page.getByRole('textbox', { name: 'City, area or hotel' }).fill('Rome');
-  await page.getByRole('textbox', { name: 'Check-in (YYYY-MM-DD)' }).fill('2001-01-01');
-  await expect(page.getByText('Choose a future check-in and a later check-out (up to 30 nights).')).toBeVisible();
-  await expect(page.getByRole('button', { name: 'Search stays' })).toBeDisabled();
-});
-
 test('search, sort by price, and switch to the map to select a stay', async ({ page }) => {
   await searchRome(page);
   await expect(page.getByRole('button', { name: /per night$/ })).toHaveCount(5);

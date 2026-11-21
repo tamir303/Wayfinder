@@ -7,12 +7,13 @@ import { Pressable, Text, View } from 'react-native';
 import { Button } from '../../../src/components/Button';
 import { StayCard } from '../../../src/components/cards';
 import { Chip } from '../../../src/components/Chip';
+import { DatePicker } from '../../../src/components/DatePicker';
 import { Input } from '../../../src/components/Input';
 import { QueryState } from '../../../src/components/QueryState';
 import { Screen } from '../../../src/components/Screen';
 import { useFavorites, useStaySearch, useStaySuggest, useToggleFavorite, type StayTrip } from '../../../src/features/stays/hooks';
 import { projectPins, sortStays, type StaySort } from '../../../src/features/stays/map';
-import { addDays, defaultTripDate, formatPrice, isValidFutureDate, nightsBetween } from '../../../src/lib/format';
+import { addDays, defaultTripDate, formatPrice, isoDate, isValidFutureDate, nightsBetween } from '../../../src/lib/format';
 
 type View_ = 'list' | 'map' | 'saved';
 const SORTS: StaySort[] = ['recommended', 'cheapest', 'topRated'];
@@ -110,9 +111,18 @@ export default function Stays() {
           </View>
         ) : null}
       </View>
-      <Input label={t('stays.checkIn')} accessibilityLabel={t('stays.checkIn')} value={checkIn} onChangeText={setCheckIn} keyboardType="numbers-and-punctuation" />
-      <Input label={t('stays.checkOut')} accessibilityLabel={t('stays.checkOut')} value={checkOut} onChangeText={setCheckOut} keyboardType="numbers-and-punctuation" />
-      {!datesOk ? <Text className="text-danger">{t('stays.datesInvalid')}</Text> : null}
+      <DatePicker
+        testID="stay-checkin"
+        label={t('stays.checkIn')}
+        value={checkIn}
+        minDate={isoDate(new Date())}
+        onChange={(d) => {
+          setCheckIn(d);
+          const n = nightsBetween(d, checkOut);
+          if (n < 1 || n > MAX_NIGHTS) setCheckOut(addDays(d, 4)); // keep a valid stay length
+        }}
+      />
+      <DatePicker testID="stay-checkout" label={t('stays.checkOut')} value={checkOut} minDate={addDays(checkIn, 1)} maxDate={addDays(checkIn, MAX_NIGHTS)} onChange={setCheckOut} />
       <View className="flex-row items-center justify-between">
         <Text className="text-base text-ink">{t('stays.guests')}</Text>
         <View className="flex-row items-center gap-4">

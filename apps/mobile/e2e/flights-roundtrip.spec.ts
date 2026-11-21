@@ -31,13 +31,6 @@ test('round trip: choose an outbound, then a return flight, then continue to the
   await expect(page.getByRole('button', { name: 'Continue to provider' }).last()).toBeVisible();
 });
 
-test('round trip: a return date that is not after the departure is rejected', async ({ page }) => {
-  await searchTlvCdg(page, true);
-  await page.getByRole('textbox').nth(3).fill('2001-01-01');
-  await expect(page.getByText('Choose a return date after the departure date.')).toBeVisible();
-  await expect(page.getByRole('button', { name: 'Search flights' })).toBeDisabled();
-});
-
 test('results can be sorted by price and filtered to direct flights', async ({ page }) => {
   await searchTlvCdg(page, false);
   await page.getByRole('button', { name: 'Search flights' }).click();

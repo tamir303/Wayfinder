@@ -2,7 +2,7 @@ import type { Translations } from './en';
 
 export const he: Translations = {
   tabs: { flights: 'טיסות', stays: 'לינה', explore: 'גלו', trips: 'טיולים', profile: 'פרופיל' },
-  common: { tryAgain: 'נסו שוב', loading: 'טוען', signOut: 'התנתקות' },
+  common: { tryAgain: 'נסו שוב', loading: 'טוען', signOut: 'התנתקות', prevMonth: 'החודש הקודם', nextMonth: 'החודש הבא' },
   errors: {
     RATE_LIMITED: 'הגעתם למגבלת החיפושים היומית. נסו שוב מחר.',
     PROVIDER_DOWN: 'החיפוש אינו זמין כרגע. נסו שוב בעוד רגע.',
@@ -33,7 +33,7 @@ export const he: Translations = {
     from: 'מוצא',
     to: 'יעד',
     airportPlaceholder: 'עיר או שדה תעופה',
-    dateLabel: 'תאריך (YYYY-MM-DD)',
+    dateLabel: 'תאריך יציאה',
     dateInvalid: 'הזינו תאריך עתידי בפורמט YYYY-MM-DD.',
     sameAirport: 'בחרו שני שדות תעופה שונים.',
     passengers: 'נוסעים',
@@ -68,7 +68,7 @@ export const he: Translations = {
     stops_other: '{{count}} עצירות',
     cardLabel: '{{airline}}, {{depart}} עד {{arrive}}, {{stops}}, {{price}}',
     tripType: { oneWay: 'כיוון אחד', roundTrip: 'הלוך ושוב' },
-    returnLabel: 'תאריך חזרה (YYYY-MM-DD)',
+    returnLabel: 'תאריך חזרה',
     returnInvalid: 'בחרו תאריך חזרה אחרי תאריך היציאה.',
     chooseOutbound: 'בחרו טיסת הלוך',
     chooseReturn: 'בחרו טיסת חזור',
@@ -96,8 +96,8 @@ export const he: Translations = {
     cardLabel: '{{name}}, {{price}} ללילה',
     destination: 'יעד',
     destinationPlaceholder: 'עיר, אזור או מלון',
-    checkIn: 'צ׳ק-אין (YYYY-MM-DD)',
-    checkOut: 'צ׳ק-אאוט (YYYY-MM-DD)',
+    checkIn: 'צ׳ק-אין',
+    checkOut: 'צ׳ק-אאוט',
     datesInvalid: 'בחרו צ׳ק-אין עתידי וצ׳ק-אאוט מאוחר יותר (עד 30 לילות).',
     guests: 'אורחים',
     guestCount_one: 'אורח {{count}}',

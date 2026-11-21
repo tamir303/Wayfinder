@@ -29,12 +29,6 @@ test('same origin and destination is rejected before searching', async ({ page }
   await expect(page.getByRole('button', { name: 'Search flights' })).toBeDisabled();
 });
 
-test('a past date is rejected', async ({ page }) => {
-  await signIn(page);
-  await page.getByRole('textbox').nth(2).fill('2001-01-01');
-  await expect(page.getByText('Enter a future date as YYYY-MM-DD.')).toBeVisible();
-});
-
 test('airport suggest shows rate-limit and empty states from the mock', async ({ page }) => {
   await signIn(page);
   const from = page.getByRole('textbox', { name: 'City or airport' }).first();

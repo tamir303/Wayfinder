@@ -5,12 +5,13 @@ import { useTranslation } from 'react-i18next';
 import { Pressable, Text, View } from 'react-native';
 import { Button } from '../../../src/components/Button';
 import { Chip } from '../../../src/components/Chip';
+import { DatePicker } from '../../../src/components/DatePicker';
 import { Input } from '../../../src/components/Input';
 import { Screen } from '../../../src/components/Screen';
 import { SuggestionRow } from '../../../src/components/SuggestionRow';
 import { toSuggestUiState } from '../../../src/features/geo/suggest-ui-state';
 import { useGeoSuggest } from '../../../src/features/geo/useGeoSuggest';
-import { addDays, defaultTripDate, isValidFutureDate } from '../../../src/lib/format';
+import { addDays, defaultTripDate, isoDate, isValidFutureDate } from '../../../src/lib/format';
 
 const CABINS = ['economy', 'premium', 'business', 'first'] as const;
 
@@ -71,9 +72,18 @@ export default function FlightSearch() {
       </View>
       <AirportField label={t('flights.from')} value={from} onChange={setFrom} />
       <AirportField label={t('flights.to')} value={to} onChange={setTo} />
-      <Input label={t('flights.dateLabel')} value={date} onChangeText={setDate} keyboardType="numbers-and-punctuation" />
+      <DatePicker
+        testID="flight-date"
+        label={t('flights.dateLabel')}
+        value={date}
+        minDate={isoDate(new Date())}
+        onChange={(d) => {
+          setDate(d);
+          if (returnDate <= d) setReturnDate(addDays(d, 7)); // keep the return after the departure
+        }}
+      />
       {!dateOk ? <Text className="text-danger">{t('flights.dateInvalid')}</Text> : null}
-      {roundTrip ? <Input label={t('flights.returnLabel')} value={returnDate} onChangeText={setReturnDate} keyboardType="numbers-and-punctuation" /> : null}
+      {roundTrip ? <DatePicker testID="flight-return" label={t('flights.returnLabel')} value={returnDate} minDate={addDays(date, 1)} onChange={setReturnDate} /> : null}
       {roundTrip && dateOk && !returnOk ? <Text className="text-danger">{t('flights.returnInvalid')}</Text> : null}
       {sameAirport ? <Text className="text-danger">{t('flights.sameAirport')}</Text> : null}
       <View className="flex-row items-center justify-between">
