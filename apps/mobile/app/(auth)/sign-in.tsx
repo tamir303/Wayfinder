@@ -1,9 +1,10 @@
 import { Redirect } from 'expo-router';
 import { useState } from 'react';
-import { ActivityIndicator, Pressable, Text, View } from 'react-native';
+import { Pressable, Text, View } from 'react-native';
+import { Button } from '../../src/components/Button';
 import { Input } from '../../src/components/Input';
 import { useSession } from '../../src/lib/session';
-import { supabase } from '../../src/lib/supabase';
+import { auth } from '../../src/lib/auth';
 
 type Step = 'email' | 'code';
 
@@ -20,10 +21,7 @@ export default function SignIn() {
   const sendCode = async () => {
     setBusy(true);
     setError(null);
-    const { error: err } = await supabase.auth.signInWithOtp({
-      email: email.trim(),
-      options: { shouldCreateUser: true },
-    });
+    const err = await auth.sendCode(email.trim()).then(() => null, (e: unknown) => e);
     setBusy(false);
     if (err) setError('Could not send the code. Check the email address and try again.');
     else setStep('code');
@@ -32,11 +30,7 @@ export default function SignIn() {
   const verify = async () => {
     setBusy(true);
     setError(null);
-    const { error: err } = await supabase.auth.verifyOtp({
-      email: email.trim(),
-      token: code.trim(),
-      type: 'email',
-    });
+    const err = await auth.verifyCode(email.trim(), code.trim()).then(() => null, (e: unknown) => e);
     setBusy(false);
     if (err) setError('That code is invalid or expired.');
     // On success onAuthStateChange updates the session and the redirect above runs.
@@ -58,13 +52,7 @@ export default function SignIn() {
             autoComplete="email"
             placeholder="you@example.com"
           />
-          <Pressable
-            disabled={!canSend}
-            onPress={() => void sendCode()}
-            className={`items-center rounded-card py-3 ${canSend ? 'bg-brand' : 'bg-line'}`}
-          >
-            {busy ? <ActivityIndicator color="#fff" /> : <Text className="font-semibold text-white">Email me a code</Text>}
-          </Pressable>
+          <Button label="Email me a code" disabled={!canSend} busy={busy} onPress={() => void sendCode()} />
         </>
       ) : (
         <>
@@ -77,14 +65,8 @@ export default function SignIn() {
             textContentType="oneTimeCode"
             maxLength={10}
           />
-          <Pressable
-            disabled={!canVerify}
-            onPress={() => void verify()}
-            className={`items-center rounded-card py-3 ${canVerify ? 'bg-brand' : 'bg-line'}`}
-          >
-            {busy ? <ActivityIndicator color="#fff" /> : <Text className="font-semibold text-white">Sign in</Text>}
-          </Pressable>
-          <Pressable onPress={() => { setStep('email'); setCode(''); setError(null); }}>
+          <Button label="Sign in" disabled={!canVerify} busy={busy} onPress={() => void verify()} />
+          <Pressable accessibilityRole="button" accessibilityLabel="Use a different email" onPress={() => { setStep('email'); setCode(''); setError(null); }}>
             <Text className="text-center text-brand">Use a different email</Text>
           </Pressable>
         </>

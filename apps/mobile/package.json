@@ -36,11 +36,18 @@
     "typescript": "~6.0.3"
   },
   "scripts": {
-    "dev": "expo start --dev-client",
-    "web": "expo start --web",
+    "dev": "node scripts/with-env.mjs dev expo start --dev-client",
+    "web": "node scripts/with-env.mjs dev expo start --web",
     "typecheck": "tsc --noEmit",
     "lint": "eslint app src",
-    "test": "jest"
+    "test": "jest",
+    "dev:staging": "node scripts/with-env.mjs staging expo start --dev-client",
+    "dev:prod": "node scripts/with-env.mjs prod expo start --dev-client",
+    "web:staging": "node scripts/with-env.mjs staging expo start --web",
+    "web:prod": "node scripts/with-env.mjs prod expo start --web",
+    "export:web": "node scripts/with-env.mjs dev expo export --platform web",
+    "export:web:staging": "node scripts/with-env.mjs staging expo export --platform web",
+    "export:web:prod": "node scripts/with-env.mjs prod expo export --platform web"
   },
   "private": true
 }

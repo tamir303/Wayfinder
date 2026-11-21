@@ -1,7 +1,7 @@
 import { ApiClientError } from '../../lib/api';
 import { toSuggestUiState } from './suggest-ui-state';
 
-jest.mock('../../lib/supabase', () => ({ supabase: { auth: {} } }));
+jest.mock('../../lib/auth', () => ({ auth: {} }));
 
 const results = { suggestions: [{ code: 'TLV', name: 'Ben Gurion Airport', city: 'Tel Aviv-Yafo' }] };
 

@@ -8,6 +8,8 @@ pnpm + Turborepo monorepo on branch `feat/foundation`: `apps/api` (NestJS, Prism
 
 Commands (repo root): `pnpm lint`, `pnpm typecheck`, `pnpm test` (all via Turbo). API: `pnpm --filter @wayfinder/api dev`. Mobile: `pnpm --filter @wayfinder/mobile dev` (needs a dev client build). DB migrations: `pnpm --filter @wayfinder/api exec prisma migrate deploy` (not `migrate dev`: the shadow DB lacks `auth.users`). Env: `apps/api/.env` and `apps/mobile/.env` are gitignored, see `.env.example`.
 
+Mobile environments (`apps/mobile`, set by `EXPO_PUBLIC_APP_ENV` through `scripts/with-env.mjs`): `dev` = mock data only, no network, mock sign-in (any email, code 123456); `staging` = real API, debug logs, nothing redacted; `prod` = real API, info logs, tokens/emails redacted, web session encrypted at rest. Run with `pnpm --filter @wayfinder/mobile web | web:staging | web:prod` (staging/prod read `.env.staging` / `.env.prod`, copy from the `.example` files). Config lives in `src/config/app-config.ts`, mocks in `src/lib/mock/`. Test the web build with the Playwright MCP tools: export with `pnpm --filter @wayfinder/mobile export:web`, then serve `dist` with `python -m http.server --directory dist` run from outside `dist`.
+
 Gotchas: the SerpAPI client (`apps/api/src/provider/serpapi.client.ts`) reserves a per-user daily credit before each uncached call and refunds on failure; all SerpAPI traffic goes through it. Jest mock factories may only reference `mock`-prefixed variables. Testing Library v14 `renderHook`, `rerender` and `act` are async.
 
 ## Product

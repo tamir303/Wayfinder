@@ -8,7 +8,7 @@ export type SuggestUiState =
   | { kind: 'results'; items: GeoSuggestion[] }
   | { kind: 'error'; code: ErrorCode; message: string };
 
-const MESSAGES: Record<ErrorCode, string> = {
+export const MESSAGES: Record<ErrorCode, string> = {
   RATE_LIMITED: "You've reached today's daily search limit. Try again tomorrow.",
   PROVIDER_DOWN: 'Search is temporarily unavailable. Please try again in a moment.',
   BAD_QUERY: 'Please enter a valid search.',

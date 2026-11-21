@@ -2,30 +2,30 @@ import { z } from 'zod';
 import { ApiClientError, apiFetch } from './api';
 
 const mockGetSession = jest.fn();
-const mockRefreshSession = jest.fn();
+const mockRefresh = jest.fn();
 const mockSignOut = jest.fn();
 
-jest.mock('./supabase', () => ({
-  supabase: {
-    auth: {
-      getSession: (...a: unknown[]) => mockGetSession(...a),
-      refreshSession: (...a: unknown[]) => mockRefreshSession(...a),
-      signOut: (...a: unknown[]) => mockSignOut(...a),
-    },
+jest.mock('../config/app-config', () => ({ config: { useMocks: false, apiUrl: 'http://api.test', logLevel: 'debug', redact: false } }));
+jest.mock('./logger', () => ({ log: { debug: jest.fn(), info: jest.fn(), warn: jest.fn(), error: jest.fn() } }));
+jest.mock('./auth', () => ({
+  auth: {
+    getSession: (...a: unknown[]) => mockGetSession(...a),
+    refresh: (...a: unknown[]) => mockRefresh(...a),
+    signOut: (...a: unknown[]) => mockSignOut(...a),
   },
 }));
 
 const Schema = z.object({ ok: z.boolean() });
 const json = (body: unknown, status = 200) => new Response(JSON.stringify(body), { status });
+const unauth = () => json({ code: 'UNAUTHENTICATED', message: 'x' }, 401);
 
 describe('apiFetch', () => {
   let fetchMock: jest.SpyInstance;
 
   beforeEach(() => {
-    process.env.EXPO_PUBLIC_API_URL = 'http://api.test';
-    mockGetSession.mockResolvedValue({ data: { session: { access_token: 'tok1' } } });
-    mockRefreshSession.mockReset();
-    mockSignOut.mockReset().mockResolvedValue({});
+    mockGetSession.mockResolvedValue({ accessToken: 'tok1', email: 'a@b.co' });
+    mockRefresh.mockReset();
+    mockSignOut.mockReset().mockResolvedValue(undefined);
     fetchMock = jest.spyOn(globalThis, 'fetch');
   });
   afterEach(() => jest.restoreAllMocks());
@@ -38,40 +38,31 @@ describe('apiFetch', () => {
     expect(init.headers.Authorization).toBe('Bearer tok1');
   });
 
-  it('refreshes the session once on 401 and retries with the new token', async () => {
-    fetchMock
-      .mockResolvedValueOnce(json({ code: 'UNAUTHENTICATED', message: 'x' }, 401))
-      .mockResolvedValueOnce(json({ ok: true }));
-    mockRefreshSession.mockResolvedValue({ data: { session: { access_token: 'tok2' } }, error: null });
-
+  it('refreshes once on 401 and retries with the new token', async () => {
+    fetchMock.mockResolvedValueOnce(unauth()).mockResolvedValueOnce(json({ ok: true }));
+    mockRefresh.mockResolvedValue({ accessToken: 'tok2', email: 'a@b.co' });
     await expect(apiFetch('/x', Schema)).resolves.toEqual({ ok: true });
     expect(fetchMock.mock.calls[1][1].headers.Authorization).toBe('Bearer tok2');
     expect(mockSignOut).not.toHaveBeenCalled();
   });
 
   it('signs out and throws UNAUTHENTICATED when the refresh fails', async () => {
-    fetchMock.mockResolvedValue(json({ code: 'UNAUTHENTICATED', message: 'x' }, 401));
-    mockRefreshSession.mockResolvedValue({ data: { session: null }, error: new Error('nope') });
-
+    fetchMock.mockResolvedValue(unauth());
+    mockRefresh.mockResolvedValue(null);
     await expect(apiFetch('/x', Schema)).rejects.toMatchObject({ code: 'UNAUTHENTICATED' });
     expect(mockSignOut).toHaveBeenCalledTimes(1);
   });
 
   it('signs out when the retry is still 401', async () => {
-    fetchMock.mockResolvedValue(json({ code: 'UNAUTHENTICATED', message: 'x' }, 401));
-    mockRefreshSession.mockResolvedValue({ data: { session: { access_token: 'tok2' } }, error: null });
-
+    fetchMock.mockResolvedValue(unauth());
+    mockRefresh.mockResolvedValue({ accessToken: 'tok2', email: 'a@b.co' });
     await expect(apiFetch('/x', Schema)).rejects.toBeInstanceOf(ApiClientError);
     expect(mockSignOut).toHaveBeenCalledTimes(1);
   });
 
   it('turns an API error body into ApiClientError with the code and status', async () => {
     fetchMock.mockResolvedValue(json({ code: 'RATE_LIMITED', message: 'Daily search limit reached' }, 429));
-    await expect(apiFetch('/x', Schema)).rejects.toMatchObject({
-      code: 'RATE_LIMITED',
-      status: 429,
-      message: 'Daily search limit reached',
-    });
+    await expect(apiFetch('/x', Schema)).rejects.toMatchObject({ code: 'RATE_LIMITED', status: 429, message: 'Daily search limit reached' });
   });
 
   it('maps an unparseable error body to PROVIDER_DOWN', async () => {
@@ -80,7 +71,7 @@ describe('apiFetch', () => {
   });
 
   it('throws UNAUTHENTICATED without calling the API when there is no session', async () => {
-    mockGetSession.mockResolvedValue({ data: { session: null } });
+    mockGetSession.mockResolvedValue(null);
     await expect(apiFetch('/x', Schema)).rejects.toMatchObject({ code: 'UNAUTHENTICATED' });
     expect(fetchMock).not.toHaveBeenCalled();
   });

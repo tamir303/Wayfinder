@@ -1,18 +1,17 @@
 import 'react-native-url-polyfill/auto';
-import { createClient } from '@supabase/supabase-js';
+import { createClient, type SupabaseClient } from '@supabase/supabase-js';
+import { config } from '../config/app-config';
 import { chunkedSecureStore } from './secure-store-adapter';
 
-const url = process.env.EXPO_PUBLIC_SUPABASE_URL;
-const anonKey = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY;
-if (!url || !anonKey) {
-  throw new Error('EXPO_PUBLIC_SUPABASE_URL and EXPO_PUBLIC_SUPABASE_ANON_KEY are required');
-}
+let client: SupabaseClient | undefined;
 
-export const supabase = createClient(url, anonKey, {
-  auth: {
-    storage: chunkedSecureStore,
-    autoRefreshToken: true,
-    persistSession: true,
-    detectSessionInUrl: false,
-  },
-});
+// Created lazily so dev (mock mode) never needs Supabase settings.
+export const getSupabase = (): SupabaseClient => {
+  if (!client) {
+    if (!config.supabaseUrl || !config.supabaseAnonKey) throw new Error('Supabase is not configured');
+    client = createClient(config.supabaseUrl, config.supabaseAnonKey, {
+      auth: { storage: chunkedSecureStore, autoRefreshToken: true, persistSession: true, detectSessionInUrl: false },
+    });
+  }
+  return client;
+};

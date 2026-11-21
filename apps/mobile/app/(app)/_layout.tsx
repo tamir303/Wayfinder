@@ -12,5 +12,6 @@ export default function AppLayout() {
     );
   }
   if (!session) return <Redirect href="/sign-in" />;
+  // Tabs live in (tabs); results, flight detail and trip detail are stack screens above them.
   return <Stack screenOptions={{ headerShown: false }} />;
 }
