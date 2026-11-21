@@ -1,0 +1,344 @@
+{
+  "search_parameters": {
+    "engine": "google_flights",
+    "hl": "en",
+    "gl": "us",
+    "type": "2",
+    "departure_id": "TLV",
+    "arrival_id": "CDG",
+    "outbound_date": "2027-03-10",
+    "booking_token": "WyJDalJJTUdweGRUaGpkVFl3YmpCQlNXMXRjSGRDUnkwdExTMHRMVzk1Wm5VeU5DMXVNVUZCUVVGQlIzTkJYMFJaUldkYWJFdEJFZ1ZNV1RNeU5Sb0xDS2l3QVJBQ0dnTlZVMFE0SEhDb3NBRT0iLFtbIlRMViIsIjIwMjctMDMtMTAiLCJDREciLG51bGwsIkxZIiwiMzI1Il1dXQ==",
+    "currency": "USD"
+  },
+  "selected_flights": [
+    {
+      "flights": [
+        {
+          "departure_airport": {
+            "name": "Ben Gurion Airport",
+            "id": "TLV",
+            "time": "2027-03-10 16:50"
+          },
+          "arrival_airport": {
+            "name": "Aéroport de Paris-Charles de Gaulle",
+            "id": "CDG",
+            "time": "2027-03-10 21:00"
+          },
+          "duration": 310,
+          "airplane": "Boeing 737",
+          "airline": "El Al",
+          "airline_logo": "https://www.gstatic.com/flights/airline_logos/70px/LY.png",
+          "travel_class": "Economy",
+          "flight_number": "LY 325",
+          "ticket_also_sold_by": [
+            "Air France"
+          ],
+          "legroom": "30 in",
+          "extensions": [
+            "Average legroom (30 in)",
+            "In-seat power & USB outlets",
+            "Stream media to your device",
+            "Carbon emissions estimate: 283 kg"
+          ]
+        }
+      ],
+      "total_duration": 310,
+      "carbon_emissions": {
+        "this_flight": 283000,
+        "typical_for_this_route": 309000,
+        "difference_percent": -8
+      },
+      "type": "One way",
+      "airline_logo": "https://www.gstatic.com/flights/airline_logos/70px/LY.png"
+    }
+  ],
+  "baggage_prices": {
+    "together": [
+      "1 free carry-on"
+    ]
+  },
+  "booking_options": [
+    {
+      "together": {
+        "book_with": "El Al",
+        "airline": true,
+        "airline_logos": [
+          "https://www.gstatic.com/flights/airline_logos/70px/LY.png"
+        ],
+        "marketed_as": [
+          "LY 325"
+        ],
+        "price": 226,
+        "baggage_prices": [
+          "1 free carry-on"
+        ],
+        "booking_request": {
+          "url": "https://www.google.com/travel/clk/f",
+          "post_data": "u=AAcRjHLhqXt5ne5McaVJOHo1kkRor000FF7BFKq4iHUcLz5sjulC97Alag38ixJmbGDgsVeWngZIvHrcGdUYq6W8jd7dEDOJO4xYdR9eGDy3EY4wv0wBkIkMzxqkLTyN8j7haC_1eZSsZ9vhz02x0W5d_szV1x7Fd2U8EHJ9kQU9iflhB4Lgm0KNC3aU_QDSowz7XRLXps_R7zG2a_Tx3g_WnIuSsT8EJnZGAdVu861d7DR4auhR14bbxwTKe7X6iZOEjZu5S9CcW7m7pEOTLpd3VMI5cOqczTeO0MLG-biEeyxHL2k_dA0W7vYjbFXK02z-9pPBRMak7kAZCejaWAGnzo_QuhsXify68b0bQAB7SBmbcDijHqFlh1bwhv_Udo-gNKoOlfXrNkvzdmyCoVkQN85vD6HeLpiMnsTwR1RilY3tSbbbIeAE5im90xPy6_eiZ2YDDGSjzmMmGur9Pysk6vBRzZcnhlTH4XyzYC0AQ1akE9KsmTzB3JjTyvWaqY2rm3RSGLFKzruR0sl0zKHLguNPs3QaluoH7ZATe-gRqyNm20Bm4ePAsah2asvPnZJ04smdMSsWxYOnD6MHltc127lk5yydl_U0UjZ7HzCNJvVZAM-Ro04BjgZYTXuyBVolsE7L3Whs_vU4nfszJofFRecPKcPPyy672DFPmDU_kCjaK84Eus6XcEPSFwNicVWFW_2lp0ZbQw-5j0nOJf0TqOvdtrV6PacCpghAeCktvzdsgFLJ_u9L1VV8HWbRsB5RWuYx5eBnASr9e3geiZENLgzkk0-dwSZ2PV1rcyolIEdfPcYxQjlAaU8_LmouDm4JEJZXr5jdb6D7va4xEKvf8e44rwJPEF-B5w_cAVBxVnhxD9uGk8tcYawjqc7H6oi5GMtNNdt0nOcj5RJWWsOJBzbM7spdWIw9fdI06Gm32BPq1rV7bAS_c94IKZ92JTjZwapfzDSlGDk5hN63curuE6BSQuDEAKR24g-rXWtVzY-OygSCiFmGK5wMM03MUmNYCSLgi9Rqb2F3ba0sTTtRzXkuz4qQ0_mpVfRi7sXREN_mYXNm0rpnSg-9LcyoSIWXi_PH-U3i37Dk_iCBUsonp3gigwPoF4r5d8PFlQbkVjStuX0asZSx6kw4A1-PLa9SJFWczQf4pqBIL40q82B9ZSPJYDjv6AIper0mFSxaUJuWiXJhevW2mCu2EZRt9bFpb8jS_ZmfR3CV-SQXkGh9u4ZDt1lSI4hxWUWa3sRdR3vvlATj6aMWDS1lUAsp9espiwI_vAY-bK8RHD7tRznLxStkiXGNVZkU_HivmAnob9VaGsrRKB2nxPuqjlPS5Q5CM-QzCUlUgE34OhfXWWqkP8fKmCeDv-gjuP8JFZjaSE5FePki2eFFE3c9Rw_jc-sBV4pAlH7LH5mHRIovSLIG6DwCYFM7QAltwn_GYpTJ-0jH2WxivDQU_VfABQmaC-MxiFelqFfhh-w2CQxjH-g621y4oh1h2hLN-ScW5Cb8Bs4jxVmUUUR_oVvqdEI1NF6ESwG1OFh6sAdQgYFqTmzGsfCuSjdO59zVGlbhmW5BXE1t6emJmldSwYluz3XjkF7WQC9ceH2JRDagypcRUltapXHmh_850f3dL4NwvvTcylkWRNejgLceU-Q6hg8xz1umgpMbWzRKnW6T6iR4YT2iODHR_jyfyIYz5x_FGsnG-xiiykw1gUfJBi-xreDQk4os6pIu1ALj0OOcL3S9bhnvQaBx08J5-VJw34u_EdDtWa40S963AcjppQT5vopq5ppwSbvXconO0ehj2ymXBc76uKQpVFiVWv-ckclnEnnyRLmSVinwH7xX0_vZqWh1ElSO6M2us3qrLcXkH-kRYiVAPm19Uwe8QvW3cpZwMZ4ZZy0UFlzyCE4FjG1k_X_EAdh40q5UTKmQLAGUkV7nQUFxTeixAN8c4tYfxysg4X2-cSiJonftML1K0PC4mKTEegC-OAHF3Uu-gxFZ4EUmsV2NPIDdEvdqTQE21D-lqWGIpIA7NWo8NHaeYejTBYAfjf_97pRk4koOor8vaNaOQcBprJ8bofkveBtsYybjv4zoor6pBl7YBGDQf_2-ByycAaN5Janyy1QuyeLnDaFgbwzaia2te43SeqIsFACihz5Luw5R5LZkKqhlCR6KXhBHhHvp2lKxMR166ybrxC10XouY3i5ev4p1gCX9i1Vwasg1G0A7tFM6h9pCn7_u97iSAdlZ_yfoGfxhkbYlfAvmdzosaoCnxQd20y2WhAsszBzgZppXQcnEz61MG-2NsmiUJg-kvSx7AUbhcwrdR5OgQAFP4CaGvjdWAsoAgiz8ae2N4eI8elyVh-2xS5f6AiPycDLuU7fZi9uRF0IvqJNxvHkdssCytgP4ujOgGED79CwF1yIWljIrmMcjhAZH9la6Cr26TrMDOrWAguAxsq62NbqXfK32orp02YD8ZPO1rm7HcvCPHl1iWlHxlaoMdVbm7ohsDDNH7Q9ULodSmUY-a-0udKKiXocYjF4rplctQCy3AIaN5haLeLahTblFsCltAHrCXUa5z62_kuVkbJIiOjohpZAKE89uVku0TU2-E7bUmfUfzVsnKX0NxWz0ltLwo1YKcyt7ckzDDFCDY0VPJRNJO9e0AryDM0YVlMO_CgbcHMoVsrAMALoXD1CNnzB3umfldpOgB-ATAi-YQnUk5HAJmNha72AdFzQAg-Gx3b9GCsPnwvWkcG5YopeqqCUl5J8Efnrgdlszn798P90smIuOH8mxBMbj8b9OIuzl-DHqV5Tm53cEy-craLq7qBj_QMB1yxRQC83rWKTY-cBzXOdjx_BgfcdA-_3lUAyhHma0ndh9biyIc7lZUXYXJMHGiEuS2c8O3jFqxL3DmO8X5dnGw7R_R48H3et5tWrMS6GbKz6NFx2QhTTRqFMJu0PoKCLCaTcnWiiAU4wZZaCLgm60qi7H63gNyWkNdnSIsxp9XSZhszKlZtEgWZwNH3F0sF62AIEb8JfV8PB6AoFH2209_sVX-M2PisbLiRhaMPvgg0fRLcsmVyxVa5VkEtFDoZfzd-jHd0_yCvwTkdvi3CNP2GhZKmybhIr-OK7VgOQOP2HGNoH3VttwL91Fpw3wgLSUBRy6j5ukiaiKtct4lvyh1j-eFWtaIRluzolXwPmLgSJgauat4QY2IPQl1NY1TIyEIBAD-wu_piFf51hldlmixH5h8zBq3DdjNKObq08S5A8oKBAVMZ5rc_dQfnnYNP9ww_d8lamJz7NflsDrcJjuB2TmCSrQF3yzTq_AR2euxBbTqUuHeKYQA37JXmn2awyOPweWAkiHPJqyCmeICM3DHZ9ApxYeWg"
+        }
+      }
+    },
+    {
+      "together": {
+        "book_with": "Air France",
+        "airline": true,
+        "airline_logos": [
+          "https://www.gstatic.com/flights/airline_logos/70px/AF.png"
+        ],
+        "marketed_as": [
+          "AF 7071"
+        ],
+        "price": 461,
+        "baggage_prices": [
+          "1 free carry-on"
+        ],
+        "booking_request": {
+          "url": "https://www.google.com/travel/clk/f",
+          "post_data": "u=AAcRjHLVyebo5Jg83dVdkLsw2Cn0C_A8LuQUQi1ur40Zr-HMiKQ0oF9HeVu4wWb9uwlTQKpUxihyeKQZ1XunULMgHmhJMfVtNkjor-m5PGZ76I9QVAfLPVa-Fdk43Ts5J2zYawyRerYY35DGZmt9kQ5e2x0KRN0ZzSdNQi6sW6C4s5JP1eUrqq8yQRJhSscRhd2NHqw_Yq70sepT1tokjc79_ikk6XjV4bC3XdbwXOr-IptyfzTecqY8Lxl8ND4I9m_c_ygJSSbNeOJZ_bG7gaL8HDGbucyUbhbVZBRPjeDEwDfYAYHA6I8jKWuvhtMUvJtCJo24-L5ksa2rlwJMIBiJGSMjP3hwuOzwVO0_oRETxa9RmdXO56vLImPnFASJnr7qYzY0-bHdFEn1mWTjMbXpqNermnxbl7_cC0CW-0Nx3whkXjTXaIuZqW4TJKbzrOTgzFEUj_oL18gxSm3unsXtuSOl2q4R-dhy7mR_eooELxHxkMtZxWgd47bThwGrQXUdtVF1D6HcOfRV1TKx8SxxyECrWckTgBpj1nlw19r5sMTKvbcs6w17PdYQjk0cG73HoMaFuNFOMvctYB4LUe_mAhvbswJZfgPsUJafrkYf3bWQSJC37YuH0CWRW9HcqlRZ7HTMQlcqbaDq4XPsy_EHCezyjLZRM4DH2AzIhUQjhf4ddY1IikrMmkM1VGANnVMUI8dk1R9ogNlt9EPuZ4Hueo0qV0YyfTUT9w3WG5DbE6vZ-jQSJlXvi0YoqFAQK_tlCkZ2oWdUIt0AM6LK2NqhhlQOOC7Vn75vYYzPagwle7kT6_TsVmIvPW7K3awFHwDbwmsqwerW48H5ZnGVYOUgf-TERtYXpGPnp1YvgRLBELoeZ-Gm6tLc1-BDONIOJnJR1KDWbg_Sq-lal28WgyRCgNGfO3yUNLK8LwzYTdR6NK5CjSpYDR_bybZui0Zdd2zTParddpZG7002zGfEex1OrgQ07w7GF2nuq6IBsVWAbcFuG1qd-K0RPC_ezj3WKxSZEX9HAVgihuPSBluvvb-tiNndPG2hl7ArPs-ywiFR5fxAhLLArYQ44ebN2cIOh5nW8k7kWcgkef8gIUjW_NN7gsPrQpi9G81Nk6H_1JZOYr3Lznsfk8wqtokKfx4gQPn3j7OG78opXTnkxQ7n-7WcCnKCCqrCT-nBvlPdLdkQ3aUq0iUWR3YW8WBpjCgXB8OITS4ddllcrC8nlYWIGVJ-cF0HIHgEWnU4FdCTWwkIOxH3AJ63nnC8MzgLS7NzhMumyAOydvDyMWbbT7l41XVACDY5VWt0jEiKKlqJXxZEJrhdGBpuE8BPO8MdtVU4xFF60CvNKR_2811MOdtwG5xB_zPV6a7oy0WkrxqIVoS6NH0nVwR31iJa8quK0XCRCjsNG1FRoAp4UkmwzLRAqoMPJ3PCSt8vV96Ci_ZLnRLVxF0HRNiwSTcjd1I_b9FM3wBRXZCBFCOObYPiDHI0cpVnXWecZ2o0uOeKxvLLXNuwU7-9_Iy1hdpddvIXD7kwD6cM5nONw4iMKhS7CQPUKX1q9ewo0YJzPZCeywo6tUKZHznEWKL7NnLsfJ6nfV_HR_hIpQSqqPFyrdJJZ9gJWMVceZTKHqAJPHz2AMQIAjMy2PpU3ITJRfZeU7SjsgQgtUHxYizahn_nyBRg28OLPXXsDN2WIC2HpGz3QLcCV612xEk-yLQTTpIlgAqcpC8eSN72_v1BZJHNWL81TRKNDOZAu9z8tkymhQQPt-dFd2xTWitE3b6v3Z0wqG4WPEUi_arUNv5-r8MBJivpFdPpiYlhGzbaR-lAf9opt6F7gGB_lNS-KeJbLnoLYrheqtR1bdts0-PhU4XNX7ET9z2Gl1_y92Z38UhLfCALtgfRC_ELTVFdOWgxqQFGmOwQUzTBkoqu5U2ddu4M1l0uqoGXnfTaZ8dMNsQrIKzZHNc1nHmUAXHl9VeGA98oXnN00TNautH3T6q-QQ2WXIjcAs3Yxh-9N-k_WdVOef-fW_Rs9vXVD9gGArPOSS79ef0Dg_LafmRITK4_mfwDt6K1qBSnj1xcQFm-vczSvvhDQmm777EtYtRP_PRB5GOFBfrMDkWG51O8kIbv1l8OCeqnANygFuvL5xqA_cCa8wUtdhdEVSMUIFbjVFQiqYSjhbeB9eg8-2w-zTmM-x2Ofs8KGD2yPw6HSocKHH8GtJ0GV3v0eax1Lp2LKP2d973jCImFFKNrCXJHYvowEMDH5-QVQ_kFekwfiRK_Q8WzhC1wTLMr1gWbBbUFvl5NKZxe0COdsDVTv15pMqdIysTwR0eopa0HP6HPZ1xSg_gLdSNtM5ddMezIL9MkqZFrfr8_i4RdfdHWkwGJxBe3vDi82XY2WD7tmkfQC7tN-GUFib2wQn-R852lCPKqIRRLi1dBLHFietJujwQLX8ea4iPLKlASZYNbBrikNMexQSQRVd0eH43Hx19N1S3lHaAdnNAu3nCqwnRNi6R4VQ-vbIrxS1-Kl0ktUz-Z7iDhwP_f8Bh_dQtQ1o5vvf69TScEjCyiYbxlTaX-OxacJX4FgnaYZW4zfPNWJxyerO44OAUilyWmXvYoLNmmUth-vEqvSDqzgTELsyN1g3ik7rVTRnq7czcE_7hYNR6-GZ5uX9ClhEf_LT8k0l2ZMFcGRKksI6EF1YRvRmez"
+        }
+      }
+    }
+  ],
+  "price_insights": {
+    "lowest_price": 226,
+    "price_level": "low",
+    "typical_price_range": [
+      310,
+      730
+    ],
+    "price_history": [
+      [
+        1790283600,
+        194
+      ],
+      [
+        1790370000,
+        194
+      ],
+      [
+        1790456400,
+        198
+      ],
+      [
+        1790542800,
+        198
+      ],
+      [
+        1790629200,
+        198
+      ],
+      [
+        1790715600,
+        198
+      ],
+      [
+        1790802000,
+        198
+      ],
+      [
+        1790888400,
+        198
+      ],
+      [
+        1790974800,
+        198
+      ],
+      [
+        1791061200,
+        198
+      ],
+      [
+        1791147600,
+        198
+      ],
+      [
+        1791234000,
+        198
+      ],
+      [
+        1791320400,
+        198
+      ],
+      [
+        1791406800,
+        198
+      ],
+      [
+        1791493200,
+        198
+      ],
+      [
+        1791579600,
+        198
+      ],
+      [
+        1791666000,
+        198
+      ],
+      [
+        1791752400,
+        198
+      ],
+      [
+        1791838800,
+        198
+      ],
+      [
+        1791925200,
+        198
+      ],
+      [
+        1792011600,
+        198
+      ],
+      [
+        1792098000,
+        198
+      ],
+      [
+        1792184400,
+        198
+      ],
+      [
+        1792270800,
+        198
+      ],
+      [
+        1792357200,
+        198
+      ],
+      [
+        1792443600,
+        198
+      ],
+      [
+        1792530000,
+        198
+      ],
+      [
+        1792616400,
+        198
+      ],
+      [
+        1792702800,
+        198
+      ],
+      [
+        1792789200,
+        198
+      ],
+      [
+        1792875600,
+        198
+      ],
+      [
+        1792965600,
+        198
+      ],
+      [
+        1793052000,
+        226
+      ],
+      [
+        1793138400,
+        226
+      ],
+      [
+        1793224800,
+        226
+      ],
+      [
+        1793311200,
+        226
+      ],
+      [
+        1793397600,
+        226
+      ],
+      [
+        1793484000,
+        226
+      ],
+      [
+        1793570400,
+        226
+      ],
+      [
+        1793656800,
+        226
+      ],
+      [
+        1793743200,
+        226
+      ],
+      [
+        1793829600,
+        226
+      ],
+      [
+        1793916000,
+        226
+      ],
+      [
+        1794002400,
+        226
+      ],
+      [
+        1794088800,
+        226
+      ],
+      [
+        1794175200,
+        226
+      ],
+      [
+        1794261600,
+        226
+      ],
+      [
+        1794348000,
+        226
+      ],
+      [
+        1794434400,
+        226
+      ],
+      [
+        1794520800,
+        226
+      ],
+      [
+        1794607200,
+        226
+      ],
+      [
+        1794693600,
+        226
+      ],
+      [
+        1794780000,
+        226
+      ],
+      [
+        1794866400,
+        226
+      ],
+      [
+        1794952800,
+        226
+      ],
+      [
+        1795039200,
+        226
+      ],
+      [
+        1795125600,
+        226
+      ],
+      [
+        1795212000,
+        226
+      ]
+    ]
+  }
+}
