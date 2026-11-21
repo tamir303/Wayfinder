@@ -15,6 +15,10 @@ describe('toSuggestUiState', () => {
     expect(toSuggestUiState({ text: 'tel', isFetching: true, error: null })).toEqual({ kind: 'loading' });
   });
 
+  it('is loading, not idle, while the debounced query has not started yet', () => {
+    expect(toSuggestUiState({ text: 'tel', isFetching: false, error: null })).toEqual({ kind: 'loading' });
+  });
+
   it('is results when data has suggestions', () => {
     expect(toSuggestUiState({ text: 'tel', isFetching: false, error: null, data: results })).toEqual({
       kind: 'results',

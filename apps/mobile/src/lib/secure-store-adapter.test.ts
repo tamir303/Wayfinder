@@ -40,3 +40,20 @@ describe('chunkedSecureStore', () => {
     expect([...mockMemory.keys()].sort()).toEqual(['k.0', 'k.n']);
   });
 });
+
+describe('chunkedSecureStore concurrency', () => {
+  beforeEach(() => mockMemory.clear());
+
+  it('keeps the last of concurrent writes intact (no interleaved chunks)', async () => {
+    const a = 'a'.repeat(3000);
+    const b = 'b'.repeat(2500);
+    await Promise.all([chunkedSecureStore.setItem('k', a), chunkedSecureStore.setItem('k', b)]);
+    expect(await chunkedSecureStore.getItem('k')).toBe(b);
+  });
+
+  it('keeps non-ASCII chunks under the byte limit', async () => {
+    const value = '日本語'.repeat(1000);
+    await chunkedSecureStore.setItem('k', value);
+    expect(await chunkedSecureStore.getItem('k')).toBe(value);
+  });
+});

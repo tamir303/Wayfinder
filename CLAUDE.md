@@ -4,7 +4,11 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Current state
 
-Wayfinder has no application code yet, only Claude Code configuration. There are no build, lint, or test commands, and no git repository. Update this file once a stack is chosen and code exists.
+pnpm + Turborepo monorepo on branch `feat/foundation`: `apps/api` (NestJS, Prisma, Redis cache, Supabase JWT guard), `apps/mobile` (Expo SDK 58, Expo Router, NativeWind v4, TanStack Query), `packages/shared` (Zod contracts, error codes), `packages/config`. The only built slice is airport autocomplete (`GET /geo/suggest`, `google_flights_autocomplete`). Spec and plan: `docs/superpowers/`.
+
+Commands (repo root): `pnpm lint`, `pnpm typecheck`, `pnpm test` (all via Turbo). API: `pnpm --filter @wayfinder/api dev`. Mobile: `pnpm --filter @wayfinder/mobile dev` (needs a dev client build). DB migrations: `pnpm --filter @wayfinder/api exec prisma migrate deploy` (not `migrate dev`: the shadow DB lacks `auth.users`). Env: `apps/api/.env` and `apps/mobile/.env` are gitignored, see `.env.example`.
+
+Gotchas: the SerpAPI client (`apps/api/src/provider/serpapi.client.ts`) reserves a per-user daily credit before each uncached call and refunds on failure; all SerpAPI traffic goes through it. Jest mock factories may only reference `mock`-prefixed variables. Testing Library v14 `renderHook`, `rerender` and `act` are async.
 
 ## Product
 

@@ -1,5 +1,5 @@
 import { GeoSuggestResponseSchema } from '@wayfinder/shared';
-import { useQuery } from '@tanstack/react-query';
+import { keepPreviousData, useQuery } from '@tanstack/react-query';
 import { apiFetch } from '../../lib/api';
 import { useDebouncedValue } from './useDebouncedValue';
 
@@ -18,6 +18,7 @@ export const useGeoSuggest = (text: string) => {
       apiFetch(`/geo/suggest?${new URLSearchParams({ q, kind: 'airport' }).toString()}`, GeoSuggestResponseSchema),
     enabled: q.length >= MIN_LENGTH,
     staleTime: ONE_DAY_MS,
+    placeholderData: keepPreviousData,
     retry: false,
   });
 };

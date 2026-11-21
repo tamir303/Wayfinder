@@ -18,12 +18,13 @@ const MESSAGES: Record<ErrorCode, string> = {
 
 type Input = { text: string; isFetching: boolean; error: unknown; data?: GeoSuggestResponse };
 
-export const toSuggestUiState = ({ text, isFetching, error, data }: Input): SuggestUiState => {
+export const toSuggestUiState = ({ text, error, data }: Input): SuggestUiState => {
   if (text.trim().length < 2) return { kind: 'idle' };
   if (error) {
     const code = error instanceof ApiClientError ? error.code : 'PROVIDER_DOWN';
     return { kind: 'error', code, message: MESSAGES[code] };
   }
-  if (!data) return isFetching ? { kind: 'loading' } : { kind: 'idle' };
+  if (!data) // Text is long enough but the debounced query has not started yet: still loading, not idle.
+  return { kind: 'loading' };
   return data.suggestions.length === 0 ? { kind: 'empty' } : { kind: 'results', items: data.suggestions };
 };

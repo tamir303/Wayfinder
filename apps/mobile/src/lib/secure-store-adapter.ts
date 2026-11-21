@@ -2,7 +2,8 @@ import * as SecureStore from 'expo-secure-store';
 
 // SecureStore values are limited to about 2 KB on iOS and Supabase sessions are larger,
 // so a value is split into chunks stored under `${key}.${index}` plus a `${key}.n` count.
-const CHUNK_SIZE = 1800;
+// Chunk size is in UTF-16 units; 600 keeps even 3-byte characters under the ~2 KB limit.
+const CHUNK_SIZE = 600;
 
 const removeItem = async (key: string): Promise<void> => {
   const count = await SecureStore.getItemAsync(`${key}.n`);
@@ -33,4 +34,18 @@ const setItem = async (key: string, value: string): Promise<void> => {
   await SecureStore.setItemAsync(`${key}.n`, String(chunks));
 };
 
-export const chunkedSecureStore = { getItem, setItem, removeItem };
+// Supabase can write concurrently (refresh + sign-in); serialize writes so chunks never interleave.
+let queue: Promise<unknown> = Promise.resolve();
+const serialized = <A extends unknown[], R>(fn: (...args: A) => Promise<R>) => {
+  return (...args: A): Promise<R> => {
+    const run = queue.then(() => fn(...args));
+    queue = run.catch(() => undefined);
+    return run;
+  };
+};
+
+export const chunkedSecureStore = {
+  getItem,
+  setItem: serialized(setItem),
+  removeItem: serialized(removeItem),
+};
