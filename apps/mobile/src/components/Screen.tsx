@@ -10,7 +10,7 @@ type Props = { title?: string; subtitle?: string; children: ReactNode; scroll?: 
 
 export const Screen = ({ title, subtitle, children, scroll = true }: Props) => {
   const body = (
-    <View className="gap-3 px-gutter pb-6">
+    <View className="w-full max-w-[720px] gap-3 self-center px-gutter pb-6">
       {title ? (
         <View className="gap-1 pt-4">
           <Text accessibilityRole="header" {...dirProps()} className="text-2xl font-bold text-brand">{title}</Text>

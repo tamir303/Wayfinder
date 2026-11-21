@@ -1,0 +1,67 @@
+import Svg, { Circle, Path, Polygon, Rect } from 'react-native-svg';
+
+// Outline icons on a 24x24 grid (lucide-style paths). Decorative: hidden from screen readers.
+const PATHS = {
+  plane: <Path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2z" />,
+  bed: (
+    <>
+      <Path d="M2 4v16" />
+      <Path d="M2 8h18a2 2 0 0 1 2 2v10" />
+      <Path d="M2 17h20" />
+      <Path d="M6 8v9" />
+    </>
+  ),
+  compass: (
+    <>
+      <Circle cx="12" cy="12" r="10" />
+      <Polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76" />
+    </>
+  ),
+  briefcase: (
+    <>
+      <Rect x="2" y="7" width="20" height="14" rx="2" />
+      <Path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16" />
+    </>
+  ),
+  user: (
+    <>
+      <Path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
+      <Circle cx="12" cy="7" r="4" />
+    </>
+  ),
+  star: <Path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />,
+  search: (
+    <>
+      <Circle cx="11" cy="11" r="8" />
+      <Path d="m21 21-4.3-4.3" />
+    </>
+  ),
+  external: (
+    <>
+      <Path d="M7 17 17 7" />
+      <Path d="M7 7h10v10" />
+    </>
+  ),
+} as const;
+
+export type IconName = keyof typeof PATHS;
+
+type Props = { name: IconName; size?: number; color?: string; filled?: boolean };
+
+export const Icon = ({ name, size = 24, color = '#12202F', filled = false }: Props) => (
+  <Svg
+    width={size}
+    height={size}
+    viewBox="0 0 24 24"
+    fill={filled ? color : 'none'}
+    stroke={color}
+    strokeWidth={2}
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    accessibilityElementsHidden
+    importantForAccessibility="no-hide-descendants"
+    aria-hidden
+  >
+    {PATHS[name]}
+  </Svg>
+);

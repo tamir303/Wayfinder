@@ -1,6 +1,7 @@
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { Pressable, Text, View } from 'react-native';
+import { Icon } from '../../../src/components/Icon';
 import { QueryState } from '../../../src/components/QueryState';
 import { Screen } from '../../../src/components/Screen';
 import { useTrips } from '../../../src/features/travel/hooks';
@@ -19,7 +20,7 @@ export default function Trips() {
             <View className="gap-3">
               {trips.map((trip) => (
                 <Pressable key={trip.id} accessibilityRole="button" accessibilityLabel={`${trip.name}, ${trip.dates}`} onPress={() => router.push({ pathname: '/trip/[id]', params: { id: trip.id } })} className="overflow-hidden rounded-card border border-line bg-surface">
-                  <View className="h-24 items-center justify-center bg-brand-soft"><Text className="text-3xl">🧳</Text></View>
+                  <View className="h-24 items-center justify-center bg-brand-soft"><Icon name="briefcase" size={32} color="#0B6BCB" /></View>
                   <View className="gap-0.5 p-3">
                     <Text className="text-lg font-semibold text-ink">{trip.name}</Text>
                     <Text className="text-sm text-ink-muted">{t('trips.meta', { dates: trip.dates, count: trip.itemCount })}</Text>

@@ -1,6 +1,7 @@
 import type { Attraction, FlightOffer, Stay } from '@wayfinder/shared';
 import { useTranslation } from 'react-i18next';
 import { Pressable, Text, View } from 'react-native';
+import { Icon } from './Icon';
 import { formatDuration, formatPrice, stopsLabel } from '../lib/format';
 
 const card = 'rounded-card border border-line bg-surface';
@@ -55,10 +56,10 @@ export const StayCard = ({ stay, selected, onPress }: { stay: Stay; selected?: b
     onPress={onPress}
     className={`flex-row gap-3 rounded-card border bg-surface p-3 ${selected ? 'border-brand' : 'border-line'}`}
   >
-    <View className="h-24 w-24 items-center justify-center rounded-card bg-brand-soft"><Text className="text-3xl">🛏</Text></View>
+    <View className="h-24 w-24 items-center justify-center rounded-card bg-brand-soft"><Icon name="bed" size={32} color="#0B6BCB" /></View>
     <View className="flex-1 gap-1">
       <Text className="text-base font-semibold text-ink">{stay.name}</Text>
-      <Text className="text-sm text-ink">★ {stay.rating} · {stay.ratingLabel}</Text>
+      <View className="flex-row items-center gap-1"><Icon name="star" size={14} color="#0B6BCB" filled /><Text className="text-sm text-ink">{stay.rating} · {stay.ratingLabel}</Text></View>
       <Text className="text-sm text-ink-muted">{stay.distance}</Text>
       <Text className="text-base font-bold text-brand-dark">{t('stays.perNight', { price: formatPrice(stay.pricePerNight, stay.currency) })}</Text>
     </View>
@@ -68,7 +69,7 @@ export const StayCard = ({ stay, selected, onPress }: { stay: Stay; selected?: b
 
 export const AttractionCard = ({ item }: { item: Attraction }) => (
   <View className={`${card} overflow-hidden`} accessibilityLabel={item.name}>
-    <View className="h-32 items-center justify-center bg-brand-soft"><Text className="text-4xl">🧭</Text></View>
+    <View className="h-32 items-center justify-center bg-brand-soft"><Icon name="compass" size={40} color="#0B6BCB" /></View>
     <View className="gap-1 p-3">
       <Text className="text-lg font-semibold text-ink">{item.name}</Text>
       <Text className="text-sm text-ink-muted">{item.category} · ★ {item.rating} ({item.reviews})</Text>

@@ -4,7 +4,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Slot, type ErrorBoundaryProps } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { useState } from 'react';
-import { Pressable, Text, View } from 'react-native';
+import { Pressable, Text, useWindowDimensions, View } from 'react-native';
 import { log } from '../src/lib/logger';
 import { SessionProvider } from '../src/lib/session';
 
@@ -24,12 +24,14 @@ export function ErrorBoundary({ error, retry }: ErrorBoundaryProps) {
 
 export default function RootLayout() {
   const [queryClient] = useState(() => new QueryClient());
+  // Phone layout up to 900px, then a wider frame so the tab sidebar and content both fit.
+  const maxWidth = useWindowDimensions().width >= 900 ? 1100 : 480;
   return (
     <SessionProvider>
       <QueryClientProvider client={queryClient}>
         <StatusBar style="auto" />
         {/* On web, keep the phone layout centred instead of stretching across the window. */}
-        <View className="w-full max-w-[480px] flex-1 self-center bg-surface">
+        <View style={{ maxWidth }} className="w-full flex-1 self-center bg-surface">
           <Slot />
         </View>
       </QueryClientProvider>
