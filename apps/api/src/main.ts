@@ -12,6 +12,7 @@ import type { Env } from './config/env';
 async function bootstrap() {
   const env = parseEnv(process.env);
   const app = await NestFactory.create(AppModule, { logger: logLevelsFor(env.APP_ENV) });
+  app.getHttpAdapter().getInstance().set('trust proxy', 1); // real client IP behind Vercel/proxies, for the rate limit
   app.use(requestLogger(env.APP_ENV));
   app.enableShutdownHooks();
   applyCors(app, app.get<Env>(ENV));

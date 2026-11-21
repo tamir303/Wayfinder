@@ -16,6 +16,7 @@ let cached: Promise<express.Express> | undefined;
 
 const createServer = async (): Promise<express.Express> => {
   const server = express();
+  server.set('trust proxy', 1); // real client IP behind Vercel, for the rate limit
   const env = parseEnv(process.env);
   const app = await NestFactory.create(AppModule, new ExpressAdapter(server), {
     logger: logLevelsFor(env.APP_ENV),
