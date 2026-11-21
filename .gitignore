@@ -28,3 +28,5 @@ Thumbs.db
 .playwright-mcp/
 apps/mobile/test-results/
 apps/mobile/playwright-report/
+CLAUDE.md 
+.claude/
