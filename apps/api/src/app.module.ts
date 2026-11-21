@@ -10,6 +10,7 @@ import { ConfigModule } from './config/config.module';
 import { FlightsModule } from './flights/flights.module';
 import { StaysModule } from './stays/stays.module';
 import { GeoModule } from './geo/geo.module';
+import { MapsModule } from './maps/maps.module';
 import { MeModule } from './me/me.module';
 import { HealthController } from './health/health.controller';
 import { PrismaModule } from './prisma/prisma.module';
@@ -29,6 +30,7 @@ import { RedisModule } from './redis/redis.module';
     FlightsModule,
     StaysModule,
     MeModule,
+    MapsModule,
   ],
   controllers: [HealthController],
   providers: [

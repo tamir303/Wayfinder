@@ -256,3 +256,9 @@ export const FavoriteStaySchema = FavoriteStayInputSchema.extend({ createdAt: z.
 export type FavoriteStay = z.infer<typeof FavoriteStaySchema>;
 export const FavoriteStayListResponseSchema = z.object({ favorites: z.array(FavoriteStaySchema) });
 export type FavoriteStayListResponse = z.infer<typeof FavoriteStayListResponseSchema>;
+
+export const MapConfigResponseSchema = z.object({
+  /** MapLibre style URL (tiles), or null when no tile provider is configured yet. */
+  styleUrl: z.string().url().nullable(),
+});
+export type MapConfigResponse = z.infer<typeof MapConfigResponseSchema>;

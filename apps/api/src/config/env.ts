@@ -11,6 +11,8 @@ const EnvSchema = z.object({
   HANDOFF_SECRET: z.string().min(32),
   // Public base URL of this API, used to build absolute handoff links.
   PUBLIC_API_URL: z.string().url().default('http://localhost:3000'),
+  // MapLibre style URL of the tile provider (a client-side key is fine; it ships in the app). Unset = placeholder map.
+  MAP_STYLE_URL: z.string().url().optional(),
   // Requests per minute per client IP, applied to every route.
   RATE_LIMIT_PER_MINUTE: z.coerce.number().int().positive().default(120),
   // Comma-separated browser origins allowed to call the API (web build). Defaults to Expo web dev.
