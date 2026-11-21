@@ -3,6 +3,7 @@
 .env
 .env.*
 !.env.example
+!.env.*.example
 
 # deps and build
 node_modules/
@@ -21,3 +22,12 @@ Thumbs.db
 
 # local Claude settings
 .claude/settings.local.json
+
+# SDD scratch
+.superpowers/
+.playwright-mcp/
+apps/mobile/test-results/
+apps/mobile/playwright-report/
+CLAUDE.md 
+.claude/
+docs/

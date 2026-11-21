@@ -1,0 +1,48 @@
+{
+  "name": "@wayfinder/api",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "dev": "node scripts/with-env.mjs dev nest start --watch",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "lint": "eslint src test api scripts",
+    "test": "jest",
+    "fixture:refresh": "tsx --env-file=.env scripts/refresh-fixture.ts",
+    "postinstall": "prisma generate",
+    "dev:staging": "node scripts/with-env.mjs staging nest start --watch",
+    "dev:prod": "node scripts/with-env.mjs prod nest start --watch"
+  },
+  "dependencies": {
+    "@nestjs/common": "^11.2.11",
+    "@nestjs/core": "^11.2.11",
+    "@nestjs/observe": "^0.3.27",
+    "@nestjs/platform-express": "^11.2.11",
+    "@nestjs/swagger": "^11.4.8",
+    "@nestjs/throttler": "^6",
+    "@prisma/client": "^6.0.0",
+    "@wayfinder/shared": "workspace:*",
+    "dotenv": "^16.4.5",
+    "express": "^5.3.0",
+    "ioredis": "^5.4.1",
+    "jose": "^5.9.6",
+    "nestjs-zod": "^5.6.0",
+    "reflect-metadata": "^0.2.2",
+    "rxjs": "^7.8.1",
+    "zod": "^3.25.76"
+  },
+  "devDependencies": {
+    "@nestjs/cli": "^11.0.24",
+    "@nestjs/testing": "^11.2.11",
+    "@types/express": "^5.0.6",
+    "@types/jest": "^29.5.14",
+    "@types/node": "^20.17.0",
+    "@types/supertest": "^6.0.2",
+    "@wayfinder/config": "workspace:*",
+    "jest": "^29.7.0",
+    "prisma": "^6.0.0",
+    "supertest": "^7.0.0",
+    "ts-jest": "^29.2.5",
+    "tsx": "^4.19.0"
+  }
+}

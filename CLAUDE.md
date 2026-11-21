@@ -4,7 +4,19 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Current state
 
-Wayfinder has no application code yet, only Claude Code configuration. There are no build, lint, or test commands, and no git repository. Update this file once a stack is chosen and code exists.
+pnpm + Turborepo monorepo on branch `feat/foundation`: `apps/api` (NestJS, Prisma, Redis cache, Supabase JWT guard), `apps/mobile` (Expo SDK 58, Expo Router, NativeWind v4, TanStack Query), `packages/shared` (Zod contracts, error codes), `packages/config`. The only built slice is airport autocomplete (`GET /geo/suggest`, `google_flights_autocomplete`). Spec and plan: `docs/superpowers/`.
+
+Commands (repo root): `pnpm lint`, `pnpm typecheck`, `pnpm test` (all via Turbo). API: `pnpm --filter @wayfinder/api dev`. Mobile: `pnpm --filter @wayfinder/mobile dev` (needs a dev client build). DB migrations: `pnpm --filter @wayfinder/api exec prisma migrate deploy` (not `migrate dev`: the shadow DB lacks `auth.users`). Env: `apps/api/.env` and `apps/mobile/.env` are gitignored, see `.env.example`.
+
+API environments (`apps/api`, `APP_ENV` set by `scripts/with-env.mjs`): `pnpm --filter @wayfinder/api dev` = **dev mock backend** (`MOCK_DATA`): recorded fixtures instead of SerpAPI (every query returns the TLV to Paris fixtures), in-memory cache and database, any bearer token signs in, no secrets needed, refused under `NODE_ENV=production`; `dev:staging` / `dev:prod` read `.env.staging` / `.env.prod` (copy the `.example`) and use the real services (staging logs debug, prod logs info and redacts). Observability is NestJS Observe (`OBSERVE_APP_KEY` + `OBSERVE_APP_SECRET`, one Observe project per environment; reports only when both are set and `APP_ENV` is not dev). Needs Node >= 22.12 (`@nestjs/observe` is ESM-only; Jest uses `test/observe-stub.ts`).
+
+Mobile environments (`apps/mobile`, set by `EXPO_PUBLIC_APP_ENV` through `scripts/with-env.mjs`): `dev` = mock data only, no network, mock sign-in (any email, code 123456); `staging` = real API, debug logs, nothing redacted; `prod` = real API, info logs, tokens/emails redacted, web session encrypted at rest. Run with `pnpm --filter @wayfinder/mobile web | web:staging | web:prod` (staging/prod read `.env.staging` / `.env.prod`, copy from the `.example` files). Config lives in `src/config/app-config.ts`, mocks in `src/lib/mock/`. Test the web build with the Playwright MCP tools: export with `pnpm --filter @wayfinder/mobile export:web`, then serve `dist` with `python -m http.server --directory dist` run from outside `dist`.
+
+Maps: the API serves the tile style at `GET /maps/config` from `MAP_STYLE_URL` (MapTiler; a client-side key is public by design, so restrict it by origin in the MapTiler dashboard and use one key per environment). Web renders the real map with `maplibre-gl` (`StaysMap.web.tsx`); native still shows the placeholder until a MapLibre dev-client build is verified. With no style URL, or if WebGL fails, the placeholder is used. In dev, set `EXPO_PUBLIC_MAP_STYLE_URL` to try the real map against mock data.
+
+Localization: all UI strings live in `apps/mobile/src/i18n/{en,he}.ts` (`he` is typed against `en`, so keys can't drift); use `useTranslation().t`, never hardcode text. Hebrew is RTL (web via `document.dir`, native via `I18nManager`, needs an app restart on first switch); use `arrow()` for direction-aware arrows. Playwright runs `*.he.spec.ts` in a `he-IL` project. Add every new string to both files.
+
+Gotchas: the SerpAPI client (`apps/api/src/provider/serpapi.client.ts`) reserves a per-user daily credit before each uncached call and refunds on failure; all SerpAPI traffic goes through it. Jest mock factories may only reference `mock`-prefixed variables. Testing Library v14 `renderHook`, `rerender` and `act` are async.
 
 ## Product
 

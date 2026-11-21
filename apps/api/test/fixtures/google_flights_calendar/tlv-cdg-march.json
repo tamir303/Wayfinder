@@ -1,0 +1,142 @@
+{
+  "search_parameters": {
+    "engine": "google_flights_calendar",
+    "hl": "en",
+    "gl": "us",
+    "type": "2",
+    "departure_id": "TLV",
+    "arrival_id": "CDG",
+    "date_range_start": "2027-03-01",
+    "date_range_end": "2027-03-31",
+    "currency": "USD"
+  },
+  "prices": [
+    {
+      "outbound_date": "2027-03-01",
+      "price": 170
+    },
+    {
+      "outbound_date": "2027-03-02",
+      "price": 136
+    },
+    {
+      "outbound_date": "2027-03-03",
+      "price": 136
+    },
+    {
+      "outbound_date": "2027-03-04",
+      "price": 136
+    },
+    {
+      "outbound_date": "2027-03-05",
+      "price": 136
+    },
+    {
+      "outbound_date": "2027-03-06",
+      "price": 211
+    },
+    {
+      "outbound_date": "2027-03-07",
+      "price": 136
+    },
+    {
+      "outbound_date": "2027-03-08",
+      "price": 194
+    },
+    {
+      "outbound_date": "2027-03-09",
+      "price": 136
+    },
+    {
+      "outbound_date": "2027-03-10",
+      "price": 136
+    },
+    {
+      "outbound_date": "2027-03-11",
+      "price": 136
+    },
+    {
+      "outbound_date": "2027-03-12",
+      "price": 136
+    },
+    {
+      "outbound_date": "2027-03-13",
+      "price": 194
+    },
+    {
+      "outbound_date": "2027-03-14",
+      "price": 136
+    },
+    {
+      "outbound_date": "2027-03-15",
+      "price": 194
+    },
+    {
+      "outbound_date": "2027-03-16",
+      "price": 136
+    },
+    {
+      "outbound_date": "2027-03-17",
+      "price": 136
+    },
+    {
+      "outbound_date": "2027-03-18",
+      "price": 136
+    },
+    {
+      "outbound_date": "2027-03-19",
+      "price": 136
+    },
+    {
+      "outbound_date": "2027-03-20",
+      "price": 194
+    },
+    {
+      "outbound_date": "2027-03-21",
+      "price": 113,
+      "low_price": true
+    },
+    {
+      "outbound_date": "2027-03-22",
+      "price": 170
+    },
+    {
+      "outbound_date": "2027-03-23",
+      "price": 113,
+      "low_price": true
+    },
+    {
+      "outbound_date": "2027-03-24",
+      "price": 133
+    },
+    {
+      "outbound_date": "2027-03-25",
+      "price": 133
+    },
+    {
+      "outbound_date": "2027-03-26",
+      "price": 133
+    },
+    {
+      "outbound_date": "2027-03-27",
+      "price": 194
+    },
+    {
+      "outbound_date": "2027-03-28",
+      "price": 133
+    },
+    {
+      "outbound_date": "2027-03-29",
+      "price": 171
+    },
+    {
+      "outbound_date": "2027-03-30",
+      "price": 113,
+      "low_price": true
+    },
+    {
+      "outbound_date": "2027-03-31",
+      "price": 133
+    }
+  ]
+}

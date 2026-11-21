@@ -1,0 +1,116 @@
+{
+  "search_parameters": {
+    "engine": "google_hotels_autocomplete",
+    "q": "paris",
+    "gl": "us",
+    "hl": "en",
+    "currency": "USD"
+  },
+  "suggestions": [
+    {
+      "position": 1,
+      "value": "paris las vegas",
+      "type": "accommodation",
+      "highlighted_words": [
+        "las vegas"
+      ],
+      "autocomplete_suggestion": "paris las vegas",
+      "serpapi_google_hotels_link": "https://serpapi.com/search.json?adults=2&check_in_date=2026-12-14&check_out_date=2026-12-15&children=0&currency=USD&engine=google_hotels&gl=us&hl=en&q=paris+las+vegas"
+    },
+    {
+      "position": 2,
+      "value": "Paris Las Vegas",
+      "type": "accommodation",
+      "location": "3655 S Las Vegas Blvd, Las Vegas",
+      "highlighted_words": [
+        "hotel las vegas"
+      ],
+      "autocomplete_suggestion": "paris hotel las vegas",
+      "kgmid": "/m/0348s6",
+      "data_cid": "4991312229159558145",
+      "property_token": "ChUIgbj58O-AraJFGgkvbS8wMzQ4czYQAQ",
+      "serpapi_google_hotels_link": "https://serpapi.com/search.json?adults=2&check_in_date=2026-12-14&check_out_date=2026-12-15&children=0&currency=USD&engine=google_hotels&gl=us&hl=en&property_token=ChUIgbj58O-AraJFGgkvbS8wMzQ4czYQAQ&q=3655+S+Las+Vegas+Blvd%2C+Las+Vegas",
+      "serpapi_link": "https://serpapi.com/search.json?device=desktop&engine=google&gl=us&google_domain=google.com&hl=en&kgmid=%2Fm%2F0348s6&q=Paris+Las+Vegas"
+    },
+    {
+      "position": 3,
+      "value": "paris hotels",
+      "type": "accommodation",
+      "highlighted_words": [
+        "hotels"
+      ],
+      "autocomplete_suggestion": "paris hotels",
+      "serpapi_google_hotels_link": "https://serpapi.com/search.json?adults=2&check_in_date=2026-12-14&check_out_date=2026-12-15&children=0&currency=USD&engine=google_hotels&gl=us&hl=en&q=paris+hotels"
+    },
+    {
+      "position": 4,
+      "value": "paris hotel vegas",
+      "type": "accommodation",
+      "highlighted_words": [
+        "hotel vegas"
+      ],
+      "autocomplete_suggestion": "paris hotel vegas",
+      "serpapi_google_hotels_link": "https://serpapi.com/search.json?adults=2&check_in_date=2026-12-14&check_out_date=2026-12-15&children=0&currency=USD&engine=google_hotels&gl=us&hl=en&q=paris+hotel+vegas"
+    },
+    {
+      "position": 5,
+      "value": "paris vegas",
+      "type": "accommodation",
+      "highlighted_words": [
+        "vegas"
+      ],
+      "autocomplete_suggestion": "paris vegas",
+      "serpapi_google_hotels_link": "https://serpapi.com/search.json?adults=2&check_in_date=2026-12-14&check_out_date=2026-12-15&children=0&currency=USD&engine=google_hotels&gl=us&hl=en&q=paris+vegas"
+    },
+    {
+      "position": 6,
+      "value": "paris casino las vegas",
+      "type": "accommodation",
+      "highlighted_words": [
+        "casino las vegas"
+      ],
+      "autocomplete_suggestion": "paris casino las vegas",
+      "serpapi_google_hotels_link": "https://serpapi.com/search.json?adults=2&check_in_date=2026-12-14&check_out_date=2026-12-15&children=0&currency=USD&engine=google_hotels&gl=us&hl=en&q=paris+casino+las+vegas"
+    },
+    {
+      "position": 7,
+      "value": "paris france hotel",
+      "type": "accommodation",
+      "highlighted_words": [
+        "france hotel"
+      ],
+      "autocomplete_suggestion": "paris france hotel",
+      "serpapi_google_hotels_link": "https://serpapi.com/search.json?adults=2&check_in_date=2026-12-14&check_out_date=2026-12-15&children=0&currency=USD&engine=google_hotels&gl=us&hl=en&q=paris+france+hotel"
+    },
+    {
+      "position": 8,
+      "value": "paris hilton hotel",
+      "type": "accommodation",
+      "highlighted_words": [
+        "hilton hotel"
+      ],
+      "autocomplete_suggestion": "paris hilton hotel",
+      "serpapi_google_hotels_link": "https://serpapi.com/search.json?adults=2&check_in_date=2026-12-14&check_out_date=2026-12-15&children=0&currency=USD&engine=google_hotels&gl=us&hl=en&q=paris+hilton+hotel"
+    },
+    {
+      "position": 9,
+      "value": "paris las vegas resort & casino",
+      "type": "accommodation",
+      "highlighted_words": [
+        "las vegas resort & casino"
+      ],
+      "autocomplete_suggestion": "paris las vegas resort & casino",
+      "serpapi_google_hotels_link": "https://serpapi.com/search.json?adults=2&check_in_date=2026-12-14&check_out_date=2026-12-15&children=0&currency=USD&engine=google_hotels&gl=us&hl=en&q=paris+las+vegas+resort+%26+casino"
+    },
+    {
+      "position": 10,
+      "value": "paris las vegas hotel & casino",
+      "type": "accommodation",
+      "highlighted_words": [
+        "las vegas hotel & casino"
+      ],
+      "autocomplete_suggestion": "paris las vegas hotel & casino",
+      "serpapi_google_hotels_link": "https://serpapi.com/search.json?adults=2&check_in_date=2026-12-14&check_out_date=2026-12-15&children=0&currency=USD&engine=google_hotels&gl=us&hl=en&q=paris+las+vegas+hotel+%26+casino"
+    }
+  ]
+}

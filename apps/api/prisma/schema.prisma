@@ -1,0 +1,84 @@
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "rhel-openssl-3.0.x"]
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model Profile {
+  id            String         @id @db.Uuid
+  createdAt     DateTime       @default(now()) @map("created_at")
+  searchLogs    SearchLog[]
+  handoffClicks HandoffClick[]
+  savedSearches SavedSearch[]
+  favoriteStays FavoriteStay[]
+
+  @@map("profiles")
+}
+
+model SearchLog {
+  id        String   @id @default(uuid()) @db.Uuid
+  userId    String   @map("user_id") @db.Uuid
+  engine    String
+  cacheHit  Boolean  @map("cache_hit")
+  credits   Int
+  createdAt DateTime @default(now()) @map("created_at")
+  profile   Profile  @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, createdAt])
+  @@map("search_logs")
+}
+
+// One row each time a user is handed off to a provider's booking page ("book this" is an outbound link).
+model HandoffClick {
+  id        String   @id @default(uuid()) @db.Uuid
+  userId    String   @map("user_id") @db.Uuid
+  kind      String // 'flight' for now; 'stay' later
+  provider  String // provider name, or 'multiple' when the user chose on the handoff page
+  price     Int? // indicative price at the time of handoff, in the response currency
+  currency  String?
+  createdAt DateTime @default(now()) @map("created_at")
+  profile   Profile  @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, createdAt])
+  @@map("handoff_clicks")
+}
+
+model SavedSearch {
+  id        String   @id @default(uuid()) @db.Uuid
+  userId    String   @map("user_id") @db.Uuid
+  fromCode  String   @map("from_code")
+  toCode    String   @map("to_code")
+  date      String // YYYY-MM-DD
+  adults    Int
+  cabin     String
+  createdAt DateTime @default(now()) @map("created_at")
+  profile   Profile  @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, fromCode, toCode, date, adults, cabin])
+  @@index([userId, createdAt])
+  @@map("saved_searches")
+}
+
+// A saved stay. Snapshots what the list needs to render without another provider call.
+model FavoriteStay {
+  id        String   @id @default(uuid()) @db.Uuid
+  userId    String   @map("user_id") @db.Uuid
+  stayId    String   @map("stay_id") // provider property token
+  name      String
+  thumbnail String?
+  stars     Float?
+  rating    Float?
+  lat       Float
+  lng       Float
+  createdAt DateTime @default(now()) @map("created_at")
+  profile   Profile  @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, stayId])
+  @@index([userId, createdAt])
+  @@map("favorite_stays")
+}

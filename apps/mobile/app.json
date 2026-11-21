@@ -1,0 +1,38 @@
+{
+  "expo": {
+    "name": "Wayfinder",
+    "slug": "wayfinder",
+    "scheme": "wayfinder",
+    "version": "0.1.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "automatic",
+    "newArchEnabled": true,
+    "ios": {
+      "bundleIdentifier": "com.wayfinder.app",
+      "supportsTablet": false
+    },
+    "android": {
+      "package": "com.wayfinder.app"
+    },
+    "plugins": [
+      "expo-router",
+      "expo-secure-store",
+      "expo-status-bar",
+      "expo-localization",
+      "expo-web-browser"
+    ],
+    "web": {
+      "bundler": "metro",
+      "output": "single",
+      "favicon": "./assets/favicon.png",
+      "name": "Wayfinder",
+      "shortName": "Wayfinder",
+      "description": "Search flights, compare stays and plan trips in one place.",
+      "themeColor": "#0B6BCB",
+      "backgroundColor": "#FFFFFF"
+    },
+    "experiments": {
+      "typedRoutes": true
+    }
+  }
+}
