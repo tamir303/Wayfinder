@@ -24,4 +24,5 @@ export class FakeRedis {
   async expire(_key: string, _seconds: number): Promise<number> {
     return 1;
   }
+async quit(): Promise<string> { return 'OK'; }
 }
