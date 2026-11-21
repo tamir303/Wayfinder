@@ -39,7 +39,7 @@ function Detail({ query, id, onBack }: { query: ReturnType<typeof FlightSearchQu
                   <Text className="text-sm text-ink-muted">{leg.airline} {leg.flightNumber} · {formatDuration(leg.durationMin)}</Text>
                 </View>
               ))}
-              <Button label={t('flights.continueProvider')} onPress={() => void Linking.openURL(offer.handoffUrl)} />
+              {offer.handoffUrl ? <Button label={t('flights.continueProvider')} onPress={() => void Linking.openURL(offer.handoffUrl as string)} /> : null}
               <Text className="text-xs text-ink-muted">{t('flights.noPayments')}</Text>
             </View>
           );

@@ -7,7 +7,11 @@ import { JwtVerifier } from '../src/auth/jwt-verifier';
 import { ENV, REDIS } from '../src/common/tokens';
 import { HandoffSigner } from '../src/handoff/handoff-signer';
 import { PrismaService } from '../src/prisma/prisma.service';
+import calendarFixture from './fixtures/google_flights_calendar/tlv-cdg-march.json';
 import bookingFixture from './fixtures/google_flights/tlv-cdg-oneway-booking.json';
+import roundtripBooking from './fixtures/google_flights/tlv-cdg-roundtrip-booking.json';
+import roundtripReturn from './fixtures/google_flights/tlv-cdg-roundtrip-return.json';
+import roundtripFixture from './fixtures/google_flights/tlv-cdg-roundtrip.json';
 import fixture from './fixtures/google_flights/tlv-cdg-oneway.json';
 import { FakeRedis } from './fake-redis';
 import { testEnv } from './test-env';
@@ -52,9 +56,18 @@ describe('GET /flights/search (e2e)', () => {
   beforeEach(() => {
     searchLogCreate.mockClear();
     handoffCreate.mockClear();
+    // Route the mocked provider by request shape, as the real one would answer.
     fetchSpy = jest.spyOn(global, 'fetch').mockImplementation(async (input) => {
-      const isBooking = new URL(String(input)).searchParams.has('booking_token');
-      return new Response(JSON.stringify(isBooking ? bookingFixture : fixture), { status: 200 });
+      const q = new URL(String(input)).searchParams;
+      const roundTrip = q.get('type') === '1';
+      const body = q.get('engine') === 'google_flights_calendar'
+        ? calendarFixture
+        : q.has('booking_token')
+          ? roundTrip ? roundtripBooking : bookingFixture
+          : q.has('departure_token')
+            ? roundtripReturn
+            : roundTrip ? roundtripFixture : fixture;
+      return new Response(JSON.stringify(body), { status: 200 });
     });
   });
   afterEach(() => jest.restoreAllMocks());
@@ -203,6 +216,117 @@ describe('GET /flights/search (e2e)', () => {
       expect(res.text).toContain('We could not open that booking page');
       expect(await used()).toBe(before);
       expect(handoffCreate).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('round trip', () => {
+    const RETURN = '2099-03-17';
+    const RT = `${SEARCH}&returnDate=${RETURN}`;
+    const now = () => Math.floor(Date.now() / 1000);
+    const used = async () => (await get('/me/usage').expect(200)).body.used as number;
+
+    it('search with a return date returns outbound options with a return token and no handoff link yet', async () => {
+      const res = await get(`${RT}&adults=2`).expect(200);
+      expect(res.body.offers).toHaveLength(10);
+      for (const o of res.body.offers) {
+        expect(o.handoffUrl).toBeNull();
+        expect(typeof o.returnToken).toBe('string');
+      }
+      expect(res.body.offers[0].price).toBe(405);
+      const q = new URL(String(fetchSpy.mock.calls[0][0])).searchParams;
+      expect(q.get('type')).toBe('1');
+      expect(q.get('return_date')).toBe(RETURN);
+    });
+
+    it.each([
+      ['a return date before the outbound', `${SEARCH}&returnDate=2099-03-01`],
+      ['a return date equal to the outbound', `${SEARCH}&returnDate=${FUTURE}`],
+      ['a malformed return date', `${SEARCH}&returnDate=soon`],
+    ])('rejects %s with 400', async (_n, path) => {
+      await get(path).expect(400);
+      expect(fetchSpy).not.toHaveBeenCalled();
+    });
+
+    it('step two: return flights for a chosen outbound are bookable and carry the whole trip price', async () => {
+      const outbound = (await get(`${RT}&adults=3`).expect(200)).body.offers[0];
+      const res = await get(`/flights/return?from=TLV&to=CDG&date=${FUTURE}&returnDate=${RETURN}&adults=3&token=${encodeURIComponent(outbound.returnToken)}`).expect(200);
+
+      expect(res.body.offers).toHaveLength(8);
+      expect(res.body.offers[0].legs[0]).toMatchObject({ fromCode: 'CDG', toCode: 'TLV' });
+      expect(JSON.stringify(res.body)).not.toContain('booking_token');
+      const q = new URL(String(fetchSpy.mock.calls.at(-1)![0])).searchParams;
+      expect(q.get('departure_token')).toBe(outbound.returnToken);
+      expect(q.get('type')).toBe('1');
+      expect(q.get('return_date')).toBe(RETURN);
+
+      const ref = new URL(res.body.offers[0].handoffUrl).searchParams.get('ref')!;
+      const payload = new HandoffSigner(testEnv.HANDOFF_SECRET).verify<{ returnDate: string }>(ref, now(), 'flight');
+      expect(payload.returnDate).toBe(RETURN);
+    });
+
+    it('rejects a return request without a token or with a bad date', async () => {
+      await get(`/flights/return?from=TLV&to=CDG&date=${FUTURE}&returnDate=${RETURN}`).expect(400);
+      await get(`/flights/return?from=TLV&to=CDG&date=${FUTURE}&token=abc`).expect(400);
+      await get(`/flights/return?from=TLV&to=CDG&date=${FUTURE}&returnDate=2099-03-01&token=abc`).expect(400);
+    });
+
+    it('handoff for a round trip looks up booking options as a round trip and shows a capped chooser', async () => {
+      const outbound = (await get(`${RT}&adults=4`).expect(200)).body.offers[0];
+      const ret = (await get(`/flights/return?from=TLV&to=CDG&date=${FUTURE}&returnDate=${RETURN}&adults=4&token=${encodeURIComponent(outbound.returnToken)}`).expect(200)).body.offers[0];
+      const url = new URL(ret.handoffUrl);
+      const before = await used();
+      const res = await get(url.pathname + url.search, false).expect(200);
+
+      const q = new URL(String(fetchSpy.mock.calls.at(-1)![0])).searchParams;
+      expect(q.get('type')).toBe('1');
+      expect(q.get('return_date')).toBe(RETURN);
+      expect(q.get('booking_token')).toBeTruthy();
+      expect(res.text).toContain('Choose where to book');
+      expect(res.text.match(/<form /g)).toHaveLength(10);
+      expect(await used()).toBe(before + 1);
+    });
+  });
+
+  describe('GET /flights/calendar', () => {
+    const used = async () => (await get('/me/usage').expect(200)).body.used as number;
+    const CAL = '/flights/calendar?from=TLV&to=CDG&start=2099-03-01&end=2099-03-31';
+
+    it('requires a token', async () => {
+      await get(CAL, false).expect(401);
+    });
+
+    it('returns a price per day and calls the calendar engine with the range', async () => {
+      const res = await get(CAL).expect(200);
+      expect(res.body.currency).toBe('USD');
+      expect(res.body.prices).toHaveLength(31);
+      expect(res.body.prices[0]).toEqual({ date: '2027-03-01', price: 170 });
+      const q = new URL(String(fetchSpy.mock.calls[0][0])).searchParams;
+      expect(q.get('engine')).toBe('google_flights_calendar');
+      expect(q.get('type')).toBe('2');
+      expect(q.get('date_range_start')).toBe('2099-03-01');
+      expect(q.get('date_range_end')).toBe('2099-03-31');
+    });
+
+    it('serves a repeated range from the cache', async () => {
+      await get(`${CAL}&x=1`.replace('&x=1', '')).expect(200);
+      expect(fetchSpy).not.toHaveBeenCalled();
+    });
+
+    it.each([
+      ['end before start', '/flights/calendar?from=TLV&to=CDG&start=2099-03-10&end=2099-03-01'],
+      ['a range over two months', '/flights/calendar?from=TLV&to=CDG&start=2099-01-01&end=2099-06-01'],
+      ['a past start', '/flights/calendar?from=TLV&to=CDG&start=2001-03-01&end=2001-03-31'],
+      ['a bad airport code', '/flights/calendar?from=T&to=CDG&start=2099-03-01&end=2099-03-31'],
+    ])('rejects %s with 400 before calling the provider', async (_n, path) => {
+      await get(path).expect(400);
+      expect(fetchSpy).not.toHaveBeenCalled();
+    });
+
+    it('answers 502 and refunds the credit on a provider error', async () => {
+      const before = await used();
+      fetchSpy.mockImplementation(async () => new Response(JSON.stringify({ error: 'Invalid API key.' }), { status: 200 }));
+      await get('/flights/calendar?from=TLV&to=LHR&start=2099-03-01&end=2099-03-31').expect(502);
+      expect(await used()).toBe(before);
     });
   });
 });

@@ -1,5 +1,5 @@
 import { createHash } from 'node:crypto';
-import type { FlightOffer, FlightSearchResponse } from '@wayfinder/shared';
+import type { FlightCalendarResponse, FlightOffer, FlightSearchResponse } from '@wayfinder/shared';
 import { z } from 'zod';
 import { AppError } from '../common/app-error';
 
@@ -19,12 +19,14 @@ const RawOfferSchema = z.object({
     .object({ this_flight: z.number(), typical_for_this_route: z.number(), difference_percent: z.number() })
     .optional(),
   price: z.number(),
-  booking_token: z.string().min(1),
-});
+  // A one-way or return-leg offer is bookable (booking_token); a round-trip outbound option needs a return flight first (departure_token).
+  booking_token: z.string().min(1).optional(),
+  departure_token: z.string().min(1).optional(),
+}).refine((o) => o.booking_token !== undefined || o.departure_token !== undefined);
 const RawInsightsSchema = z.object({ lowest_price: z.number(), price_level: z.enum(['low', 'typical', 'high']) });
 
-/** An offer before the per-user handoff link is attached. bookingToken never leaves the API. */
-export type MappedOffer = Omit<FlightOffer, 'handoffUrl'> & { bookingToken: string };
+/** An offer before the per-user handoff link is attached. bookingToken never leaves the API; returnToken goes to the client. */
+export type MappedOffer = Omit<FlightOffer, 'handoffUrl'> & { bookingToken: string | null };
 export type MappedFlights = { offers: MappedOffer[]; insights: FlightSearchResponse['insights'] };
 
 // Only SerpAPI's explicit "no results" message is an empty result. Any other error (bad key, quota)
@@ -41,7 +43,7 @@ const toOffer = (raw: z.infer<typeof RawOfferSchema>, group: 'best' | 'other', c
   const layovers = (raw.layovers ?? []).map((l) => ({ code: l.id, name: l.name, durationMin: l.duration }));
   const emissions = raw.carbon_emissions;
   return {
-    id: createHash('sha256').update(raw.booking_token).digest('hex').slice(0, 16),
+    id: createHash('sha256').update(raw.booking_token ?? raw.departure_token ?? '').digest('hex').slice(0, 16),
     group,
     price: raw.price,
     currency,
@@ -61,7 +63,8 @@ const toOffer = (raw: z.infer<typeof RawOfferSchema>, group: 'best' | 'other', c
     emissions: emissions
       ? { grams: emissions.this_flight, typicalGrams: emissions.typical_for_this_route, diffPercent: emissions.difference_percent }
       : null,
-    bookingToken: raw.booking_token,
+    returnToken: raw.departure_token ?? null,
+    bookingToken: raw.booking_token ?? null,
   };
 };
 
@@ -102,6 +105,8 @@ const RawBookingOptionSchema = z.object({
   }),
 });
 
+const MAX_BOOKING_OPTIONS = 10;
+
 export type BookingOption = {
   provider: string;
   price: number;
@@ -127,5 +132,25 @@ export const mapBookingOptions = (raw: unknown): BookingOption[] => {
     });
   }
   if (options.length === 0) throw down('No booking options available');
-  return options;
+  // Cheapest first; a long tail of agencies is noise on a handoff page.
+  return options.sort((a, b) => a.price - b.price).slice(0, MAX_BOOKING_OPTIONS);
+};
+
+const RawCalendarEntrySchema = z.object({ outbound_date: z.string(), price: z.number() });
+
+export const mapCalendar = (raw: unknown, currency = 'USD'): FlightCalendarResponse => {
+  const error = providerError(raw);
+  if (error !== undefined) {
+    if (NO_RESULTS.test(error)) return { currency, prices: [] };
+    throw down('Price calendar failed');
+  }
+  const list = typeof raw === 'object' && raw !== null ? (raw as { prices?: unknown }).prices : undefined;
+  if (!Array.isArray(list)) throw down('Unexpected calendar response');
+  const prices: FlightCalendarResponse['prices'] = [];
+  for (const item of list) {
+    const parsed = RawCalendarEntrySchema.safeParse(item);
+    if (parsed.success) prices.push({ date: parsed.data.outbound_date, price: parsed.data.price });
+  }
+  prices.sort((a, b) => a.date.localeCompare(b.date));
+  return { currency, prices };
 };

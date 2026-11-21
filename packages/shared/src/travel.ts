@@ -1,16 +1,50 @@
 import { z } from 'zod';
 
-export const FlightSearchQuerySchema = z.object({
+const IsoDate = z.string().regex(/^\d{4}-\d{2}-\d{2}$/);
+const today = () => new Date().toISOString().slice(0, 10);
+const futureDate = (d: string) => !Number.isNaN(Date.parse(d)) && d >= today();
+
+export const FlightSearchQueryBase = z.object({
   from: z.string().regex(/^[A-Z]{3}$/),
   to: z.string().regex(/^[A-Z]{3}$/),
-  date: z
-    .string()
-    .regex(/^\d{4}-\d{2}-\d{2}$/)
-    .refine((d) => !Number.isNaN(Date.parse(d)) && d >= new Date().toISOString().slice(0, 10), 'date must be today or later'),
+  date: IsoDate.refine(futureDate, 'date must be today or later'),
+  /** Present for a round trip; the search then returns outbound options. */
+  returnDate: IsoDate.optional(),
   adults: z.coerce.number().int().min(1).max(9).default(1),
   cabin: z.enum(['economy', 'premium', 'business', 'first']).default('economy'),
 });
+const returnAfter = (v: { date: string; returnDate?: string | undefined }) => v.returnDate === undefined || v.returnDate > v.date;
+
+export const FlightSearchQuerySchema = FlightSearchQueryBase.refine(returnAfter, {
+  message: 'returnDate must be after date',
+  path: ['returnDate'],
+});
 export type FlightSearchQuery = z.infer<typeof FlightSearchQuerySchema>;
+
+/** Second step of a round trip: pick the return flight for a chosen outbound (its returnToken). */
+export const FlightReturnQuerySchema = FlightSearchQueryBase.extend({
+  returnDate: IsoDate,
+  token: z.string().min(1).max(4000),
+}).refine(returnAfter, { message: 'returnDate must be after date', path: ['returnDate'] });
+export type FlightReturnQuery = z.infer<typeof FlightReturnQuerySchema>;
+
+export const FlightCalendarQuerySchema = z
+  .object({
+    from: z.string().regex(/^[A-Z]{3}$/),
+    to: z.string().regex(/^[A-Z]{3}$/),
+    start: IsoDate.refine(futureDate, 'start must be today or later'),
+    end: IsoDate,
+  })
+  .refine((v) => v.end >= v.start, { message: 'end must not be before start', path: ['end'] })
+  .refine((v) => (Date.parse(v.end) - Date.parse(v.start)) / 86_400_000 <= 61, { message: 'range is limited to about two months', path: ['end'] });
+export type FlightCalendarQuery = z.infer<typeof FlightCalendarQuerySchema>;
+
+export const FlightCalendarResponseSchema = z.object({
+  currency: z.string(),
+  /** One-way price per departure day; days without a price are left out. */
+  prices: z.array(z.object({ date: z.string(), price: z.number() })),
+});
+export type FlightCalendarResponse = z.infer<typeof FlightCalendarResponseSchema>;
 
 export const FlightLegSchema = z.object({
   fromCode: z.string(),
@@ -41,7 +75,10 @@ export const FlightOfferSchema = z.object({
   legs: z.array(FlightLegSchema),
   layovers: z.array(FlightLayoverSchema).default([]),
   emissions: FlightEmissionsSchema.nullable().default(null),
-  handoffUrl: z.string(),
+  /** Opaque token for step two of a round trip (the return flight). Null once the offer is bookable. */
+  returnToken: z.string().nullable().default(null),
+  /** Signed link to the provider booking page. Null for round-trip outbound options: choose a return flight first. */
+  handoffUrl: z.string().nullable(),
 });
 export type FlightOffer = z.infer<typeof FlightOfferSchema>;
 
@@ -133,7 +170,7 @@ export type TripListResponse = z.infer<typeof TripListResponseSchema>;
 export const UsageResponseSchema = z.object({ used: z.number(), cap: z.number() });
 export type UsageResponse = z.infer<typeof UsageResponseSchema>;
 
-export const SavedSearchSchema = FlightSearchQuerySchema.extend({
+export const SavedSearchSchema = FlightSearchQueryBase.omit({ returnDate: true }).extend({
   id: z.string().uuid(),
   createdAt: z.string(),
 });

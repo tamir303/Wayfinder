@@ -7,7 +7,7 @@ import { type AuthUser, CurrentUser } from '../auth/current-user.decorator';
 import { Public } from '../auth/public.decorator';
 import { AppError } from '../common/app-error';
 import { renderErrorPage, sendPage, type RenderedPage } from '../handoff/handoff-page';
-import { FlightSearchQueryDto } from './flights.dto';
+import { FlightCalendarQueryDto, FlightReturnQueryDto, FlightSearchQueryDto } from './flights.dto';
 import { FlightsService } from './flights.service';
 
 @ApiTags('flights')
@@ -16,15 +16,42 @@ import { FlightsService } from './flights.service';
 export class FlightsController {
   constructor(private readonly flights: FlightsService) {}
 
-  @ApiOperation({ summary: 'One-way flight search (cached 30 min; costs 1 SerpAPI credit on a miss)' })
+  @ApiOperation({
+    summary: 'Flight search (cached 30 min; 1 SerpAPI credit on a miss)',
+    description: 'One-way by default. With returnDate it is a round trip: offers are outbound options with a returnToken (handoffUrl is null); pick one and call /flights/return.',
+  })
   @ApiQuery({ name: 'from', required: true, description: 'Departure airport IATA code', example: 'TLV' })
   @ApiQuery({ name: 'to', required: true, description: 'Arrival airport IATA code', example: 'CDG' })
   @ApiQuery({ name: 'date', required: true, description: 'Departure date, YYYY-MM-DD, today or later', example: '2027-03-10' })
+  @ApiQuery({ name: 'returnDate', required: false, description: 'YYYY-MM-DD, after date. Makes it a round trip', example: '2027-03-17' })
   @ApiQuery({ name: 'adults', required: false, description: '1-9, default 1', example: 1 })
   @ApiQuery({ name: 'cabin', required: false, enum: ['economy', 'premium', 'business', 'first'] })
   @Get('search')
   search(@Query() query: FlightSearchQueryDto, @CurrentUser() user: AuthUser) {
     return this.flights.search(user.userId, query);
+  }
+
+  @ApiOperation({ summary: 'Round trip step two: return flights for a chosen outbound, priced as the whole trip (1 credit on a miss)' })
+  @ApiQuery({ name: 'from', required: true, example: 'TLV' })
+  @ApiQuery({ name: 'to', required: true, example: 'CDG' })
+  @ApiQuery({ name: 'date', required: true, example: '2027-03-10' })
+  @ApiQuery({ name: 'returnDate', required: true, example: '2027-03-17' })
+  @ApiQuery({ name: 'token', required: true, description: "returnToken of the chosen outbound offer" })
+  @ApiQuery({ name: 'adults', required: false })
+  @ApiQuery({ name: 'cabin', required: false, enum: ['economy', 'premium', 'business', 'first'] })
+  @Get('return')
+  returnFlights(@Query() query: FlightReturnQueryDto, @CurrentUser() user: AuthUser) {
+    return this.flights.returnFlights(user.userId, query);
+  }
+
+  @ApiOperation({ summary: 'One-way price per day for a date range, for flexible dates (cached 3 h; 1 credit on a miss)' })
+  @ApiQuery({ name: 'from', required: true, example: 'TLV' })
+  @ApiQuery({ name: 'to', required: true, example: 'CDG' })
+  @ApiQuery({ name: 'start', required: true, description: 'First day, today or later', example: '2027-03-01' })
+  @ApiQuery({ name: 'end', required: true, description: 'Last day, at most about two months after start', example: '2027-03-31' })
+  @Get('calendar')
+  calendar(@Query() query: FlightCalendarQueryDto, @CurrentUser() user: AuthUser) {
+    return this.flights.calendar(user.userId, query);
   }
 
   @ApiOperation({
