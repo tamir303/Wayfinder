@@ -1,7 +1,9 @@
 import fixture from '../../test/fixtures/google_hotels/paris-hotels.json';
 import detail from '../../test/fixtures/google_hotels/courtyard-gare-de-lyon.json';
 import autocomplete from '../../test/fixtures/google_hotels_autocomplete/paris.json';
-import { mapHotels, mapStayDetail, mapSuggestions } from './stays.mapper';
+import calendar from '../../test/fixtures/google_hotels_price_calendar/courtyard-march.json';
+import reviews from '../../test/fixtures/google_hotels_reviews/courtyard-reviews.json';
+import { mapHotels, mapReviews, mapStayCalendar, mapStayDetail, mapSuggestions } from './stays.mapper';
 
 describe('mapHotels (real Paris fixture)', () => {
   const result = mapHotels(fixture);
@@ -176,5 +178,66 @@ describe('mapStayDetail edge cases', () => {
     const d = mapStayDetail(minimal);
     expect(d.offers.map((o) => o.provider)).toEqual(['Good']);
     expect(d.detail).toMatchObject({ stars: null, rating: null, reviewCount: 0, description: null, images: [], amenities: [], typicalPriceRange: null, deal: null });
+  });
+});
+
+describe('mapStayCalendar (real March fixture)', () => {
+  it('maps one price per start day, in date order', () => {
+    const r = mapStayCalendar(calendar);
+    expect(r.currency).toBe('USD');
+    expect(r.prices).toHaveLength(31);
+    expect(r.prices[0]).toEqual({ date: '2027-03-01', pricePerNight: 230 });
+    const dates = r.prices.map((p) => p.date);
+    expect(dates).toEqual([...dates].sort());
+  });
+
+  it('skips days without a price, tolerates an empty list, and handles provider errors', () => {
+    expect(mapStayCalendar({ prices: [{ date: '2027-03-01' }, { date: '2027-03-02', extracted_display_price: 99 }] }).prices).toEqual([{ date: '2027-03-02', pricePerNight: 99 }]);
+    expect(mapStayCalendar({ prices: [] }).prices).toEqual([]);
+    expect(mapStayCalendar({ error: "Google Hotels hasn't returned any results for this search." }).prices).toEqual([]);
+    expect(() => mapStayCalendar({ error: 'Invalid API key.' })).toThrow(expect.objectContaining({ code: 'PROVIDER_DOWN' }));
+    expect(() => mapStayCalendar(null)).toThrow(expect.objectContaining({ code: 'PROVIDER_DOWN' }));
+    expect(() => mapStayCalendar({ nope: 1 })).toThrow(expect.objectContaining({ code: 'PROVIDER_DOWN' }));
+  });
+});
+
+describe('mapReviews (real Courtyard fixture)', () => {
+  const r = mapReviews(reviews);
+
+  it('maps reviews and the next page token', () => {
+    expect(r.reviews).toHaveLength(10);
+    expect(r.nextPageToken).toMatch(/:10$/);
+    expect(r.reviews[0]).toMatchObject({ author: 'Catherine Wygal', source: 'Google', rating: 5, date: 'a week ago' });
+    expect(r.reviews[0]!.text).toContain('Marriott Courtyard');
+  });
+
+  it('normalises ratings to a 0-5 scale and keeps only https images, at most 3', () => {
+    for (const rv of r.reviews) {
+      expect(rv.rating).toBeGreaterThanOrEqual(0);
+      expect(rv.rating).toBeLessThanOrEqual(5);
+      expect(rv.images.length).toBeLessThanOrEqual(3);
+      for (const u of rv.images) expect(u.startsWith('https://')).toBe(true);
+    }
+    const scaled = mapReviews({ reviews: [{ user: { name: 'A' }, source: 'X', rating: 8, best_rating: 10, snippet: 'ok' }] });
+    expect(scaled.reviews[0]!.rating).toBe(4);
+  });
+
+  it('does not leak reviewer profile links or avatars', () => {
+    const out = JSON.stringify(r);
+    expect(out).not.toContain('google.com/maps/contrib');
+    expect(out).not.toContain('lh3.googleusercontent.com/a-');
+  });
+
+  it('keeps sub-ratings when present and skips reviews without text', () => {
+    expect(r.reviews.some((x) => x.subratings && x.subratings.rooms !== undefined)).toBe(true);
+    expect(mapReviews({ reviews: [{ user: { name: 'A' }, source: 'X', rating: 5 }, { user: { name: 'B' }, source: 'X', rating: 4, snippet: 'fine' }] }).reviews).toHaveLength(1);
+  });
+
+  it('handles empty lists and errors', () => {
+    expect(mapReviews({ reviews: [] })).toEqual({ reviews: [], nextPageToken: null });
+    expect(() => mapReviews({ error: 'Invalid API key.' })).toThrow(expect.objectContaining({ code: 'PROVIDER_DOWN' }));
+    expect(() => mapReviews({ error: 'Property not found.' })).toThrow(expect.objectContaining({ code: 'NOT_FOUND' }));
+    expect(() => mapReviews(null)).toThrow(expect.objectContaining({ code: 'PROVIDER_DOWN' }));
+    expect(() => mapReviews({ nope: 1 })).toThrow(expect.objectContaining({ code: 'PROVIDER_DOWN' }));
   });
 });

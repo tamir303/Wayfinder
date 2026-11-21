@@ -1,0 +1,325 @@
+{
+  "search_parameters": {
+    "engine": "google_hotels_price_calendar",
+    "property_token": "ChkIh_ig59yqmq16Gg0vZy8xMWY2Y3IybmpqEAE",
+    "start_date": "2027-03-01",
+    "end_date": "2027-03-31",
+    "adults": 2,
+    "children": 0,
+    "hl": "en",
+    "gl": "us",
+    "currency": "USD"
+  },
+  "prices": [
+    {
+      "date": "2027-03-01",
+      "display_price": "$230",
+      "extracted_display_price": 230,
+      "before_taxes_fees": "$230",
+      "extracted_before_taxes_fees": 230,
+      "after_taxes_fees": "$272",
+      "extracted_after_taxes_fees": 272,
+      "currency": "USD"
+    },
+    {
+      "date": "2027-03-02",
+      "display_price": "$239",
+      "extracted_display_price": 239,
+      "before_taxes_fees": "$239",
+      "extracted_before_taxes_fees": 239,
+      "after_taxes_fees": "$282",
+      "extracted_after_taxes_fees": 282,
+      "currency": "USD"
+    },
+    {
+      "date": "2027-03-03",
+      "display_price": "$212",
+      "extracted_display_price": 212,
+      "before_taxes_fees": "$212",
+      "extracted_before_taxes_fees": 212,
+      "after_taxes_fees": "$252",
+      "extracted_after_taxes_fees": 252,
+      "currency": "USD"
+    },
+    {
+      "date": "2027-03-04",
+      "display_price": "$202",
+      "extracted_display_price": 202,
+      "before_taxes_fees": "$202",
+      "extracted_before_taxes_fees": 202,
+      "after_taxes_fees": "$241",
+      "extracted_after_taxes_fees": 241,
+      "currency": "USD"
+    },
+    {
+      "date": "2027-03-05",
+      "display_price": "$185",
+      "extracted_display_price": 185,
+      "before_taxes_fees": "$185",
+      "extracted_before_taxes_fees": 185,
+      "after_taxes_fees": "$222",
+      "extracted_after_taxes_fees": 222,
+      "currency": "USD"
+    },
+    {
+      "date": "2027-03-06",
+      "display_price": "$228",
+      "extracted_display_price": 228,
+      "before_taxes_fees": "$228",
+      "extracted_before_taxes_fees": 228,
+      "after_taxes_fees": "$270",
+      "extracted_after_taxes_fees": 270,
+      "currency": "USD"
+    },
+    {
+      "date": "2027-03-07",
+      "display_price": "$181",
+      "extracted_display_price": 181,
+      "before_taxes_fees": "$181",
+      "extracted_before_taxes_fees": 181,
+      "after_taxes_fees": "$198",
+      "extracted_after_taxes_fees": 198,
+      "currency": "USD"
+    },
+    {
+      "date": "2027-03-08",
+      "display_price": "$212",
+      "extracted_display_price": 212,
+      "before_taxes_fees": "$212",
+      "extracted_before_taxes_fees": 212,
+      "after_taxes_fees": "$252",
+      "extracted_after_taxes_fees": 252,
+      "currency": "USD"
+    },
+    {
+      "date": "2027-03-09",
+      "display_price": "$212",
+      "extracted_display_price": 212,
+      "before_taxes_fees": "$212",
+      "extracted_before_taxes_fees": 212,
+      "after_taxes_fees": "$252",
+      "extracted_after_taxes_fees": 252,
+      "currency": "USD"
+    },
+    {
+      "date": "2027-03-10",
+      "display_price": "$212",
+      "extracted_display_price": 212,
+      "before_taxes_fees": "$212",
+      "extracted_before_taxes_fees": 212,
+      "after_taxes_fees": "$252",
+      "extracted_after_taxes_fees": 252,
+      "currency": "USD"
+    },
+    {
+      "date": "2027-03-11",
+      "display_price": "$212",
+      "extracted_display_price": 212,
+      "before_taxes_fees": "$212",
+      "extracted_before_taxes_fees": 212,
+      "after_taxes_fees": "$252",
+      "extracted_after_taxes_fees": 252,
+      "currency": "USD"
+    },
+    {
+      "date": "2027-03-12",
+      "display_price": "$203",
+      "extracted_display_price": 203,
+      "before_taxes_fees": "$203",
+      "extracted_before_taxes_fees": 203,
+      "after_taxes_fees": "$242",
+      "extracted_after_taxes_fees": 242,
+      "currency": "USD"
+    },
+    {
+      "date": "2027-03-13",
+      "display_price": "$199",
+      "extracted_display_price": 199,
+      "before_taxes_fees": "$199",
+      "extracted_before_taxes_fees": 199,
+      "after_taxes_fees": "$217",
+      "extracted_after_taxes_fees": 217,
+      "currency": "USD"
+    },
+    {
+      "date": "2027-03-14",
+      "display_price": "$203",
+      "extracted_display_price": 203,
+      "before_taxes_fees": "$203",
+      "extracted_before_taxes_fees": 203,
+      "after_taxes_fees": "$221",
+      "extracted_after_taxes_fees": 221,
+      "currency": "USD"
+    },
+    {
+      "date": "2027-03-15",
+      "display_price": "$240",
+      "extracted_display_price": 240,
+      "before_taxes_fees": "$240",
+      "extracted_before_taxes_fees": 240,
+      "after_taxes_fees": "$283",
+      "extracted_after_taxes_fees": 283,
+      "currency": "USD"
+    },
+    {
+      "date": "2027-03-16",
+      "display_price": "$277",
+      "extracted_display_price": 277,
+      "before_taxes_fees": "$277",
+      "extracted_before_taxes_fees": 277,
+      "after_taxes_fees": "$324",
+      "extracted_after_taxes_fees": 324,
+      "currency": "USD"
+    },
+    {
+      "date": "2027-03-17",
+      "display_price": "$268",
+      "extracted_display_price": 268,
+      "before_taxes_fees": "$268",
+      "extracted_before_taxes_fees": 268,
+      "after_taxes_fees": "$313",
+      "extracted_after_taxes_fees": 313,
+      "currency": "USD"
+    },
+    {
+      "date": "2027-03-18",
+      "display_price": "$249",
+      "extracted_display_price": 249,
+      "before_taxes_fees": "$249",
+      "extracted_before_taxes_fees": 249,
+      "after_taxes_fees": "$293",
+      "extracted_after_taxes_fees": 293,
+      "currency": "USD"
+    },
+    {
+      "date": "2027-03-19",
+      "display_price": "$211",
+      "extracted_display_price": 211,
+      "before_taxes_fees": "$211",
+      "extracted_before_taxes_fees": 211,
+      "after_taxes_fees": "$251",
+      "extracted_after_taxes_fees": 251,
+      "currency": "USD"
+    },
+    {
+      "date": "2027-03-20",
+      "display_price": "$277",
+      "extracted_display_price": 277,
+      "before_taxes_fees": "$277",
+      "extracted_before_taxes_fees": 277,
+      "after_taxes_fees": "$324",
+      "extracted_after_taxes_fees": 324,
+      "currency": "USD"
+    },
+    {
+      "date": "2027-03-21",
+      "display_price": "$212",
+      "extracted_display_price": 212,
+      "before_taxes_fees": "$212",
+      "extracted_before_taxes_fees": 212,
+      "after_taxes_fees": "$252",
+      "extracted_after_taxes_fees": 252,
+      "currency": "USD"
+    },
+    {
+      "date": "2027-03-22",
+      "display_price": "$278",
+      "extracted_display_price": 278,
+      "before_taxes_fees": "$278",
+      "extracted_before_taxes_fees": 278,
+      "after_taxes_fees": "$325",
+      "extracted_after_taxes_fees": 325,
+      "currency": "USD"
+    },
+    {
+      "date": "2027-03-23",
+      "display_price": "$324",
+      "extracted_display_price": 324,
+      "before_taxes_fees": "$324",
+      "extracted_before_taxes_fees": 324,
+      "after_taxes_fees": "$375",
+      "extracted_after_taxes_fees": 375,
+      "currency": "USD"
+    },
+    {
+      "date": "2027-03-24",
+      "display_price": "$324",
+      "extracted_display_price": 324,
+      "before_taxes_fees": "$324",
+      "extracted_before_taxes_fees": 324,
+      "after_taxes_fees": "$375",
+      "extracted_after_taxes_fees": 375,
+      "currency": "USD"
+    },
+    {
+      "date": "2027-03-25",
+      "display_price": "$298",
+      "extracted_display_price": 298,
+      "before_taxes_fees": "$298",
+      "extracted_before_taxes_fees": 298,
+      "after_taxes_fees": "$346",
+      "extracted_after_taxes_fees": 346,
+      "currency": "USD"
+    },
+    {
+      "date": "2027-03-26",
+      "display_price": "$324",
+      "extracted_display_price": 324,
+      "before_taxes_fees": "$324",
+      "extracted_before_taxes_fees": 324,
+      "after_taxes_fees": "$375",
+      "extracted_after_taxes_fees": 375,
+      "currency": "USD"
+    },
+    {
+      "date": "2027-03-27",
+      "display_price": "$370",
+      "extracted_display_price": 370,
+      "before_taxes_fees": "$370",
+      "extracted_before_taxes_fees": 370,
+      "after_taxes_fees": "$426",
+      "extracted_after_taxes_fees": 426,
+      "currency": "USD"
+    },
+    {
+      "date": "2027-03-28",
+      "display_price": "$277",
+      "extracted_display_price": 277,
+      "before_taxes_fees": "$277",
+      "extracted_before_taxes_fees": 277,
+      "after_taxes_fees": "$324",
+      "extracted_after_taxes_fees": 324,
+      "currency": "USD"
+    },
+    {
+      "date": "2027-03-29",
+      "display_price": "$240",
+      "extracted_display_price": 240,
+      "before_taxes_fees": "$240",
+      "extracted_before_taxes_fees": 240,
+      "after_taxes_fees": "$283",
+      "extracted_after_taxes_fees": 283,
+      "currency": "USD"
+    },
+    {
+      "date": "2027-03-30",
+      "display_price": "$305",
+      "extracted_display_price": 305,
+      "before_taxes_fees": "$305",
+      "extracted_before_taxes_fees": 305,
+      "after_taxes_fees": "$333",
+      "extracted_after_taxes_fees": 333,
+      "currency": "USD"
+    },
+    {
+      "date": "2027-03-31",
+      "display_price": "$305",
+      "extracted_display_price": 305,
+      "before_taxes_fees": "$305",
+      "extracted_before_taxes_fees": 305,
+      "after_taxes_fees": "$354",
+      "extracted_after_taxes_fees": 354,
+      "currency": "USD"
+    }
+  ]
+}

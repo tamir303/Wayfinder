@@ -1,4 +1,4 @@
-import type { Stay, StayDetail, StayOffer, StaySuggestResponse } from '@wayfinder/shared';
+import type { Stay, StayCalendarResponse, StayDetail, StayOffer, StayReviewsResponse, StaySuggestResponse } from '@wayfinder/shared';
 import { z } from 'zod';
 import { AppError } from '../common/app-error';
 
@@ -221,4 +221,72 @@ export const mapStayDetail = (raw: unknown, currency = 'USD'): MappedStayDetail 
     },
     offers,
   };
+};
+
+// ---- price calendar ----
+
+const RawCalendarEntrySchema = z.object({
+  date: z.string(),
+  extracted_display_price: z.number().optional(),
+  extracted_lowest: z.number().optional(),
+});
+
+export const mapStayCalendar = (raw: unknown, currency = 'USD'): StayCalendarResponse => {
+  if (typeof raw !== 'object' || raw === null) throw down('Unexpected calendar response');
+  const body = raw as { error?: unknown; prices?: unknown };
+  if (typeof body.error === 'string') {
+    if (NO_RESULTS.test(body.error)) return { currency, prices: [] };
+    throw down('Price calendar failed');
+  }
+  if (!Array.isArray(body.prices)) throw down('Unexpected calendar response');
+  const prices: StayCalendarResponse['prices'] = [];
+  for (const item of body.prices) {
+    const p = RawCalendarEntrySchema.safeParse(item);
+    const nightly = p.success ? (p.data.extracted_display_price ?? p.data.extracted_lowest) : undefined;
+    if (p.success && nightly !== undefined && nightly > 0) prices.push({ date: p.data.date, pricePerNight: nightly });
+  }
+  prices.sort((a, b) => a.date.localeCompare(b.date));
+  return { currency, prices };
+};
+
+// ---- reviews ----
+
+const RawReviewSchema = z.object({
+  user: z.object({ name: z.string().optional() }).optional(),
+  source: z.string().default('Google'),
+  rating: z.number(),
+  best_rating: z.number().positive().optional(),
+  date: z.string().optional(),
+  snippet: z.string().min(1),
+  images: z.array(z.string()).optional(),
+  subratings: z.record(z.number()).optional(),
+});
+
+const MAX_REVIEW_IMAGES = 3;
+
+export const mapReviews = (raw: unknown): StayReviewsResponse => {
+  if (typeof raw !== 'object' || raw === null) throw down('Unexpected reviews response');
+  const body = raw as { error?: unknown; reviews?: unknown; serpapi_pagination?: { next_page_token?: unknown } };
+  if (typeof body.error === 'string') {
+    throw NOT_FOUND.test(body.error) ? new AppError('NOT_FOUND', 'Property not found') : down('Reviews lookup failed');
+  }
+  if (!Array.isArray(body.reviews)) throw down('Unexpected reviews response');
+
+  const reviews: StayReviewsResponse['reviews'] = [];
+  for (const item of body.reviews) {
+    const p = RawReviewSchema.safeParse(item);
+    if (!p.success) continue;
+    const r = p.data;
+    reviews.push({
+      author: r.user?.name ?? 'Guest', // reviewer profile links and avatars are deliberately not passed on
+      source: r.source,
+      rating: Math.round(Math.min(5, Math.max(0, (r.rating / (r.best_rating ?? 5)) * 5)) * 10) / 10,
+      date: r.date ?? null,
+      text: r.snippet,
+      subratings: r.subratings ?? null,
+      images: (r.images ?? []).filter((u) => /^https:\/\//i.test(u)).slice(0, MAX_REVIEW_IMAGES),
+    });
+  }
+  const next = body.serpapi_pagination?.next_page_token;
+  return { reviews, nextPageToken: typeof next === 'string' ? next : null };
 };

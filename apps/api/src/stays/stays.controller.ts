@@ -7,10 +7,13 @@ import { type AuthUser, CurrentUser } from '../auth/current-user.decorator';
 import { Public } from '../auth/public.decorator';
 import { AppError } from '../common/app-error';
 import { renderErrorPage, sendPage } from '../handoff/handoff-page';
-import { StayDetailQueryDto, StaySearchQueryDto, StaySuggestQueryDto } from './stays.dto';
+import { StayCalendarQueryDto, StayDetailQueryDto, StayReviewsQueryDto, StaySearchQueryDto, StaySuggestQueryDto } from './stays.dto';
 import { StaysService } from './stays.service';
 
 const MAX_TOKEN_LENGTH = 300;
+const checkToken = (token: string): void => {
+  if (token.length > MAX_TOKEN_LENGTH) throw new AppError('BAD_QUERY', 'Invalid property id');
+};
 
 @ApiTags('stays')
 @Controller('stays')
@@ -65,7 +68,29 @@ export class StaysController {
   @ApiQuery({ name: 'adults', required: false, example: 2 })
   @Get(':token')
   detail(@Param('token') token: string, @Query() query: StayDetailQueryDto, @CurrentUser() user: AuthUser) {
-    if (token.length > MAX_TOKEN_LENGTH) throw new AppError('BAD_QUERY', 'Invalid property id');
+    checkToken(token);
     return this.stays.detail(user.userId, token, query);
+  }
+
+  @ApiBearerAuth('bearer')
+  @ApiOperation({ summary: 'Best one-night price per start day for a property (cached 3 h; 1 credit on a miss)' })
+  @ApiParam({ name: 'token', description: "A stay's id (provider property token)" })
+  @ApiQuery({ name: 'start', required: true, description: 'First day, today or later', example: '2027-03-01' })
+  @ApiQuery({ name: 'end', required: true, description: 'Last day, at most about two months after start', example: '2027-03-31' })
+  @ApiQuery({ name: 'adults', required: false, example: 2 })
+  @Get(':token/calendar')
+  calendar(@Param('token') token: string, @Query() query: StayCalendarQueryDto, @CurrentUser() user: AuthUser) {
+    checkToken(token);
+    return this.stays.calendar(user.userId, token, query);
+  }
+
+  @ApiBearerAuth('bearer')
+  @ApiOperation({ summary: 'Guest reviews for a property, 10 per page (cached 24 h; 1 credit on a miss)' })
+  @ApiParam({ name: 'token', description: "A stay's id (provider property token)" })
+  @ApiQuery({ name: 'pageToken', required: false, description: 'nextPageToken from the previous page' })
+  @Get(':token/reviews')
+  reviews(@Param('token') token: string, @Query() query: StayReviewsQueryDto, @CurrentUser() user: AuthUser) {
+    checkToken(token);
+    return this.stays.reviews(user.userId, token, query);
   }
 }

@@ -10,6 +10,8 @@ import { PrismaService } from '../src/prisma/prisma.service';
 import detailFixture from './fixtures/google_hotels/courtyard-gare-de-lyon.json';
 import fixture from './fixtures/google_hotels/paris-hotels.json';
 import autocompleteFixture from './fixtures/google_hotels_autocomplete/paris.json';
+import calendarFixture from './fixtures/google_hotels_price_calendar/courtyard-march.json';
+import reviewsFixture from './fixtures/google_hotels_reviews/courtyard-reviews.json';
 import { FakeRedis } from './fake-redis';
 import { testEnv } from './test-env';
 
@@ -54,7 +56,17 @@ describe('stays (e2e)', () => {
     handoffCreate.mockClear();
     fetchSpy = jest.spyOn(global, 'fetch').mockImplementation(async (input) => {
       const q = new URL(String(input)).searchParams;
-      const body = q.get('engine') === 'google_hotels_autocomplete' ? autocompleteFixture : q.has('property_token') ? detailFixture : fixture;
+      const engine = q.get('engine');
+      const body =
+        engine === 'google_hotels_autocomplete'
+          ? autocompleteFixture
+          : engine === 'google_hotels_price_calendar'
+            ? calendarFixture
+            : engine === 'google_hotels_reviews'
+              ? reviewsFixture
+              : q.has('property_token')
+                ? detailFixture
+                : fixture;
       return new Response(JSON.stringify(body), { status: 200 });
     });
   });
@@ -232,6 +244,61 @@ describe('stays (e2e)', () => {
       expect(missing.body.code).toBe('NOT_FOUND');
       fetchSpy.mockImplementation(async () => new Response(JSON.stringify({ error: 'Invalid API key.' }), { status: 200 }));
       await get(`${DETAIL}&adults=6`).expect(502);
+      expect(await used()).toBe(before);
+    });
+  });
+
+  describe('GET /stays/:token/calendar and /reviews', () => {
+    const TOKEN = 'ChkIh_ig59yqmq16Gg0vZy8xMWY2Y3IybmpqEAE';
+    const CAL = `/stays/${TOKEN}/calendar?start=2099-03-01&end=2099-03-31`;
+
+    it('require a token', async () => {
+      await get(CAL, false).expect(401);
+      await get(`/stays/${TOKEN}/reviews`, false).expect(401);
+    });
+
+    it('calendar: returns a price per start day and calls the calendar engine', async () => {
+      const res = await get(`${CAL}&adults=3`).expect(200);
+      expect(res.body.currency).toBe('USD');
+      expect(res.body.prices).toHaveLength(31);
+      expect(res.body.prices[0]).toEqual({ date: '2027-03-01', pricePerNight: 230 });
+      const q = new URL(String(fetchSpy.mock.calls[0][0])).searchParams;
+      expect(q.get('engine')).toBe('google_hotels_price_calendar');
+      expect(q.get('property_token')).toBe(TOKEN);
+      expect(q.get('start_date')).toBe('2099-03-01');
+      expect(q.get('adults')).toBe('3');
+    });
+
+    it.each([
+      ['end before start', `/stays/${TOKEN}/calendar?start=2099-03-10&end=2099-03-01`],
+      ['a range over two months', `/stays/${TOKEN}/calendar?start=2099-01-01&end=2099-06-01`],
+      ['a past start', `/stays/${TOKEN}/calendar?start=2001-03-01&end=2001-03-31`],
+      ['an oversized token', `/stays/${'x'.repeat(400)}/calendar?start=2099-03-01&end=2099-03-31`],
+    ])('calendar rejects %s with 400 before calling the provider', async (_n, path) => {
+      await get(path).expect(400);
+      expect(fetchSpy).not.toHaveBeenCalled();
+    });
+
+    it('reviews: returns reviews without reviewer profile links and forwards the page token', async () => {
+      const res = await get(`/stays/${TOKEN}/reviews`).expect(200);
+      expect(res.body.reviews).toHaveLength(10);
+      expect(res.body.nextPageToken).toBeTruthy();
+      expect(JSON.stringify(res.body)).not.toContain('google.com/maps/contrib');
+      const first = new URL(String(fetchSpy.mock.calls[0][0])).searchParams;
+      expect(first.get('engine')).toBe('google_hotels_reviews');
+      expect(first.get('next_page_token')).toBeNull();
+
+      await get(`/stays/${TOKEN}/reviews?pageToken=${encodeURIComponent(res.body.nextPageToken)}`).expect(200);
+      expect(new URL(String(fetchSpy.mock.calls.at(-1)![0])).searchParams.get('next_page_token')).toBe(res.body.nextPageToken);
+    });
+
+    it('reviews: a repeat is served from the cache; an unknown property is 404 with a refund', async () => {
+      await get(`/stays/${TOKEN}/reviews`).expect(200);
+      expect(fetchSpy).not.toHaveBeenCalled();
+      const before = await used();
+      fetchSpy.mockImplementation(async () => new Response(JSON.stringify({ error: 'Property not found.' }), { status: 200 }));
+      const res = await get('/stays/unknown-token/reviews').expect(404);
+      expect(res.body.code).toBe('NOT_FOUND');
       expect(await used()).toBe(before);
     });
   });

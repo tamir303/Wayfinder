@@ -37,13 +37,10 @@ Exit: staging and prod exist with the same code and different config; the fronte
 - Saved searches: table, RLS, CRUD.
 Exit: TLV to Paris to the provider's booking page on staging.
 
-## B2: Stays and maps (Q2 2027)
-- `hotels` module: `google_hotels` search mapper, `GET /hotels/search`, property detail, reviews, photos, price calendar.
-- `geo`: city and hotel destination autocomplete (`google_hotels_autocomplete`), resolve a destination to coordinates.
-- Favorites table (RLS) and CRUD; handoff for stays through the same signed-ref mechanism.
-- Map support: tile-provider config endpoint (key never exposed), bounding-box search parameters.
-- Second source `booking` behind the same contract if Google coverage is weak.
-Exit: compare stays on a map and click through.
+## B2: Stays and maps (Q2 2027) - DONE
+Built: `GET /stays/search`, `/stays/suggest`, `/stays/:token` (facts, rating breakdown, other-site ratings, photos, nearby, typical range, prices by provider), `/stays/:token/calendar` (price per start day), `/stays/:token/reviews` (paged, no reviewer profile data), `/stays/handoff` (signed, logs the booking site), favorites CRUD, `GET /maps/config` (tile style URL from `MAP_STYLE_URL`, null until a tile provider is chosen).
+Deliberately not built: bounding-box search (the Google Hotels engine searches by text, not by map area, so "search this area" will be a destination search); a separate photos engine (detail already returns up to 12 photos); the `booking` second source (only if Google coverage proves weak).
+Exit met: compare stays on a map and click through (map tiles wait on a tile-provider choice).
 
 ## B3: Places and trips (Q3 2027)
 - `places` module: Tripadvisor search and detail mappers, `google_maps` place search, `google_maps_directions` with decoded route polylines.

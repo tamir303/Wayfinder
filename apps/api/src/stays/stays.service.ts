@@ -1,15 +1,28 @@
 import { Inject, Injectable } from '@nestjs/common';
-import type { StayDetail, StayDetailQuery, StaySearchQuery, StaySearchResponse, StaySuggestQuery, StaySuggestResponse } from '@wayfinder/shared';
+import type {
+  StayCalendarQuery,
+  StayCalendarResponse,
+  StayDetail,
+  StayDetailQuery,
+  StayReviewsQuery,
+  StayReviewsResponse,
+  StaySearchQuery,
+  StaySearchResponse,
+  StaySuggestQuery,
+  StaySuggestResponse,
+} from '@wayfinder/shared';
 import { AppError } from '../common/app-error';
 import { ENV } from '../common/tokens';
 import type { Env } from '../config/env';
 import { HandoffClickService } from '../handoff/handoff-click.service';
 import { HandoffSigner } from '../handoff/handoff-signer';
 import { SerpApiClient } from '../provider/serpapi.client';
-import { mapHotels, mapStayDetail, mapSuggestions } from './stays.mapper';
+import { mapHotels, mapReviews, mapStayCalendar, mapStayDetail, mapSuggestions } from './stays.mapper';
 
 const SEARCH_TTL_SECONDS = 30 * 60;
 const SUGGEST_TTL_SECONDS = 24 * 60 * 60;
+const CALENDAR_TTL_SECONDS = 3 * 60 * 60; // a price calendar changes slowly
+const REVIEWS_TTL_SECONDS = 24 * 60 * 60;
 const CURRENCY = 'USD';
 
 // `provider` is set for offers from the detail page, so the click is logged against the booking site, not Google.
@@ -65,6 +78,28 @@ export class StaysService {
       ttlSeconds: SUGGEST_TTL_SECONDS,
       userId,
       map: mapSuggestions,
+    });
+  }
+
+  /** Best one-night price per start day for one property. */
+  async calendar(userId: string, token: string, q: StayCalendarQuery): Promise<StayCalendarResponse> {
+    return this.serpApi.call({
+      engine: 'google_hotels_price_calendar',
+      params: { property_token: token, start_date: q.start, end_date: q.end, adults: q.adults, currency: CURRENCY, gl: 'us', hl: 'en' },
+      ttlSeconds: CALENDAR_TTL_SECONDS,
+      userId,
+      map: (raw) => mapStayCalendar(raw, CURRENCY),
+    });
+  }
+
+  /** Guest reviews, ten per page. */
+  async reviews(userId: string, token: string, q: StayReviewsQuery): Promise<StayReviewsResponse> {
+    return this.serpApi.call({
+      engine: 'google_hotels_reviews',
+      params: { property_token: token, hl: 'en', ...(q.pageToken ? { next_page_token: q.pageToken } : {}) },
+      ttlSeconds: REVIEWS_TTL_SECONDS,
+      userId,
+      map: mapReviews,
     });
   }
 

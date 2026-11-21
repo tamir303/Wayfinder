@@ -262,3 +262,44 @@ export const MapConfigResponseSchema = z.object({
   styleUrl: z.string().url().nullable(),
 });
 export type MapConfigResponse = z.infer<typeof MapConfigResponseSchema>;
+
+const today2 = () => new Date().toISOString().slice(0, 10);
+
+export const StayCalendarQuerySchema = z
+  .object({
+    start: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).refine((d) => !Number.isNaN(Date.parse(d)) && d >= today2(), 'start must be today or later'),
+    end: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
+    adults: z.coerce.number().int().min(1).max(9).default(2),
+  })
+  .refine((v) => v.end >= v.start, { message: 'end must not be before start', path: ['end'] })
+  .refine((v) => (Date.parse(v.end) - Date.parse(v.start)) / 86_400_000 <= 61, { message: 'range is limited to about two months', path: ['end'] });
+export type StayCalendarQuery = z.infer<typeof StayCalendarQuerySchema>;
+
+export const StayCalendarResponseSchema = z.object({
+  currency: z.string(),
+  /** Best one-night price for a stay starting each day. */
+  prices: z.array(z.object({ date: z.string(), pricePerNight: z.number() })),
+});
+export type StayCalendarResponse = z.infer<typeof StayCalendarResponseSchema>;
+
+export const StayReviewsQuerySchema = z.object({ pageToken: z.string().max(400).optional() });
+export type StayReviewsQuery = z.infer<typeof StayReviewsQuerySchema>;
+
+export const StayReviewSchema = z.object({
+  author: z.string(),
+  /** Review site, e.g. Google or Tripadvisor. */
+  source: z.string(),
+  /** Normalised to 0-5. */
+  rating: z.number(),
+  /** Relative date as the site gives it ("a week ago"). */
+  date: z.string().nullable().default(null),
+  text: z.string(),
+  subratings: z.record(z.number()).nullable().default(null),
+  images: z.array(z.string()).default([]),
+});
+export type StayReview = z.infer<typeof StayReviewSchema>;
+export const StayReviewsResponseSchema = z.object({
+  reviews: z.array(StayReviewSchema),
+  nextPageToken: z.string().nullable().default(null),
+});
+export type StayReviewsResponse = z.infer<typeof StayReviewsResponseSchema>;

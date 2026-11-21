@@ -1,0 +1,276 @@
+{
+  "search_parameters": {
+    "engine": "google_hotels_reviews",
+    "property_token": "ChkIh_ig59yqmq16Gg0vZy8xMWY2Y3IybmpqEAE",
+    "hl": "en"
+  },
+  "reviews": [
+    {
+      "user": {
+        "name": "Catherine Wygal",
+        "link": "https://www.google.com/maps/contrib/118219217342865413036?hl=en",
+        "thumbnail": "https://lh3.googleusercontent.com/a-/ALV-UjX7o9adMIx1U8c8MlhDDW3iBdmMzgt-HBw28CiwnQXpEzRK4hLFCg=s40-c-rp-mo-br100"
+      },
+      "source": "Google",
+      "source_icon": "https://www.gstatic.com/images/branding/product/1x/googleg_48dp.png",
+      "rating": 5,
+      "best_rating": 5,
+      "date": "a week ago",
+      "snippet": "Great Marriott Courtyard steps from the metro and Gare de Lyon station.\nSuper friendly staff all English speaking, security gaurd at the entrance, large, clean and quiet room, comfy bed, elevators, strong A/C, fresh towels every day, a small fridge in the room and a refillable glass water bottle (Brita room temp/cold water dispenser on our floor). LOVED the complimentary Brita Water!\nFelt like an American Marriott Courtyard experience, so you'll need to go outside to remember you're in Paris. 😊\nDidn't pay for an upgraded \"city view\" so our windows (9th floor) looked on to an office building next door with a partial view of Gare de Lyon. Realized when I opened the curtains that we got a reflective view of the Eiffel Tower and the Pantheon From the office windows next door! 🤣\nDrawbacks of the room were:\n1. Little clothing storage. Only one small, shallow drawer for clothes, and a tiny closet (maybe 15\"  wide?) so challenging for two people.\n2. The en suite bathroom has a frosted glass wall next to the bed. Though it offers privacy, it felt a little more exposed than I was comfortable with.\nOtherwise, super happy with our stay, slept SO well, ultra convenient to the Metro, great little boulangerie around the corner, and felt safe walking around at all times of day and night. Would definitely return!",
+      "images": [
+        "https://lh3.googleusercontent.com/grass-cs/AABkmLdB5XjJ1ts0WGMRoRGTFv0bfWCeyP3I9e6jIgjGgEyc9wI3dtILbXYfm9dXPhWVWLpTZwBPZXwN3gjwdN8XNUEwSSRqsKWPGij7ThHWLukvnIRB9j6XpGeU3-DzvOTB4yhz2F8ysMPhgMJg=k-no",
+        "https://lh3.googleusercontent.com/grass-cs/AABkmLdvYszYio-7Bdw4gMkwSAgvfdQeW5zUt4gLliYjzkAWthzybjqGjtAmJWTi73xq--nWRytqoE8ep5bNB4lcxmi-oxFR1oZqy6i3asJIk7vKZ9kRiQvD3B_Mto2YqZH1uHlQQXuLiiPqGndP=k-no",
+        "https://lh3.googleusercontent.com/grass-cs/AABkmLeJy1MNEgS53jxeoTRnYct06iwm1Q7xRct50dIV1ZHlxaearE4kX6nxvg85Bv96kbC3RB-Fphl2DZ0FMkWz36VfYuPtmX58z5uYpTUJLUyAFtfAxMxDt8sDvQUm5QaACLwLCfMjC92Qn9xp=k-no",
+        "https://lh3.googleusercontent.com/grass-cs/AABkmLdA4VVa8rsuQ9hkwo8fmip7vJ9InD08vM1iM5DuWRLo-G2GzBvw-mRsLNwbEWXvpwitm4MO19dMkJ___AUgLmblAeBsjr1c8lxZMb44Lskf5wQ_-oY8BEXILLWJkdX3zATLpuTpVptJKUmU=k-no",
+        "https://lh3.googleusercontent.com/grass-cs/AABkmLfEDvoqzwUihJU1Hth_cGNLGDNWKY3bMHCkmjwDpZrBqUwN2TWRszVIfwWzjJv5eDC2WBpi56TdMvw5QniILY-UArwfG3-6j01_eJ-lMsVbFp4IN31cGPUoJ3PzeAKnjvy91ZNbDmO7E-Rc=k-no"
+      ],
+      "subratings": {
+        "rooms": 4,
+        "service": 5,
+        "location": 5
+      },
+      "hotel_highlights": [
+        "Quiet",
+        "Great value"
+      ],
+      "attributes": [
+        {
+          "name": "Nearby activities",
+          "snippet": "Jardin de Plants is GORGEOUS for a morning stroll. Kid friendly.\nLe Train Bleu restaurant at Gare de Lyon station was an unforgettable 5 star experience."
+        },
+        {
+          "name": "Safety",
+          "snippet": "Security gaurd at the entrance, and card key access after hours."
+        },
+        {
+          "name": "Walkability",
+          "snippet": "Super easy access to the metro (less than a 1 minute walk).\n5 minute walk to the Seine.\n10 minute walk to the Jardin de Plants.\n30 minute walk along the Seine to Notre Dame.\n5 minute walk to a Monoprix grocery store.\n5 minute walk to Gare de Lyon station."
+        },
+        {
+          "name": "Food & drinks",
+          "snippet": "Starbucks next door, boulangerie around the corner, small snacks and drinks convenience area in the hotel reception, and a restaurant on site."
+        },
+        {
+          "name": "Noteworthy details",
+          "snippet": "Complimentary filtered water  thought our stay was SUCH a lovely change from traveling in the US!"
+        }
+      ],
+      "response": {
+        "date": "2 days ago",
+        "snippet": "Dear Guest,\n\nA thousand thanks yous for this wonderful review after your stay at the Courtyard Paris Gare de Lyon!  We are delighted to read that you enjoyed your stay with us, from the comfort of your room and bed to the location.\n\nWe truly appreciate your kind words about our team and hope to have the pleasure of welcoming you back to Courtyard Paris Gare de Lyon on your next visit to Paris.\n\nKind regards,\nThe Courtyard Paris Gare de Lyon's team."
+      }
+    },
+    {
+      "user": {
+        "name": "Anthony Collins",
+        "link": "https://www.google.com/maps/contrib/111764812502989933659?hl=en",
+        "thumbnail": "https://lh3.googleusercontent.com/a/ACg8ocLV2VhuXeJoxoZRbDjTel_JxvZvqEDUWK6V33VSG0ZmW2HjHQ=s40-c-rp-mo-ba12-br100"
+      },
+      "source": "Google",
+      "source_icon": "https://www.gstatic.com/images/branding/product/1x/googleg_48dp.png",
+      "rating": 5,
+      "best_rating": 5,
+      "date": "5 days ago",
+      "snippet": "Hotel was great and convenient location to walk to Gare de Lyon and to Batobus pick up at Jardin de Plants stop. Rooms were clean and comfortable and with great views on 16th floor.\nBartender at kitchen &bar, was super efficient and friendly and took care of my son and I and made feel right at home. Great personality and customer service. Great job, Mehana! Bartender at kitchen &bar, was super efficient and friendly and took care of my son and I and made feel right at home. Great personality and customer service. Great job, Mehana!",
+      "images": [
+        "https://lh3.googleusercontent.com/grass-cs/AABkmLeLwC5jR7NZ--hJUAvfm2ajd4S0soxrIIiG9lUMcRV26DBdm7YvJjeMffp8i0F0a13em2XZQsmtFK52yneCHi1aN-I0m4DKvv1ojbIhcYo-bWoPFBztDACfFxIunisshnvm2G-g0r7atGjd=k-no",
+        "https://lh3.googleusercontent.com/grass-cs/AABkmLeu5LCvpgJ39NyYz9sjyIfOQ8ADDQrOcrsNOA8bpH4loaEe8DKsf8HNg93zZul1cPyIn9YfQuEaTyjIg_MHJOaGudIkENfkDgvKv9kK7CnctMry-Y3G5bsMUV2WfRI9ARoLAW7U0o79k9k=k-no",
+        "https://lh3.googleusercontent.com/grass-cs/AABkmLeqduaJ1Jk9sPhH-0crpenARX04RPDzbXMQFYJ_iqo8B4KhA_CBlJiryek8aCcp3WimJvErViWo1L8t3aMF1KIOeEzVupM5rD9-3SwolEuVgecU9v3rOUD-xqkqxaLwEYhEoPGemQnQYns=k-no",
+        "https://lh3.googleusercontent.com/grass-cs/AABkmLd8BvQAM8VUjIZwUq8Ltgj-JpqHq2m1fY7-WgeEhYtR2kdthAiEwIE_gwPG0y0m_aKsUJ1UVMlsEZ4CKkcak3k7BlgMyZzCNSi-dfcOLBlweOV1fq5lMldoQNtX0v4ez8cHoBMUBZRike2v=k-no"
+      ],
+      "subratings": {
+        "rooms": 5,
+        "service": 5,
+        "location": 5
+      },
+      "attributes": [
+        {
+          "name": "Noteworthy details",
+          "snippet": "Bartender at kitchen &bar, was super efficient and friendly and took care of my son and I and made feel right at home. Great personality and customer service. Great job, Mehana!"
+        }
+      ]
+    },
+    {
+      "link": "https://www.tripadvisor.com/ShowUserReviews-g187147-d15243992-r1079132448?m=68573&staydates=2026_12_06_2026_12_07&uguests=1_2_0&supdv=unknown&supuc=US&supul=en",
+      "user": {
+        "name": "DeborahK136",
+        "link": "https://www.tripadvisor.com/ShowUserReviews-g187147-d15243992-r1079132448?m=68573&staydates=2026_12_06_2026_12_07&uguests=1_2_0&supdv=unknown&supuc=US&supul=en",
+        "thumbnail": "https://lh3.googleusercontent.com/local-reviews/AJMZ0Qczn4VDfUM6-AtEt-6oaNazFa-i9Fy6kqPVfGIlPil6vJulEYyK8t930jZwOW4hD80mzw=s40-c-br100"
+      },
+      "source": "Tripadvisor",
+      "source_icon": "https://www.gstatic.com/travel-hotels/branding/icon_100532569.png",
+      "rating": 5,
+      "best_rating": 5,
+      "date": "a month ago",
+      "snippet": "We finished our 4 day stay at the Courtyard Paris yesterday.  The hotel was beautifully appointed and a far cut above the typical Courtyard in the US (many of which I have stayed at for business). The footprint of the building was narrower and higher than in the US, but the room sizes were quite generous for Paris, the view from our room was fantastic and the restaurant served a great breakfast buffet and quite a good dinner. The staff were always kind and helpful and all spoke good English. My husband and I would happily stay at this hotel again, which is across the street from the Gare de Lyon train station. And the main attractions are within 1.5 to 3 miles of the hotel."
+    },
+    {
+      "link": "https://www.trip.com/hotels/detail?hotelid=21856613&Allianceid=810504&Sid=1394411&utm_medium=cpc&utm_campaign=HPA&utm_source=google#review",
+      "user": {
+        "name": "Trip.com Member",
+        "link": "https://www.trip.com/hotels/detail?hotelid=21856613&Allianceid=810504&Sid=1394411&utm_medium=cpc&utm_campaign=HPA&utm_source=google#review",
+        "thumbnail": "https://lh3.googleusercontent.com/local-reviews/AJMZ0QeCck1CfANpZm9bBk3PHtP97Kh9k25HZfvq9yAWlN3BaIyjSHUPEfWkhAJmuYiJsH-_6g=s40-c-br100"
+      },
+      "source": "Trip.com",
+      "source_icon": "https://www.gstatic.com/travel-hotels/branding/b8089cb0-34b4-458c-8749-9bc4614baba4.png",
+      "rating": 4.2,
+      "best_rating": 5,
+      "date": "5 months ago",
+      "snippet": "Hotel is very close to train station. There is a good bakery close by for breakfast in the morning with lots of baked goods and sandwiches called Les Delices de la Gare de Lyon. Our room had view of the Eiffel Tower and a table where we can drink our own bottle of wine and admire the view. Room is adequate for two people."
+    },
+    {
+      "user": {
+        "name": "Andre Andraos",
+        "link": "https://www.google.com/maps/contrib/100772975211166528382?hl=en",
+        "thumbnail": "https://lh3.googleusercontent.com/a-/ALV-UjUq-OyyccRWJZVLY0XNz3iZz7cWobWLN-zkcCjTBWw5a_rs6VKj=s40-c-rp-mo-ba12-br100"
+      },
+      "source": "Google",
+      "source_icon": "https://www.gstatic.com/images/branding/product/1x/googleg_48dp.png",
+      "rating": 5,
+      "best_rating": 5,
+      "date": "a month ago",
+      "snippet": "Amazing location, right next to the Gare De Lyon transit hub and about 7 mins walk from the Gare d’Austerlitz station.\nThe room was fantastic, other than not a lot of drawers space, it was very comfortable clean, nice size bathroom and shower. The view is amazing though. The kitchen and bar was our go to for breakfast- delicious. The hotel staff were very friendly and helpful. We would definitely stay there again.",
+      "images": [
+        "https://lh3.googleusercontent.com/grass-cs/AABkmLc1n6NzCFm0_HK0zJHv4XENGre_d7moivV-oN8zVvRDWJwZbUyfFJbPd4s1fe6uTkaGuzzqmw6NqEI2Z0O1EvLPmB8-EG1LMjZke-wVtbFG3tDQtUM3UtaDDopP7ZSioEVuIdrYLWN26aMP=k-no",
+        "https://lh3.googleusercontent.com/grass-cs/AABkmLfwDMS8ZD6-uBKxEqPDVFHwQzny6nM-RW8J_HCQs6j0xDWobOdT8X31aBCu5HzrMGECQ-cFpfaeJdxsXujFkuuopYbW6cgHLW3iF1xHVwzfLGafbUgpoBcfa6tRp2m8tLeR6wusqyUZUeCz=k-no"
+      ],
+      "subratings": {
+        "rooms": 4,
+        "service": 5,
+        "location": 5
+      },
+      "attributes": [
+        {
+          "name": "Rooms",
+          "snippet": "Good size, comfortable bed, daily cleaning service - you didn’t go on vacation to stay in your hotel room 😁"
+        },
+        {
+          "name": "Safety",
+          "snippet": "Felt very safe walking around"
+        },
+        {
+          "name": "Walkability",
+          "snippet": "Great location"
+        },
+        {
+          "name": "Noteworthy details",
+          "snippet": "Location, you don’t need a car, use the metro"
+        }
+      ]
+    },
+    {
+      "user": {
+        "name": "Karen Ehrisman",
+        "link": "https://www.google.com/maps/contrib/112874924584360234252?hl=en",
+        "thumbnail": "https://lh3.googleusercontent.com/a-/ALV-UjWPo-7Z-aduombbHU-k5TasHWkBIR9PRZfH3FDucm1yvNLgmILT=s40-c-rp-mo-ba12-br100"
+      },
+      "source": "Google",
+      "source_icon": "https://www.gstatic.com/images/branding/product/1x/googleg_48dp.png",
+      "rating": 5,
+      "best_rating": 5,
+      "date": "a month ago",
+      "snippet": "Comfortable, welcoming base near Gare de Lyon\nI had an enjoyable seven-night stay at Courtyard by Marriott Paris Gare de Lyon on a mix of business and leisure travel. Thibault greeted me with a warm welcome, and my room was ready when I arrived around 4 PM on a Sunday afternoon. I opted for a spacious king room with city views, including the Eiffel Tower and Sacré-Cœur. Two welcome beverage vouchers at check-in were a nice touch.\nI enjoyed several dinners at the on-site Kitchen and Bar restaurant. Shout out to F&B Manager Antoine and Service Leaders Justine and Quang. The food and hospitality are great when you're not up for venturing out for a bite.\nThe location is excellent, just steps from Gare de Lyon with access to multiple RER and Metro lines. For longer stays, Monop' and Monoprix are both within walking distance for groceries, and be sure to visit the Marché d'Aligre on Saturdays, a short walk from the hotel. As a solo female traveler, I felt safe and welcomed here, and I hope to stay again on a future visit to Paris.",
+      "subratings": {
+        "rooms": 5,
+        "service": 5,
+        "location": 5
+      },
+      "response": {
+        "date": "3 weeks ago",
+        "snippet": "Dear Guest,\n\nThank you so much for taking the time to share such a detailed review of your stay with us at the Courtyard Paris Gare de Lyon!\n\nWe are thrilled to hear that you had an enjoyable seven-night stay and that Thibault welcomed you so warmly upon your arrival. It is fantastic that you loved your spacious king room and the view of the Eiffel Tower and Sacré-Cœur. Please be assured that we will share your kind words with Antoine, Justine, and Quang. They will be delighted to know their hospitality made a difference.\n\nAs a solo female traveler, knowing that you felt safe, and cared for means the world to our entire team. We would be honored to welcome you back on your next trip to Paris!\n\nKind regards,\nThe Courtyard Paris Gare de Lyon's team."
+      }
+    },
+    {
+      "user": {
+        "name": "Matt Matt",
+        "link": "https://www.google.com/maps/contrib/114072192544027131453?hl=en",
+        "thumbnail": "https://lh3.googleusercontent.com/a/ACg8ocJ3L8qrxi0PeEM_9c76da1fgpmWAxth6KsAFsJdmnl9cX2XGA=s40-c-rp-mo-ba12-br100"
+      },
+      "source": "Google",
+      "source_icon": "https://www.gstatic.com/images/branding/product/1x/googleg_48dp.png",
+      "rating": 5,
+      "best_rating": 5,
+      "date": "2 months ago",
+      "snippet": "Great hotel, fantastic location and view. Nothing beats having that view of the Eiffel Tower when in Paris. Nice friendly, helpful staff. Arrived by train at Gare De Lyon from Nice and easy walk across the road to hotel. Metro station there as well allowed easy access to all of Paris. Walking distance to Bastille with heaps of dinning options there. Dining was good inside hotel, nice lounge bar to relax after hectic travel day and waiting for room. Small hiccup with towels in room but was immediately sorted by very helpful staff at front desk and housekeeping.",
+      "subratings": {
+        "rooms": 4,
+        "service": 5,
+        "location": 5
+      }
+    },
+    {
+      "user": {
+        "name": "Amy Liu",
+        "link": "https://www.google.com/maps/contrib/100673912252599584591?hl=en",
+        "thumbnail": "https://lh3.googleusercontent.com/a-/ALV-UjX7TGN6KABCdpKd8xGAa2p8F5qtZ2uyM4NmDw9nll8ylKknHrGw=s40-c-rp-mo-ba12-br100"
+      },
+      "source": "Google",
+      "source_icon": "https://www.gstatic.com/images/branding/product/1x/googleg_48dp.png",
+      "rating": 5,
+      "best_rating": 5,
+      "date": "2 months ago",
+      "snippet": "Unbeatable location with its proximity to the train station and the various metro lines just down the street. Rooms are spacious enough and filled with natural light, though there is room for improvement in cleaner carpets.\nThis is my second time staying at this hotel, and the service has remained exceptional. Special mention to Clement at reception who was kind, helpful, and followed up on a room change request; Thomas, Lyvna, and Mehana at the restaurant who were friendly and courteous; and Windy at breakfast - a familiar face from my previous trip! - who made sure I did not go hungry upon departure. Thank you to the lovely team.",
+      "subratings": {
+        "rooms": 4,
+        "service": 5,
+        "location": 5
+      },
+      "response": {
+        "date": "2 months ago",
+        "snippet": "Dear Guest,\n\nThank you so much for taking the time to write this comment after your experience at the Courtyard Paris Gare de Lyon. We are so glad you chose to stay with us for the second time. Please, be assured that we will share your kind words with our team, as your satisfaction is always our greatest reward.\n\nWe look forward to welcoming you again soon.\n\nKind regards,"
+      }
+    },
+    {
+      "user": {
+        "name": "Henry",
+        "link": "https://www.google.com/maps/contrib/105756776476828948692?hl=en",
+        "thumbnail": "https://lh3.googleusercontent.com/a/ACg8ocIGAOSu2Lxvo24WUjSPizu7UFJ3fvHIXu7ZX0OG4HZdP-nQoA=s40-c-rp-mo-ba12-br100"
+      },
+      "source": "Google",
+      "source_icon": "https://www.gstatic.com/images/branding/product/1x/googleg_48dp.png",
+      "rating": 3,
+      "best_rating": 5,
+      "date": "2 months ago",
+      "snippet": "Great location right at the Lyon train station with access to lots of metro lines. They recognize Marriott status: being platinum anf got upgraded to a tower view room which was nice and was able to extend late check out to 4 pm. Breakfast is not included though, Courtyard here only gave 10 euros per day for Platinum. Staff are welcoming and professional.\nThe downside is the room quality. My room is not clean: black stains on towels, stains on one of the bed, a bug on the bed too. The carpet is broken too.",
+      "images": [
+        "https://lh3.googleusercontent.com/grass-cs/AABkmLdD_ErQF57LPrg6aiIsvWpMP8lQ9NsHg06MLYB4K1F4hM78DRVrtkKGzZWE4Xme3NR3e_V1alLxRgbGzcOnIezAiuUQYxqtxeTzRRTPzacwFnYnn0Y7t22DJGe6bjaKz8vdVk-5ihOq4Ho=k-no",
+        "https://lh3.googleusercontent.com/grass-cs/AABkmLeEsLW3F9JUnDgZvg7O_6NWGEPO_eUkIEydZMghiMae9yKPq1MDoNTwqQuWKM3sr7wmfLJ02F-CvWI5qDtgObmcgRMg_9sq_ChEJSZAclGK5cf6_9B330bvUmT5hD_7P5PZpgWqp0EOqfSI=k-no",
+        "https://lh3.googleusercontent.com/grass-cs/AABkmLcJf8vkBAkDDS54UbbXoSSbbHP2JaUtcFkK2yBt0H28wyBvtugznsAvamOqOAGbiZrJcsfY0lDQ37RO6VvdEN4n0hPmcbdE8Vs14Wke7_7j-bqyhLWBtS1kf_446jiUirmy7Gep4qr_Xv0=k-no",
+        "https://lh3.googleusercontent.com/grass-cs/AABkmLfPKouMIwoxk7_q-Kgh_8BczZH1XVdnj9KueqUmX6CZ3_gwyt3mhkwlLdbDmn3fmdMVu68B1tSTB1NZkB0_3in0kRguOK1bSloKFWSdj0AL0UzmT3bkCVFFx04s4-Nc5eAD15ecApI55mfY=k-no",
+        "https://lh3.googleusercontent.com/grass-cs/AABkmLetWIM1oQTC0lcQ5yoNuLVnF-QV-f2tvFCFWnvt-Caj9KOwZqLc8Kzh8_rpP-trwjUDPj7xIVvC0j6KNQDk_Q2vvINp1zduZJSU26TQ3Z4zV5yGlndGMIDmchgV5jun1RbxpZbQu-bx9ULl=k-no",
+        "https://lh3.googleusercontent.com/grass-cs/AABkmLfpafPn2oXOsS-sCguKPvg_CK4x6SOOXnrgGPJIrapb6m8M9zS_BxkrKC0oUxosOpTUmnn9fvPOeah1XBiSjKj-qpoXz1MsMwgH7MbSAd-o3qFsWHLdW4IVdhh7fOanJg3uh6qYXGHMjOA=k-no"
+      ],
+      "subratings": {
+        "rooms": 2,
+        "service": 4,
+        "location": 4
+      }
+    },
+    {
+      "user": {
+        "name": "Ramona Franklin",
+        "link": "https://www.google.com/maps/contrib/113434357893481399675?hl=en",
+        "thumbnail": "https://lh3.googleusercontent.com/a/ACg8ocIPfnsTET8LNhv0I6v9Bs8NBqAEF1wK0quu3cvqVORNP0sCqg=s40-c-rp-mo-br100"
+      },
+      "source": "Google",
+      "source_icon": "https://www.gstatic.com/images/branding/product/1x/googleg_48dp.png",
+      "rating": 5,
+      "best_rating": 5,
+      "date": "a month ago",
+      "snippet": "My experience there was great! It is a great location, directly across the street from a major train station, and easy walking to restaurants and bars.  3 people stood out. Joanna, Julie and Thibault! They were so kind and helpful with whatever I need it! I would highly recommend this location! The bar and restaurant staff were also exceptional!",
+      "subratings": {
+        "rooms": 5,
+        "service": 5,
+        "location": 5
+      },
+      "response": {
+        "date": "a month ago",
+        "snippet": "Dear Guest,\n\nThank you for taking the time to write this beautiful comment. We are truly delighted to read you enjoyed your Parisian journey, and that our team made such a good impression! You can be sure we will share your kind words with them.\n\nWe look forward to your next visit.\n\nKind regards,\nThe Courtyard Paris Gare de Lyon's team."
+      }
+    }
+  ],
+  "serpapi_pagination": {
+    "next_page_token": "CjEIARIpCgoAP7_LAD-n____EhDuRP817HfxKq07gbAAAAAAGgn92QMCXvLAFXUYACIA:10",
+    "next": "https://serpapi.com/search.json?engine=google_hotels_reviews&hl=en&next_page_token=CjEIARIpCgoAP7_LAD-n____EhDuRP817HfxKq07gbAAAAAAGgn92QMCXvLAFXUYACIA%3A10&property_token=ChkIh_ig59yqmq16Gg0vZy8xMWY2Y3IybmpqEAE"
+  }
+}
