@@ -14,14 +14,18 @@ url.search = new URLSearchParams({
   api_key: key,
 }).toString();
 
-const response = await fetch(url);
-if (!response.ok) throw new Error(`SerpAPI responded ${response.status}`);
-const body = (await response.json()) as Record<string, unknown>;
+const main = async () => {
+  const response = await fetch(url);
+  if (!response.ok) throw new Error(`SerpAPI responded ${response.status}`);
+  const body = (await response.json()) as Record<string, unknown>;
 
-// Keep only what the mapper needs. search_metadata holds private archive URLs.
-const fixture = { search_parameters: { engine: 'google_flights_autocomplete', q: query, hl: 'en', gl: 'us' }, suggestions: body.suggestions };
+  // Keep only what the mapper needs. search_metadata holds private archive URLs.
+  const fixture = { search_parameters: { engine: 'google_flights_autocomplete', q: query, hl: 'en', gl: 'us' }, suggestions: body.suggestions };
 
-const target = join(__dirname, '../test/fixtures/google_flights_autocomplete', `${name}.json`);
-await mkdir(dirname(target), { recursive: true });
-await writeFile(target, `${JSON.stringify(fixture, null, 2)}\n`);
-console.log(`wrote ${target}`);
+  const target = join(__dirname, '../test/fixtures/google_flights_autocomplete', `${name}.json`);
+  await mkdir(dirname(target), { recursive: true });
+  await writeFile(target, `${JSON.stringify(fixture, null, 2)}\n`);
+  console.log(`wrote ${target}`);
+};
+
+void main();
