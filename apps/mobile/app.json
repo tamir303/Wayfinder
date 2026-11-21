@@ -19,7 +19,7 @@
       "expo-secure-store",
       "expo-status-bar"
     ],
-    "web": { "bundler": "metro", "output": "single" },
+    "web": { "bundler": "metro", "output": "single", "favicon": "./assets/favicon.png", "name": "Wayfinder", "shortName": "Wayfinder", "description": "Search flights, compare stays and plan trips in one place.", "themeColor": "#0B6BCB", "backgroundColor": "#FFFFFF" },
     "experiments": {
       "typedRoutes": true
     }

@@ -4,8 +4,26 @@
     "development": {
       "developmentClient": true,
       "distribution": "internal",
-      "env": { "EXPO_PUBLIC_API_URL": "https://<preview-or-dev-api-url>" }
+      "env": { "EXPO_PUBLIC_APP_ENV": "dev" }
     },
-    "production": { "autoIncrement": true }
+    "staging": {
+      "developmentClient": true,
+      "distribution": "internal",
+      "channel": "staging",
+      "env": {
+        "EXPO_PUBLIC_APP_ENV": "staging",
+        "EXPO_PUBLIC_API_URL": "https://<staging-api-url>",
+        "EXPO_PUBLIC_SUPABASE_URL": "https://<staging-project>.supabase.co"
+      }
+    },
+    "production": {
+      "autoIncrement": true,
+      "channel": "production",
+      "env": {
+        "EXPO_PUBLIC_APP_ENV": "prod",
+        "EXPO_PUBLIC_API_URL": "https://<production-api-url>",
+        "EXPO_PUBLIC_SUPABASE_URL": "https://<production-project>.supabase.co"
+      }
+    }
   }
 }
