@@ -1,5 +1,5 @@
-import { Controller, Get, Query, Res } from '@nestjs/common';
-import { ApiBearerAuth, ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
+import { Controller, Get, Param, Query, Res } from '@nestjs/common';
+import { ApiBearerAuth, ApiOperation, ApiParam, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
 import { HTTP_STATUS_BY_CODE } from '@wayfinder/shared';
 import type { Response } from 'express';
@@ -7,8 +7,10 @@ import { type AuthUser, CurrentUser } from '../auth/current-user.decorator';
 import { Public } from '../auth/public.decorator';
 import { AppError } from '../common/app-error';
 import { renderErrorPage, sendPage } from '../handoff/handoff-page';
-import { StaySearchQueryDto } from './stays.dto';
+import { StayDetailQueryDto, StaySearchQueryDto, StaySuggestQueryDto } from './stays.dto';
 import { StaysService } from './stays.service';
+
+const MAX_TOKEN_LENGTH = 300;
 
 @ApiTags('stays')
 @Controller('stays')
@@ -25,6 +27,14 @@ export class StaysController {
   @Get('search')
   search(@Query() query: StaySearchQueryDto, @CurrentUser() user: AuthUser) {
     return this.stays.search(user.userId, query);
+  }
+
+  @ApiBearerAuth('bearer')
+  @ApiOperation({ summary: 'Destination and hotel suggestions for a search box (cached 24 h; 1 credit on a miss)' })
+  @ApiQuery({ name: 'q', required: true, description: '2-80 characters', example: 'paris' })
+  @Get('suggest')
+  suggest(@Query() query: StaySuggestQueryDto, @CurrentUser() user: AuthUser) {
+    return this.stays.suggest(user.userId, query);
   }
 
   @ApiOperation({
@@ -44,5 +54,18 @@ export class StaysController {
       const known = error instanceof AppError;
       sendPage(res, known ? HTTP_STATUS_BY_CODE[error.code] : 502, renderErrorPage(known ? error.message : 'Something went wrong. Please try again.'));
     }
+  }
+
+  @ApiBearerAuth('bearer')
+  @ApiOperation({ summary: 'One property with prices by provider, ratings, amenities and photos (cached 30 min; 1 credit on a miss)' })
+  @ApiParam({ name: 'token', description: "A stay's id (provider property token)" })
+  @ApiQuery({ name: 'q', required: true, description: 'The destination text used for the search', example: 'Paris hotels' })
+  @ApiQuery({ name: 'checkIn', required: true, example: '2027-03-10' })
+  @ApiQuery({ name: 'checkOut', required: true, example: '2027-03-14' })
+  @ApiQuery({ name: 'adults', required: false, example: 2 })
+  @Get(':token')
+  detail(@Param('token') token: string, @Query() query: StayDetailQueryDto, @CurrentUser() user: AuthUser) {
+    if (token.length > MAX_TOKEN_LENGTH) throw new AppError('BAD_QUERY', 'Invalid property id');
+    return this.stays.detail(user.userId, token, query);
   }
 }

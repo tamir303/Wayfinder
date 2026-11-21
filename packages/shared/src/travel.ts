@@ -177,3 +177,66 @@ export const SavedSearchSchema = FlightSearchQueryBase.omit({ returnDate: true }
 export type SavedSearch = z.infer<typeof SavedSearchSchema>;
 export const SavedSearchListResponseSchema = z.object({ searches: z.array(SavedSearchSchema) });
 export type SavedSearchListResponse = z.infer<typeof SavedSearchListResponseSchema>;
+
+export const StaySuggestQuerySchema = z.object({ q: z.string().trim().min(2).max(80) });
+export type StaySuggestQuery = z.infer<typeof StaySuggestQuerySchema>;
+
+export const StaySuggestionSchema = z.object({
+  /** Text to put in the search box and send as q. */
+  text: z.string(),
+  /** 'accommodation' for a specific property; other values are places and regions. */
+  kind: z.string(),
+  location: z.string().nullable().default(null),
+  propertyToken: z.string().nullable().default(null),
+});
+export type StaySuggestion = z.infer<typeof StaySuggestionSchema>;
+export const StaySuggestResponseSchema = z.object({ suggestions: z.array(StaySuggestionSchema) });
+export type StaySuggestResponse = z.infer<typeof StaySuggestResponseSchema>;
+
+/** Property detail uses the same trip parameters as a search (dates drive the prices). */
+export const StayDetailQuerySchema = StaySearchQuerySchema;
+export type StayDetailQuery = z.infer<typeof StayDetailQuerySchema>;
+
+export const StayOfferSchema = z.object({
+  provider: z.string(),
+  official: z.boolean(),
+  pricePerNight: z.number(),
+  totalPrice: z.number().nullable().default(null),
+  logo: z.string().nullable().default(null),
+  /** Signed handoff link (logs the click, then redirects to this provider). */
+  dealUrl: z.string(),
+});
+
+export const StayDetailSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  type: z.string(),
+  description: z.string().nullable().default(null),
+  address: z.string().nullable().default(null),
+  phone: z.string().nullable().default(null),
+  lat: z.number(),
+  lng: z.number(),
+  stars: z.number().nullable().default(null),
+  rating: z.number().nullable().default(null),
+  reviewCount: z.number().default(0),
+  locationRating: z.number().nullable().default(null),
+  /** Guests per star level (5 to 1). */
+  ratingBreakdown: z.array(z.object({ stars: z.number(), count: z.number() })).default([]),
+  /** Ratings from other sites, e.g. Tripadvisor. */
+  reviewSources: z.array(z.object({ source: z.string(), rating: z.number(), maxRating: z.number(), count: z.number() })).default([]),
+  checkInTime: z.string().nullable().default(null),
+  checkOutTime: z.string().nullable().default(null),
+  amenities: z.array(z.string()).default([]),
+  images: z.array(z.string()).default([]),
+  nearby: z
+    .array(z.object({ name: z.string(), category: z.string().nullable().default(null), transport: z.array(z.object({ type: z.string(), duration: z.string() })).default([]) }))
+    .default([]),
+  currency: z.string(),
+  /** Usual nightly price range for this property and dates, when known. */
+  typicalPriceRange: z.object({ low: z.number(), high: z.number() }).nullable().default(null),
+  deal: z.string().nullable().default(null),
+  /** Prices by provider, cheapest first. */
+  offers: z.array(StayOfferSchema),
+});
+export type StayDetail = z.infer<typeof StayDetailSchema>;
+export type StayOffer = z.infer<typeof StayOfferSchema>;

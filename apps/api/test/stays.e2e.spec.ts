@@ -7,7 +7,9 @@ import { JwtVerifier } from '../src/auth/jwt-verifier';
 import { ENV, REDIS } from '../src/common/tokens';
 import { HandoffSigner } from '../src/handoff/handoff-signer';
 import { PrismaService } from '../src/prisma/prisma.service';
+import detailFixture from './fixtures/google_hotels/courtyard-gare-de-lyon.json';
 import fixture from './fixtures/google_hotels/paris-hotels.json';
+import autocompleteFixture from './fixtures/google_hotels_autocomplete/paris.json';
 import { FakeRedis } from './fake-redis';
 import { testEnv } from './test-env';
 
@@ -50,7 +52,11 @@ describe('stays (e2e)', () => {
   beforeEach(() => {
     searchLogCreate.mockClear();
     handoffCreate.mockClear();
-    fetchSpy = jest.spyOn(global, 'fetch').mockImplementation(async () => new Response(JSON.stringify(fixture), { status: 200 }));
+    fetchSpy = jest.spyOn(global, 'fetch').mockImplementation(async (input) => {
+      const q = new URL(String(input)).searchParams;
+      const body = q.get('engine') === 'google_hotels_autocomplete' ? autocompleteFixture : q.has('property_token') ? detailFixture : fixture;
+      return new Response(JSON.stringify(body), { status: 200 });
+    });
   });
   afterEach(() => jest.restoreAllMocks());
   afterAll(async () => app.close());
@@ -161,6 +167,72 @@ describe('stays (e2e)', () => {
       await get(`/stays/handoff?ref=${ref({ url: 'http://insecure.example' })}`, false).expect(400);
       await get(`/stays/handoff?ref=${ref({ url: 'javascript:alert(1)' })}`, false).expect(400);
       expect(handoffCreate).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('GET /stays/suggest', () => {
+    it('requires a token and a query of at least 2 characters', async () => {
+      await get('/stays/suggest?q=par', false).expect(401);
+      await get('/stays/suggest?q=p').expect(400);
+      expect(fetchSpy).not.toHaveBeenCalled();
+    });
+
+    it('returns suggestions, lower-cases the query for the cache and serves a repeat from it', async () => {
+      const res = await get('/stays/suggest?q=Paris').expect(200);
+      expect(res.body.suggestions).toHaveLength(10);
+      expect(res.body.suggestions[0]).toMatchObject({ text: 'paris las vegas', kind: 'accommodation' });
+      const q = new URL(String(fetchSpy.mock.calls[0][0])).searchParams;
+      expect(q.get('engine')).toBe('google_hotels_autocomplete');
+      expect(q.get('q')).toBe('paris');
+      await get('/stays/suggest?q=paris').expect(200);
+      expect(fetchSpy).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  describe('GET /stays/:token', () => {
+    const TOKEN = 'ChkIh_ig59yqmq16Gg0vZy8xMWY2Y3IybmpqEAE';
+    const DETAIL = `/stays/${TOKEN}?q=Paris%20hotels&checkIn=2099-03-10&checkOut=2099-03-14`;
+
+    it('requires a token and valid dates', async () => {
+      await get(DETAIL, false).expect(401);
+      await get(`/stays/${TOKEN}?q=Paris&checkIn=2099-03-14&checkOut=2099-03-10`).expect(400);
+      await get(`/stays/${'x'.repeat(400)}?q=Paris&checkIn=2099-03-10&checkOut=2099-03-14`).expect(400);
+      expect(fetchSpy).not.toHaveBeenCalled();
+    });
+
+    it('returns the property with provider offers, cheapest first, with signed links only', async () => {
+      const res = await get(`${DETAIL}&adults=3`).expect(200);
+      expect(res.body).toMatchObject({ id: TOKEN, name: 'Courtyard by Marriott Paris Gare de Lyon', stars: 4, rating: 4.4, currency: 'USD' });
+      expect(res.body.images.length).toBeGreaterThan(3);
+      const prices = res.body.offers.map((o: { pricePerNight: number }) => o.pricePerNight);
+      expect(prices).toEqual([...prices].sort((a: number, b: number) => a - b));
+      expect(res.body.offers[0].provider).toBe('Super.com');
+      expect(JSON.stringify(res.body)).not.toContain('providerUrl');
+      expect(JSON.stringify(res.body)).not.toContain('google.com/travel/lodging/clk');
+      expect(res.body.offers[0].dealUrl).toMatch(/^http:\/\/api\.test\/stays\/handoff\?ref=/);
+
+      const q = new URL(String(fetchSpy.mock.calls[0][0])).searchParams;
+      expect(q.get('property_token')).toBe(TOKEN);
+      expect(q.get('check_in_date')).toBe('2099-03-10');
+      expect(q.get('adults')).toBe('3');
+    });
+
+    it("an offer's deal link redirects to that provider and logs the booking site, not google.com", async () => {
+      const res = await get(`${DETAIL}&adults=4`).expect(200);
+      const url = new URL(res.body.offers[0].dealUrl);
+      const out = await get(url.pathname + url.search, false).expect(302);
+      expect(out.headers.location).toMatch(/^https:\/\/www\.google\.com\/travel\/lodging\/clk/);
+      expect(handoffCreate).toHaveBeenCalledWith({ data: expect.objectContaining({ kind: 'stay', provider: 'Super.com', price: 202 }) });
+    });
+
+    it('answers 404 NOT_FOUND for an unknown property and 502 for other provider errors, refunding both', async () => {
+      const before = await used();
+      fetchSpy.mockImplementation(async () => new Response(JSON.stringify({ error: 'Property not found.' }), { status: 200 }));
+      const missing = await get(`${DETAIL.replace(TOKEN, 'unknown')}&adults=5`).expect(404);
+      expect(missing.body.code).toBe('NOT_FOUND');
+      fetchSpy.mockImplementation(async () => new Response(JSON.stringify({ error: 'Invalid API key.' }), { status: 200 }));
+      await get(`${DETAIL}&adults=6`).expect(502);
+      expect(await used()).toBe(before);
     });
   });
 });

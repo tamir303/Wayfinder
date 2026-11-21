@@ -1,5 +1,7 @@
 import fixture from '../../test/fixtures/google_hotels/paris-hotels.json';
-import { mapHotels } from './stays.mapper';
+import detail from '../../test/fixtures/google_hotels/courtyard-gare-de-lyon.json';
+import autocomplete from '../../test/fixtures/google_hotels_autocomplete/paris.json';
+import { mapHotels, mapStayDetail, mapSuggestions } from './stays.mapper';
 
 describe('mapHotels (real Paris fixture)', () => {
   const result = mapHotels(fixture);
@@ -94,5 +96,85 @@ describe('mapHotels edge cases', () => {
 
   it('returns an empty list for an empty properties array', () => {
     expect(mapHotels({ properties: [] })).toEqual({ stays: [], nextPageToken: null });
+  });
+});
+
+
+describe('mapSuggestions (real autocomplete fixture)', () => {
+  it('maps text, kind, location and property token', () => {
+    const { suggestions } = mapSuggestions(autocomplete);
+    expect(suggestions).toHaveLength(10);
+    expect(suggestions[0]).toMatchObject({ text: 'paris las vegas', kind: 'accommodation' });
+    expect(suggestions.some((s) => s.propertyToken)).toBe(true);
+    expect(suggestions.every((s) => s.text.length > 0)).toBe(true);
+  });
+
+  it('is empty for no suggestions and PROVIDER_DOWN for provider errors or bad shapes', () => {
+    expect(mapSuggestions({ suggestions: [] }).suggestions).toEqual([]);
+    expect(mapSuggestions({ error: "Google Hotels hasn't returned any results for this search." }).suggestions).toEqual([]);
+    expect(() => mapSuggestions({ error: 'Invalid API key.' })).toThrow(expect.objectContaining({ code: 'PROVIDER_DOWN' }));
+    expect(() => mapSuggestions(null)).toThrow(expect.objectContaining({ code: 'PROVIDER_DOWN' }));
+  });
+});
+
+describe('mapStayDetail (real Courtyard fixture)', () => {
+  const d = mapStayDetail(detail);
+
+  it('maps the property facts', () => {
+    expect(d.detail).toMatchObject({
+      id: 'ChkIh_ig59yqmq16Gg0vZy8xMWY2Y3IybmpqEAE',
+      name: 'Courtyard by Marriott Paris Gare de Lyon',
+      type: 'hotel',
+      address: '209-211 Rue de Bercy, 75012 Paris, France',
+      stars: 4,
+      rating: 4.4,
+      reviewCount: 1764,
+      locationRating: 4.6,
+      currency: 'USD',
+      deal: '22% less than usual',
+      typicalPriceRange: { low: 206, high: 265 },
+    });
+    expect(d.detail.lat).toBeCloseTo(48.845, 2);
+    expect(d.detail.ratingBreakdown[0]).toEqual({ stars: 5, count: 1152 });
+    expect(d.detail.reviewSources[0]).toMatchObject({ source: 'Tripadvisor', maxRating: 5, count: 852 });
+    expect(d.detail.images.length).toBeGreaterThan(3);
+    expect(d.detail.images.every((u) => u.startsWith('https://'))).toBe(true);
+    expect(d.detail.amenities).toContain('Wi-Fi');
+    expect(d.detail.nearby[0]!.transport[0]).toEqual({ type: 'Taxi', duration: '11 min' });
+  });
+
+  it('lists provider offers cheapest first with a provider link kept server-side', () => {
+    expect(d.offers.length).toBeGreaterThan(10);
+    const prices = d.offers.map((o) => o.pricePerNight);
+    expect(prices).toEqual([...prices].sort((a, b) => a - b));
+    expect(d.offers[0]).toMatchObject({ provider: 'Super.com', pricePerNight: 202, official: false });
+    expect(d.offers.find((o) => o.official)?.provider).toBe('Courtyard by Marriott Paris Gare de Lyon');
+    for (const o of d.offers) expect(o.providerUrl).toMatch(/^https:\/\//);
+  });
+});
+
+describe('mapStayDetail edge cases', () => {
+  it('maps NOT_FOUND-style provider errors to NOT_FOUND and others to PROVIDER_DOWN', () => {
+    expect(() => mapStayDetail({ error: 'Property not found.' })).toThrow(expect.objectContaining({ code: 'NOT_FOUND' }));
+    expect(() => mapStayDetail({ error: 'Invalid API key.' })).toThrow(expect.objectContaining({ code: 'PROVIDER_DOWN' }));
+    expect(() => mapStayDetail(null)).toThrow(expect.objectContaining({ code: 'PROVIDER_DOWN' }));
+    expect(() => mapStayDetail({ nope: 1 })).toThrow(expect.objectContaining({ code: 'PROVIDER_DOWN' }));
+  });
+
+  it('skips offers without a usable https link or price and tolerates missing optional fields', () => {
+    const minimal = {
+      name: 'Tiny Inn',
+      property_token: 'tok',
+      gps_coordinates: { latitude: 1, longitude: 2 },
+      prices: [
+        { source: 'NoLink', rate_per_night: { extracted_display_price: 50 } },
+        { source: 'Insecure', link: 'http://x.example', rate_per_night: { extracted_display_price: 40 } },
+        { source: 'NoPrice', link: 'https://x.example' },
+        { source: 'Good', link: 'https://good.example', rate_per_night: { extracted_display_price: 60 } },
+      ],
+    };
+    const d = mapStayDetail(minimal);
+    expect(d.offers.map((o) => o.provider)).toEqual(['Good']);
+    expect(d.detail).toMatchObject({ stars: null, rating: null, reviewCount: 0, description: null, images: [], amenities: [], typicalPriceRange: null, deal: null });
   });
 });
