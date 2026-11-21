@@ -19,3 +19,6 @@ export const addDays = (iso: string, days: number): string => {
   d.setUTCDate(d.getUTCDate() + days);
   return isoDate(d);
 };
+
+export const nightsBetween = (checkIn: string, checkOut: string): number =>
+  Math.round((Date.parse(`${checkOut}T00:00:00Z`) - Date.parse(`${checkIn}T00:00:00Z`)) / 86_400_000);

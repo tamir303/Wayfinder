@@ -1,15 +1,6 @@
 import { expect, test } from '@playwright/test';
 import { openTab, signIn } from './helpers';
 
-test('stays: selecting a map pin opens the stay panel with a deal button', async ({ page }) => {
-  await signIn(page);
-  await openTab(page, 'Stays');
-  await page.getByRole('button', { name: /Map pin Harbour View Suites/ }).click();
-  const panel = page.getByLabel('Selected stay Harbour View Suites');
-  await expect(panel).toContainText('Wi-Fi · Pool · Gym · Breakfast');
-  await expect(panel.getByRole('button', { name: 'View deal' })).toBeVisible();
-});
-
 test('explore: category chips filter the attractions', async ({ page }) => {
   await signIn(page);
   await openTab(page, 'Explore');

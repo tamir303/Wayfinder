@@ -46,24 +46,53 @@ export const FlightCard = ({ offer, onPress, roundTrip = false }: { offer: Fligh
   );
 };
 
-export const StayCard = ({ stay, selected, onPress }: { stay: Stay; selected?: boolean; onPress: () => void }) => {
+type StayCardProps = {
+  stay: Stay;
+  selected?: boolean;
+  onPress: () => void;
+  nights?: number;
+  favorite?: boolean;
+  onToggleFavorite?: () => void;
+};
+
+// The card body and the save button are siblings: nested buttons are invalid on the web.
+export const StayCard = ({ stay, selected, onPress, nights = 0, favorite = false, onToggleFavorite }: StayCardProps) => {
   const { t } = useTranslation();
   return (
-  <Pressable
-    accessibilityRole="button"
-    accessibilityState={{ selected: !!selected }}
-    accessibilityLabel={t('stays.cardLabel', { name: stay.name, price: formatPrice(stay.pricePerNight, stay.currency) })}
-    onPress={onPress}
-    className={`flex-row gap-3 rounded-card border bg-surface p-3 ${selected ? 'border-brand' : 'border-line'}`}
-  >
-    <View className="h-24 w-24 items-center justify-center rounded-card bg-brand-soft"><Icon name="bed" size={32} color="#0B6BCB" /></View>
-    <View className="flex-1 gap-1">
-      <Text className="text-base font-semibold text-ink">{stay.name}</Text>
-      <View className="flex-row items-center gap-1"><Icon name="star" size={14} color="#0B6BCB" filled /><Text className="text-sm text-ink">{stay.rating} · {stay.ratingLabel}</Text></View>
-      <Text className="text-sm text-ink-muted">{stay.distance}</Text>
-      <Text className="text-base font-bold text-brand-dark">{t('stays.perNight', { price: formatPrice(stay.pricePerNight, stay.currency) })}</Text>
+    <View className={`flex-row rounded-card border bg-surface ${selected ? 'border-brand' : 'border-line'}`}>
+      <Pressable
+        accessibilityRole="button"
+        accessibilityState={{ selected: !!selected }}
+        accessibilityLabel={t('stays.cardLabel', { name: stay.name, price: formatPrice(stay.pricePerNight, stay.currency) })}
+        onPress={onPress}
+        className="flex-1 flex-row gap-3 p-3"
+      >
+        <View className="h-24 w-24 items-center justify-center rounded-card bg-brand-soft"><Icon name="bed" size={32} color="#0B6BCB" /></View>
+        <View className="flex-1 gap-1">
+          <Text className="text-base font-semibold text-ink">{stay.name}</Text>
+          {stay.rating !== null ? (
+            <View className="flex-row items-center gap-1">
+              <Icon name="star" size={14} color="#0B6BCB" filled />
+              <Text className="text-sm text-ink">{t('stays.ratingLine', { rating: stay.rating.toFixed(1), count: stay.reviewCount })}</Text>
+            </View>
+          ) : null}
+          {stay.distance ? <Text className="text-sm text-ink-muted">{stay.distance}</Text> : null}
+          <Text className="text-base font-bold text-brand-dark">{t('stays.perNight', { price: formatPrice(stay.pricePerNight, stay.currency) })}</Text>
+          {nights > 0 ? <Text className="text-xs text-ink-muted">{t('stays.total', { price: formatPrice(stay.totalPrice ?? stay.pricePerNight * nights, stay.currency) })} · {t('stays.nights', { count: nights })}</Text> : null}
+        </View>
+      </Pressable>
+      {onToggleFavorite ? (
+        <Pressable
+          accessibilityRole="button"
+          accessibilityState={{ selected: favorite }}
+          accessibilityLabel={t(favorite ? 'stays.unsave' : 'stays.save', { name: stay.name })}
+          onPress={onToggleFavorite}
+          className="p-3"
+        >
+          <Icon name="heart" size={22} color="#0B6BCB" filled={favorite} />
+        </Pressable>
+      ) : null}
     </View>
-  </Pressable>
   );
 };
 

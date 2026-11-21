@@ -73,11 +73,11 @@ export const buildCalendar = (start: string, end: string): { date: string; price
 };
 
 const RAW_STAYS = [
-  { id: 's1', name: 'Hotel Eden', rating: 8.9, ratingLabel: 'Excellent', distance: '1.2 km from centre', pricePerNight: 540, currency: 'ILS', mapX: 30, mapY: 35, amenities: ['Wi-Fi', 'Breakfast', 'Pool'], dealUrl: 'https://example.com/mock-stay?id=s1' },
-  { id: 's2', name: 'Casa Rossa', rating: 8.4, ratingLabel: 'Very good', distance: '0.4 km from centre', pricePerNight: 610, currency: 'ILS', mapX: 55, mapY: 50, amenities: ['Wi-Fi', 'Free cancellation'], dealUrl: 'https://example.com/mock-stay?id=s2' },
-  { id: 's3', name: 'Harbour View Suites', rating: 9.2, ratingLabel: 'Superb', distance: '2.0 km from centre', pricePerNight: 780, currency: 'ILS', mapX: 72, mapY: 28, amenities: ['Wi-Fi', 'Pool', 'Gym', 'Breakfast'], dealUrl: 'https://example.com/mock-stay?id=s3' },
-  { id: 's4', name: 'Urban Nest Hostel', rating: 7.8, ratingLabel: 'Good', distance: '0.8 km from centre', pricePerNight: 190, currency: 'ILS', mapX: 40, mapY: 68, amenities: ['Wi-Fi'], dealUrl: 'https://example.com/mock-stay?id=s4' },
-  { id: 's5', name: 'Grand Plaza', rating: 8.7, ratingLabel: 'Excellent', distance: '0.1 km from centre', pricePerNight: 920, currency: 'ILS', mapX: 62, mapY: 72, amenities: ['Wi-Fi', 'Spa', 'Gym', 'Free cancellation'], dealUrl: 'https://example.com/mock-stay?id=s5' },
+  { id: 's1', name: 'Hotel Eden', rating: 4.5, ratingLabel: 'Excellent', distance: '1.2 km from centre', pricePerNight: 540, currency: 'ILS', mapX: 30, mapY: 35, amenities: ['Wi-Fi', 'Breakfast', 'Pool'], dealUrl: 'https://example.com/mock-stay?id=s1' },
+  { id: 's2', name: 'Casa Rossa', rating: 4.2, ratingLabel: 'Very good', distance: '0.4 km from centre', pricePerNight: 610, currency: 'ILS', mapX: 55, mapY: 50, amenities: ['Wi-Fi', 'Free cancellation'], dealUrl: 'https://example.com/mock-stay?id=s2' },
+  { id: 's3', name: 'Harbour View Suites', rating: 4.6, ratingLabel: 'Superb', distance: '2.0 km from centre', pricePerNight: 780, currency: 'ILS', mapX: 72, mapY: 28, amenities: ['Wi-Fi', 'Pool', 'Gym', 'Breakfast'], dealUrl: 'https://example.com/mock-stay?id=s3' },
+  { id: 's4', name: 'Urban Nest Hostel', rating: 3.9, ratingLabel: 'Good', distance: '0.8 km from centre', pricePerNight: 190, currency: 'ILS', mapX: 40, mapY: 68, amenities: ['Wi-Fi'], dealUrl: 'https://example.com/mock-stay?id=s4' },
+  { id: 's5', name: 'Grand Plaza', rating: 4.4, ratingLabel: 'Excellent', distance: '0.1 km from centre', pricePerNight: 920, currency: 'ILS', mapX: 62, mapY: 72, amenities: ['Wi-Fi', 'Spa', 'Gym', 'Free cancellation'], dealUrl: 'https://example.com/mock-stay?id=s5' },
 ];
 
 // Rome-ish coordinates derived from the placeholder map position; the other new fields use plausible defaults.
