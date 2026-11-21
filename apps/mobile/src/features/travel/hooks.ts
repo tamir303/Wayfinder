@@ -3,7 +3,6 @@ import {
   FlightCalendarResponseSchema,
   FlightSearchResponseSchema,
   StaySearchResponseSchema,
-  TripListResponseSchema,
   UsageResponseSchema,
   type FlightCalendarQuery,
   type FlightSearchQuery,
@@ -41,9 +40,6 @@ export const useStays = () =>
 
 export const useAttractions = () =>
   useQuery({ queryKey: ['attractions'], queryFn: () => apiFetch('/attractions', AttractionListResponseSchema), staleTime: FIVE_MIN, retry: false });
-
-export const useTrips = () =>
-  useQuery({ queryKey: ['trips'], queryFn: () => apiFetch('/trips', TripListResponseSchema), staleTime: FIVE_MIN, retry: false });
 
 export const useUsage = () =>
   useQuery({ queryKey: ['usage'], queryFn: () => apiFetch('/me/usage', UsageResponseSchema), retry: false });

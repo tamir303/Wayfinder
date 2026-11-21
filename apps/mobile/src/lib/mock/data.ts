@@ -1,4 +1,4 @@
-import type { Attraction, FlightOffer, GeoSuggestion, Stay, Trip } from '@wayfinder/shared';
+import type { Attraction, FlightOffer, GeoSuggestion, Stay } from '@wayfinder/shared';
 
 export const AIRPORTS: GeoSuggestion[] = [
   { code: 'TLV', name: 'Ben Gurion Airport', city: 'Tel Aviv-Yafo' },
@@ -99,16 +99,4 @@ export const ATTRACTIONS: Attraction[] = [
   { id: 'a3', name: 'Trevi Fountain', category: 'Landmark', rating: 4.8, reviews: '41k', blurb: 'The famous baroque fountain. Visit early or late to avoid the crowds.', hours: 'Always open' },
   { id: 'a4', name: 'Trastevere Food Tour', category: 'Tour', rating: 4.9, reviews: '3k', blurb: 'Three hours of tastings through Rome\'s most charming neighbourhood.', hours: 'Daily 17:00' },
   { id: 'a5', name: 'Da Enzo al 29', category: 'Restaurant', rating: 4.5, reviews: '9k', blurb: 'Classic Roman trattoria known for carbonara and cacio e pepe.', hours: 'Tue-Sun 12:30-23:00' },
-];
-
-export const TRIPS: Trip[] = [
-  {
-    id: 't1', name: 'Rome getaway', dates: '12 Dec - 15 Dec', itemCount: 5,
-    days: [
-      { label: 'Day 1', stops: [{ time: '09:00', title: 'Colosseum', meta: 'Landmark · 2h · Timed entry' }, { time: '13:00', title: 'Da Enzo al 29', meta: 'Restaurant · 1h 30m' }, { time: '16:00', title: 'Trevi Fountain', meta: 'Landmark · 45m' }] },
-      { label: 'Day 2', stops: [{ time: '09:30', title: 'Vatican Museums', meta: 'Museum · 3h' }, { time: '17:00', title: 'Trastevere Food Tour', meta: 'Tour · 3h' }] },
-      { label: 'Day 3', stops: [] },
-    ],
-  },
-  { id: 't2', name: 'Paris weekend', dates: '4 Mar - 7 Mar', itemCount: 2, days: [{ label: 'Day 1', stops: [{ time: '10:00', title: 'Louvre', meta: 'Museum · 3h' }] }] },
 ];

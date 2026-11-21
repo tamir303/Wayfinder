@@ -1,3 +1,4 @@
+import { useRouter } from 'expo-router';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ScrollView, Text, View } from 'react-native';
@@ -9,6 +10,7 @@ import { useAttractions } from '../../../src/features/travel/hooks';
 
 export default function Explore() {
   const { t } = useTranslation();
+  const router = useRouter();
   const result = useAttractions();
   const [category, setCategory] = useState('all');
   return (
@@ -23,7 +25,7 @@ export default function Explore() {
                 {categories.map((c) => <Chip key={c} label={c === 'all' ? t('explore.all') : c} selected={c === category} onPress={() => setCategory(c)} />)}
               </ScrollView>
               {shown.length === 0 ? <Text className="text-ink-muted">{t('explore.empty')}</Text> : null}
-              {shown.map((a) => <AttractionCard key={a.id} item={a} />)}
+              {shown.map((a) => <AttractionCard key={a.id} item={a} onPress={() => router.push({ pathname: '/attraction/[id]', params: { id: a.id } })} />)}
             </View>
           );
         }}

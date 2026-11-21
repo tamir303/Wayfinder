@@ -96,8 +96,8 @@ export const StayCard = ({ stay, selected, onPress, nights = 0, favorite = false
   );
 };
 
-export const AttractionCard = ({ item }: { item: Attraction }) => (
-  <View className={`${card} overflow-hidden`} accessibilityLabel={item.name}>
+export const AttractionCard = ({ item, onPress }: { item: Attraction; onPress?: () => void }) => (
+  <Pressable accessibilityRole="button" accessibilityLabel={item.name} onPress={onPress} className={`${card} overflow-hidden`}>
     <View className="h-32 items-center justify-center bg-brand-soft"><Icon name="compass" size={40} color="#0B6BCB" /></View>
     <View className="gap-1 p-3">
       <Text className="text-lg font-semibold text-ink">{item.name}</Text>
@@ -105,15 +105,5 @@ export const AttractionCard = ({ item }: { item: Attraction }) => (
       <Text className="text-sm text-ink">{item.blurb}</Text>
       <Text className="text-xs text-ink-muted">{item.hours}</Text>
     </View>
-  </View>
-);
-
-export const ItineraryItem = ({ time, title, meta }: { time: string; title: string; meta: string }) => (
-  <View className="flex-row gap-3">
-    <Text className="w-12 pt-3 text-sm font-semibold text-brand">{time}</Text>
-    <View className="flex-1 gap-0.5 rounded-card bg-surface-muted p-3">
-      <Text className="text-base font-semibold text-ink">{title}</Text>
-      <Text className="text-sm text-ink-muted">{meta}</Text>
-    </View>
-  </View>
+  </Pressable>
 );

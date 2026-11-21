@@ -31,6 +31,7 @@ const emissionsLine = (t: ReturnType<typeof useTranslation>['t'], e: NonNullable
 
 function Detail({ query, id, token, onBack }: { query: Query; id?: string | undefined; token?: string | undefined; onBack: () => void }) {
   const { t } = useTranslation();
+  const router = useRouter();
   const result = useFlightOffers(token ? { ...query, token } : query);
   const roundTrip = !!query.returnDate;
   return (
@@ -61,6 +62,11 @@ function Detail({ query, id, token, onBack }: { query: Query; id?: string | unde
               {offer.handoffUrl ? (
                 <Button label={t('flights.continueProvider')} onPress={() => void WebBrowser.openBrowserAsync(offer.handoffUrl as string)} />
               ) : null}
+              <Button
+                label={t('trips.addButton')}
+                variant="secondary"
+                onPress={() => router.push({ pathname: '/add-to-trip', params: { kind: 'flight', id: offer.id, title: `${query.from} → ${query.to}`, meta: `${offer.airline} · ${query.date}`, price: String(offer.price), currency: offer.currency } })}
+              />
               <Text className="text-xs text-ink-muted">{t('flights.noPayments')}</Text>
             </View>
           );

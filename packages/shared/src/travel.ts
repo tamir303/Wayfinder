@@ -166,19 +166,6 @@ export type Attraction = z.infer<typeof AttractionSchema>;
 export const AttractionListResponseSchema = z.object({ attractions: z.array(AttractionSchema) });
 export type AttractionListResponse = z.infer<typeof AttractionListResponseSchema>;
 
-export const TripStopSchema = z.object({ time: z.string(), title: z.string(), meta: z.string() });
-export const TripDaySchema = z.object({ label: z.string(), stops: z.array(TripStopSchema) });
-export const TripSchema = z.object({
-  id: z.string(),
-  name: z.string(),
-  dates: z.string(),
-  itemCount: z.number(),
-  days: z.array(TripDaySchema),
-});
-export type Trip = z.infer<typeof TripSchema>;
-export const TripListResponseSchema = z.object({ trips: z.array(TripSchema) });
-export type TripListResponse = z.infer<typeof TripListResponseSchema>;
-
 export const UsageResponseSchema = z.object({ used: z.number(), cap: z.number() });
 export type UsageResponse = z.infer<typeof UsageResponseSchema>;
 

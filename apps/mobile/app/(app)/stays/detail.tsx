@@ -41,7 +41,12 @@ function Reviews({ id }: { id: string }) {
 
 function Body({ d, trip, onCalendar }: { d: StayDetail; trip: StayTrip; onCalendar: () => void }) {
   const { t } = useTranslation();
+  const router = useRouter();
   const nights = nightsBetween(trip.checkIn, trip.checkOut);
+  const cheapest = d.offers[0];
+  const cost = cheapest ? (cheapest.totalPrice ?? (nights > 0 ? cheapest.pricePerNight * nights : cheapest.pricePerNight)) : undefined;
+  const addToTrip = () =>
+    router.push({ pathname: '/add-to-trip', params: { kind: 'stay', id: d.id, title: d.name, meta: `${trip.checkIn} → ${trip.checkOut}`, ...(cost === undefined ? {} : { price: String(cost), currency: d.currency }) } });
   const maxCount = Math.max(1, ...d.ratingBreakdown.map((r) => r.count));
   return (
     <View className="gap-3">
@@ -65,6 +70,7 @@ function Body({ d, trip, onCalendar }: { d: StayDetail; trip: StayTrip; onCalend
         </View>
       ))}
       <Button label={t('stays.calendar')} variant="secondary" onPress={onCalendar} />
+      <Button label={t('trips.addButton')} variant="secondary" onPress={addToTrip} />
 
       {d.amenities.length ? (
         <View className="gap-2">

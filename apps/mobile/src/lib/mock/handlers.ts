@@ -2,7 +2,7 @@ import type { ApiInit } from '../api';
 import { ApiClientError } from '../api-error';
 import { createSaved, listSaved, removeSaved, resetSaved } from './saved';
 import { buildStayDetail, listFavorites, putFavorite, removeFavorite, resetFavorites, stayCalendar, stayReviews, suggestStays } from './stays';
-import { AIRPORTS, ATTRACTIONS, buildCalendar, buildFlights, buildOutbound, buildReturn, STAYS, TRIPS } from './data';
+import { AIRPORTS, ATTRACTIONS, buildCalendar, buildFlights, buildOutbound, buildReturn, STAYS } from './data';
 
 const LATENCY_MS = 250;
 
@@ -88,8 +88,6 @@ export const mockRequest = async (path: string, init?: ApiInit): Promise<unknown
       return { stays: q === 'zzz' ? [] : STAYS, nextPageToken: null };
     case '/attractions':
       return { attractions: ATTRACTIONS };
-    case '/trips':
-      return { trips: TRIPS };
     case '/me/usage':
       return { used: 12, cap: 200 };
     default:

@@ -10,20 +10,6 @@ test('explore: category chips filter the attractions', async ({ page }) => {
   await expect(page.getByLabel('Colosseum')).toBeHidden();
 });
 
-test('trips: open the itinerary, switch days, see an empty day', async ({ page }) => {
-  await signIn(page);
-  await openTab(page, 'Trips');
-  await page.getByRole('button', { name: 'Rome getaway, 12 Dec - 15 Dec' }).click();
-  await expect(page).toHaveURL(/\/trip\/t1$/);
-  await expect(page.getByText('Colosseum').first()).toBeVisible();
-  await page.getByRole('button', { name: 'Day 2' }).click();
-  await expect(page.getByText('Trastevere Food Tour').last()).toBeVisible();
-  await page.getByRole('button', { name: 'Day 3' }).click();
-  await expect(page.getByText('Nothing planned for this day yet.')).toBeVisible();
-  await page.getByRole('button', { name: 'Back to trips' }).click();
-  await expect(page).toHaveURL(/\/trips$/);
-});
-
 test('profile shows the account and the daily search meter', async ({ page }) => {
   await signIn(page, 'someone@example.com');
   await openTab(page, 'Profile');
