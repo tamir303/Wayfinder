@@ -55,14 +55,24 @@ describe('mapFlights (real tlv-cdg fixture)', () => {
     expect(mapFlights(oneway).offers.map((o) => o.id)).toEqual(result.offers.map((o) => o.id));
   });
 
-  it('maps price insights', () => {
-    expect(result.insights).toEqual({ lowestPrice: 136, level: 'low' });
+  it('maps price insights with the typical range and a daily history', () => {
+    expect(result.insights).toMatchObject({ lowestPrice: 136, level: 'low', typicalRange: { low: 150, high: 255 } });
+    expect(result.insights!.history).toHaveLength(62);
+    expect(result.insights!.history[0]).toEqual({ date: '2026-09-20', price: 112 });
+    const dates = result.insights!.history.map((h) => h.date);
+    expect(dates).toEqual([...dates].sort());
+  });
+
+  it('stamps when the provider was queried', () => {
+    const at = new Date('2027-01-02T03:04:05.000Z');
+    expect(mapFlights(oneway, 'USD', at).asOf).toBe('2027-01-02T03:04:05.000Z');
+    expect(mapFlights({ error: "Google Flights hasn't returned any results for this query." }, 'USD', at).asOf).toBe('2027-01-02T03:04:05.000Z');
   });
 });
 
 describe('mapFlights edge cases', () => {
   it('treats the provider no-results message as an empty result', () => {
-    expect(mapFlights({ error: "Google Flights hasn't returned any results for this query." })).toEqual({
+    expect(mapFlights({ error: "Google Flights hasn't returned any results for this query." })).toMatchObject({
       offers: [],
       insights: null,
     });
@@ -84,7 +94,7 @@ describe('mapFlights edge cases', () => {
   });
 
   it('returns no offers when both lists are empty', () => {
-    expect(mapFlights({ best_flights: [], other_flights: [] })).toEqual({ offers: [], insights: null });
+    expect(mapFlights({ best_flights: [], other_flights: [] })).toMatchObject({ offers: [], insights: null });
   });
 });
 

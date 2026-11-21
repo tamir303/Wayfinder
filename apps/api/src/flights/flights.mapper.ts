@@ -23,11 +23,16 @@ const RawOfferSchema = z.object({
   booking_token: z.string().min(1).optional(),
   departure_token: z.string().min(1).optional(),
 }).refine((o) => o.booking_token !== undefined || o.departure_token !== undefined);
-const RawInsightsSchema = z.object({ lowest_price: z.number(), price_level: z.enum(['low', 'typical', 'high']) });
+const RawInsightsSchema = z.object({
+  lowest_price: z.number(),
+  price_level: z.enum(['low', 'typical', 'high']),
+  typical_price_range: z.tuple([z.number(), z.number()]).optional(),
+  price_history: z.array(z.tuple([z.number(), z.number()])).optional(),
+});
 
 /** An offer before the per-user handoff link is attached. bookingToken never leaves the API; returnToken goes to the client. */
 export type MappedOffer = Omit<FlightOffer, 'handoffUrl'> & { bookingToken: string | null };
-export type MappedFlights = { offers: MappedOffer[]; insights: FlightSearchResponse['insights'] };
+export type MappedFlights = { offers: MappedOffer[]; insights: FlightSearchResponse['insights']; asOf: string };
 
 // Only SerpAPI's explicit "no results" message is an empty result. Any other error (bad key, quota)
 // must surface as PROVIDER_DOWN so it is not cached as "no flights".
@@ -68,10 +73,11 @@ const toOffer = (raw: z.infer<typeof RawOfferSchema>, group: 'best' | 'other', c
   };
 };
 
-export const mapFlights = (raw: unknown, currency = 'USD'): MappedFlights => {
+export const mapFlights = (raw: unknown, currency = 'USD', now: Date = new Date()): MappedFlights => {
+  const asOf = now.toISOString(); // stored with the cached result, so it stays the time the provider was queried
   const error = providerError(raw);
   if (error !== undefined) {
-    if (NO_RESULTS.test(error)) return { offers: [], insights: null };
+    if (NO_RESULTS.test(error)) return { offers: [], insights: null, asOf };
     throw down('Flight search failed');
   }
   if (typeof raw !== 'object' || raw === null) throw down('Unexpected flights response');
@@ -92,7 +98,18 @@ export const mapFlights = (raw: unknown, currency = 'USD'): MappedFlights => {
   if (seen > 0 && offers.length === 0) throw down('Unexpected flights response');
 
   const insights = RawInsightsSchema.safeParse(body.price_insights);
-  return { offers, insights: insights.success ? { lowestPrice: insights.data.lowest_price, level: insights.data.price_level } : null };
+  return {
+    offers,
+    asOf,
+    insights: insights.success
+      ? {
+          lowestPrice: insights.data.lowest_price,
+          level: insights.data.price_level,
+          typicalRange: insights.data.typical_price_range ? { low: insights.data.typical_price_range[0], high: insights.data.typical_price_range[1] } : null,
+          history: (insights.data.price_history ?? []).map(([ts, price]) => ({ date: new Date(ts * 1000).toISOString().slice(0, 10), price })),
+        }
+      : null,
+  };
 };
 
 const RawBookingOptionSchema = z.object({

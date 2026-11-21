@@ -99,7 +99,8 @@ describe('GET /flights/search (e2e)', () => {
     const res = await get(`${SEARCH}&adults=2&cabin=business`).expect(200);
 
     expect(res.body.offers).toHaveLength(10);
-    expect(res.body.insights).toEqual({ lowestPrice: 136, level: 'low' });
+    expect(res.body.insights).toMatchObject({ lowestPrice: 136, level: 'low', typicalRange: { low: 150, high: 255 } });
+    expect(new Date(res.body.asOf).toString()).not.toBe('Invalid Date');
     expect(JSON.stringify(res.body)).not.toContain('bookingToken');
     expect(JSON.stringify(res.body)).not.toContain('booking_token');
 
@@ -128,7 +129,8 @@ describe('GET /flights/search (e2e)', () => {
   it('returns an empty result for the provider no-results message', async () => {
     fetchSpy.mockImplementation(async () => new Response(JSON.stringify({ error: "Google Flights hasn't returned any results for this query." }), { status: 200 }));
     const res = await get(`${SEARCH}&adults=4`).expect(200);
-    expect(res.body).toEqual({ offers: [], insights: null });
+    expect(res.body).toMatchObject({ offers: [], insights: null });
+    expect(typeof res.body.asOf).toBe('string');
   });
 
   it('answers 502 PROVIDER_DOWN for any other provider error and refunds the credit', async () => {

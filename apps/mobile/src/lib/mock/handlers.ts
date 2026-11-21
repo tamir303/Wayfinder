@@ -4,6 +4,17 @@ import { buildStayDetail, listFavorites, putFavorite, removeFavorite, resetFavor
 import { AIRPORTS, ATTRACTIONS, buildCalendar, buildFlights, buildOutbound, buildReturn, STAYS, TRIPS } from './data';
 
 const LATENCY_MS = 250;
+
+// 30 days of prices ending today, drifting around the typical range.
+const MOCK_INSIGHTS = () => ({
+  lowestPrice: 163,
+  level: 'low' as const,
+  typicalRange: { low: 180, high: 260 },
+  history: Array.from({ length: 30 }, (_, i) => ({
+    date: new Date(Date.now() - (29 - i) * 86_400_000).toISOString().slice(0, 10),
+    price: 170 + ((i * 17 + 5) % 70),
+  })),
+});
 const sleep = (ms: number) => new Promise<void>((resolve) => setTimeout(resolve, ms));
 
 // dev only. Special queries make error states easy to see: q=limit (rate limited), q=down (provider down), q=zzz (empty).
@@ -44,10 +55,10 @@ export const mockRequest = async (path: string, init?: ApiInit): Promise<unknown
     case '/flights/search': {
       const p = url.searchParams;
       const [from, to, date] = [p.get('from') ?? '', p.get('to') ?? '', p.get('date') ?? ''];
-      if (from === to) return { offers: [], insights: null };
+      if (from === to) return { offers: [], insights: null, asOf: new Date().toISOString() };
       const adults = Number(p.get('adults') ?? 1);
       const offers = p.get('returnDate') ? buildOutbound(from, to, date, adults) : buildFlights(from, to, date, adults);
-      return { offers, insights: { lowestPrice: 163, level: 'low' } };
+      return { offers, insights: MOCK_INSIGHTS(), asOf: new Date().toISOString() };
     }
     case '/flights/return': {
       const p = url.searchParams;
@@ -55,6 +66,7 @@ export const mockRequest = async (path: string, init?: ApiInit): Promise<unknown
       return {
         offers: buildReturn(p.get('from') ?? '', p.get('to') ?? '', p.get('returnDate') ?? '', Number(p.get('adults') ?? 1)),
         insights: null,
+        asOf: new Date().toISOString(),
       };
     }
     case '/flights/calendar': {

@@ -82,9 +82,21 @@ export const FlightOfferSchema = z.object({
 });
 export type FlightOffer = z.infer<typeof FlightOfferSchema>;
 
+export const FlightInsightsSchema = z.object({
+  lowestPrice: z.number(),
+  level: z.enum(['low', 'typical', 'high']),
+  /** Usual price range for this route, when the provider gives one. */
+  typicalRange: z.object({ low: z.number(), high: z.number() }).nullable().default(null),
+  /** Recent price per day for this route, oldest first. */
+  history: z.array(z.object({ date: z.string(), price: z.number() })).default([]),
+});
+export type FlightInsights = z.infer<typeof FlightInsightsSchema>;
+
 export const FlightSearchResponseSchema = z.object({
   offers: z.array(FlightOfferSchema),
-  insights: z.object({ lowestPrice: z.number(), level: z.enum(['low', 'typical', 'high']) }).nullable(),
+  insights: FlightInsightsSchema.nullable(),
+  /** When the provider was queried (ISO). Results can come from a cache up to 30 minutes old, so show this. */
+  asOf: z.string(),
 });
 export type FlightSearchResponse = z.infer<typeof FlightSearchResponseSchema>;
 

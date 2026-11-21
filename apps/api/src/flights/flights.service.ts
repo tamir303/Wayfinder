@@ -98,6 +98,7 @@ export class FlightsService {
     const now = Math.floor(Date.now() / 1000);
     return {
       insights: mapped.insights,
+      asOf: mapped.asOf,
       offers: mapped.offers.map(({ bookingToken, ...offer }) => {
         if (!bookingToken) return { ...offer, handoffUrl: null }; // round-trip outbound: pick a return flight first
         const payload: FlightHandoff = { userId, bookingToken, ...trip };
