@@ -240,3 +240,19 @@ export const StayDetailSchema = z.object({
 });
 export type StayDetail = z.infer<typeof StayDetailSchema>;
 export type StayOffer = z.infer<typeof StayOfferSchema>;
+
+export const FavoriteStayInputSchema = z.object({
+  /** The stay's id (provider property token). */
+  id: z.string().min(1).max(300),
+  name: z.string().min(1).max(200),
+  thumbnail: z.string().url().max(2000).nullable().default(null),
+  stars: z.number().min(0).max(5).nullable().default(null),
+  rating: z.number().min(0).max(5).nullable().default(null),
+  lat: z.number().min(-90).max(90),
+  lng: z.number().min(-180).max(180),
+});
+export type FavoriteStayInput = z.infer<typeof FavoriteStayInputSchema>;
+export const FavoriteStaySchema = FavoriteStayInputSchema.extend({ createdAt: z.string() });
+export type FavoriteStay = z.infer<typeof FavoriteStaySchema>;
+export const FavoriteStayListResponseSchema = z.object({ favorites: z.array(FavoriteStaySchema) });
+export type FavoriteStayListResponse = z.infer<typeof FavoriteStayListResponseSchema>;

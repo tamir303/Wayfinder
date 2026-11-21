@@ -15,6 +15,7 @@ model Profile {
   searchLogs    SearchLog[]
   handoffClicks HandoffClick[]
   savedSearches SavedSearch[]
+  favoriteStays FavoriteStay[]
 
   @@map("profiles")
 }
@@ -61,4 +62,23 @@ model SavedSearch {
   @@unique([userId, fromCode, toCode, date, adults, cabin])
   @@index([userId, createdAt])
   @@map("saved_searches")
+}
+
+// A saved stay. Snapshots what the list needs to render without another provider call.
+model FavoriteStay {
+  id        String   @id @default(uuid()) @db.Uuid
+  userId    String   @map("user_id") @db.Uuid
+  stayId    String   @map("stay_id") // provider property token
+  name      String
+  thumbnail String?
+  stars     Float?
+  rating    Float?
+  lat       Float
+  lng       Float
+  createdAt DateTime @default(now()) @map("created_at")
+  profile   Profile  @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, stayId])
+  @@index([userId, createdAt])
+  @@map("favorite_stays")
 }
