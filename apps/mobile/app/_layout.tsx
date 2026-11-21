@@ -1,4 +1,5 @@
 import '../global.css';
+import i18n from '../src/i18n';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Slot, type ErrorBoundaryProps } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
@@ -12,10 +13,10 @@ export function ErrorBoundary({ error, retry }: ErrorBoundaryProps) {
   log.error('screen crashed', { message: error.message });
   return (
     <View className="flex-1 items-center justify-center gap-3 bg-surface px-gutter">
-      <Text accessibilityRole="header" className="text-2xl font-bold text-ink">Something went wrong</Text>
-      <Text className="text-center text-ink-muted">Please try again.</Text>
-      <Pressable accessibilityRole="button" accessibilityLabel="Try again" onPress={() => void retry()} className="rounded-card bg-brand px-6 py-3">
-        <Text className="font-semibold text-white">Try again</Text>
+      <Text accessibilityRole="header" className="text-2xl font-bold text-ink">{i18n.t('errors.crashTitle')}</Text>
+      <Text className="text-center text-ink-muted">{i18n.t('errors.crashBody')}</Text>
+      <Pressable accessibilityRole="button" accessibilityLabel={i18n.t('common.tryAgain')} onPress={() => void retry()} className="rounded-card bg-brand px-6 py-3">
+        <Text className="font-semibold text-white">{i18n.t('common.tryAgain')}</Text>
       </Pressable>
     </View>
   );

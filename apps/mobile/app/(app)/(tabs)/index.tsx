@@ -1,6 +1,7 @@
 import type { GeoSuggestion } from '@wayfinder/shared';
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Pressable, Text, View } from 'react-native';
 import { Button } from '../../../src/components/Button';
 import { Chip } from '../../../src/components/Chip';
@@ -16,6 +17,7 @@ const CABINS = ['economy', 'premium', 'business', 'first'] as const;
 type FieldProps = { label: string; value: GeoSuggestion | null; onChange: (v: GeoSuggestion | null) => void };
 
 const AirportField = ({ label, value, onChange }: FieldProps) => {
+  const { t } = useTranslation();
   const [text, setText] = useState('');
   const query = useGeoSuggest(text);
   const state = toSuggestUiState({ text, isFetching: query.isFetching, error: query.error, data: query.data });
@@ -24,7 +26,7 @@ const AirportField = ({ label, value, onChange }: FieldProps) => {
       <Input
         label={label}
         value={value ? `${value.city} (${value.code})` : text}
-        placeholder="City or airport"
+        placeholder={t('flights.airportPlaceholder')}
         onChangeText={(t) => {
           onChange(null);
           setText(t);
@@ -38,12 +40,13 @@ const AirportField = ({ label, value, onChange }: FieldProps) => {
         </View>
       ) : null}
       {!value && state.kind === 'error' ? <Text className="pt-1 text-danger">{state.message}</Text> : null}
-      {!value && state.kind === 'empty' ? <Text className="pt-1 text-ink-muted">No airports found.</Text> : null}
+      {!value && state.kind === 'empty' ? <Text className="pt-1 text-ink-muted">{t('flights.noAirports')}</Text> : null}
     </View>
   );
 };
 
 export default function FlightSearch() {
+  const { t } = useTranslation();
   const router = useRouter();
   const [from, setFrom] = useState<GeoSuggestion | null>(null);
   const [to, setTo] = useState<GeoSuggestion | null>(null);
@@ -56,27 +59,27 @@ export default function FlightSearch() {
   const canSearch = !!from && !!to && dateOk && !sameAirport;
 
   return (
-    <Screen title="Flights" subtitle="One-way search. Booking happens on the provider's site.">
-      <AirportField label="From" value={from} onChange={setFrom} />
-      <AirportField label="To" value={to} onChange={setTo} />
-      <Input label="Date (YYYY-MM-DD)" value={date} onChangeText={setDate} keyboardType="numbers-and-punctuation" />
-      {!dateOk ? <Text className="text-danger">Enter a future date as YYYY-MM-DD.</Text> : null}
-      {sameAirport ? <Text className="text-danger">Choose two different airports.</Text> : null}
+    <Screen title={t('flights.title')} subtitle={t('flights.subtitle')}>
+      <AirportField label={t('flights.from')} value={from} onChange={setFrom} />
+      <AirportField label={t('flights.to')} value={to} onChange={setTo} />
+      <Input label={t('flights.dateLabel')} value={date} onChangeText={setDate} keyboardType="numbers-and-punctuation" />
+      {!dateOk ? <Text className="text-danger">{t('flights.dateInvalid')}</Text> : null}
+      {sameAirport ? <Text className="text-danger">{t('flights.sameAirport')}</Text> : null}
       <View className="flex-row items-center justify-between">
-        <Text className="text-base text-ink">Passengers</Text>
+        <Text className="text-base text-ink">{t('flights.passengers')}</Text>
         <View className="flex-row items-center gap-4">
-          <Pressable accessibilityLabel="Fewer passengers" accessibilityRole="button" disabled={adults <= 1} onPress={() => setAdults(adults - 1)} className="h-9 w-9 items-center justify-center rounded-full border border-line"><Text className="text-lg text-ink">−</Text></Pressable>
-          <Text accessibilityLabel={`${adults} ${adults === 1 ? "passenger" : "passengers"}`} className="w-6 text-center text-lg font-semibold text-ink">{adults}</Text>
-          <Pressable accessibilityLabel="More passengers" accessibilityRole="button" disabled={adults >= 9} onPress={() => setAdults(adults + 1)} className="h-9 w-9 items-center justify-center rounded-full border border-line"><Text className="text-lg text-ink">+</Text></Pressable>
+          <Pressable accessibilityLabel={t('flights.fewer')} accessibilityRole="button" disabled={adults <= 1} onPress={() => setAdults(adults - 1)} className="h-9 w-9 items-center justify-center rounded-full border border-line"><Text className="text-lg text-ink">−</Text></Pressable>
+          <Text accessibilityLabel={t('flights.passengerCount', { count: adults })} className="w-6 text-center text-lg font-semibold text-ink">{adults}</Text>
+          <Pressable accessibilityLabel={t('flights.more')} accessibilityRole="button" disabled={adults >= 9} onPress={() => setAdults(adults + 1)} className="h-9 w-9 items-center justify-center rounded-full border border-line"><Text className="text-lg text-ink">+</Text></Pressable>
         </View>
       </View>
       <View className="flex-row flex-wrap gap-2">
         {CABINS.map((c) => (
-          <Chip key={c} label={c[0].toUpperCase() + c.slice(1)} selected={cabin === c} onPress={() => setCabin(c)} />
+          <Chip key={c} label={t(`flights.cabin.${c}`)} selected={cabin === c} onPress={() => setCabin(c)} />
         ))}
       </View>
       <Button
-        label="Search flights"
+        label={t('flights.search')}
         disabled={!canSearch}
         onPress={() => router.push({ pathname: '/flights/results', params: { from: from!.code, to: to!.code, date, adults: String(adults), cabin } })}
       />

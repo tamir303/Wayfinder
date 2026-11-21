@@ -1,5 +1,6 @@
 import { Redirect } from 'expo-router';
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Pressable, Text, View } from 'react-native';
 import { Button } from '../../src/components/Button';
 import { Input } from '../../src/components/Input';
@@ -9,6 +10,7 @@ import { auth } from '../../src/lib/auth';
 type Step = 'email' | 'code';
 
 export default function SignIn() {
+  const { t } = useTranslation();
   const { session } = useSession();
   const [step, setStep] = useState<Step>('email');
   const [email, setEmail] = useState('');
@@ -23,7 +25,7 @@ export default function SignIn() {
     setError(null);
     const err = await auth.sendCode(email.trim()).then(() => null, (e: unknown) => e);
     setBusy(false);
-    if (err) setError('Could not send the code. Check the email address and try again.');
+    if (err) setError(t('auth.sendFailed'));
     else setStep('code');
   };
 
@@ -32,7 +34,7 @@ export default function SignIn() {
     setError(null);
     const err = await auth.verifyCode(email.trim(), code.trim()).then(() => null, (e: unknown) => e);
     setBusy(false);
-    if (err) setError('That code is invalid or expired.');
+    if (err) setError(t('auth.codeInvalid'));
     // On success onAuthStateChange updates the session and the redirect above runs.
   };
 
@@ -45,29 +47,29 @@ export default function SignIn() {
       {step === 'email' ? (
         <>
           <Input
-            label="Email"
+            label={t('auth.emailLabel')}
             value={email}
             onChangeText={setEmail}
             keyboardType="email-address"
             autoComplete="email"
-            placeholder="you@example.com"
+            placeholder={t('auth.emailPlaceholder')}
           />
-          <Button label="Email me a code" disabled={!canSend} busy={busy} onPress={() => void sendCode()} />
+          <Button label={t('auth.sendCode')} disabled={!canSend} busy={busy} onPress={() => void sendCode()} />
         </>
       ) : (
         <>
-          <Text className="text-ink-muted">Enter the 6-digit code sent to {email}.</Text>
+          <Text className="text-ink-muted">{t('auth.enterCode', { email })}</Text>
           <Input
-            label="Code"
+            label={t('auth.codeLabel')}
             value={code}
             onChangeText={setCode}
             keyboardType="number-pad"
             textContentType="oneTimeCode"
             maxLength={10}
           />
-          <Button label="Sign in" disabled={!canVerify} busy={busy} onPress={() => void verify()} />
-          <Pressable accessibilityRole="button" accessibilityLabel="Use a different email" onPress={() => { setStep('email'); setCode(''); setError(null); }}>
-            <Text className="text-center text-brand">Use a different email</Text>
+          <Button label={t('auth.signIn')} disabled={!canVerify} busy={busy} onPress={() => void verify()} />
+          <Pressable accessibilityRole="button" accessibilityLabel={t('auth.differentEmail')} onPress={() => { setStep('email'); setCode(''); setError(null); }}>
+            <Text className="text-center text-brand">{t('auth.differentEmail')}</Text>
           </Pressable>
         </>
       )}

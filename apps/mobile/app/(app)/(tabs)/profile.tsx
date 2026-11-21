@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import { Text, View } from 'react-native';
 import { Button } from '../../../src/components/Button';
 import { QueryState } from '../../../src/components/QueryState';
@@ -8,31 +9,32 @@ import { auth } from '../../../src/lib/auth';
 import { useSession } from '../../../src/lib/session';
 
 export default function Profile() {
+  const { t } = useTranslation();
   const { session } = useSession();
   const usage = useUsage();
   return (
-    <Screen title="Profile">
+    <Screen title={t('profile.title')}>
       <View className="gap-1 rounded-card border border-line p-4">
-        <Text className="text-sm text-ink-muted">Signed in as</Text>
-        <Text accessibilityLabel="Account email" className="text-base font-semibold text-ink">{session?.email}</Text>
+        <Text className="text-sm text-ink-muted">{t('profile.signedInAs')}</Text>
+        <Text accessibilityLabel={t('profile.email')} className="text-base font-semibold text-ink">{session?.email}</Text>
       </View>
       <View className="gap-2 rounded-card border border-line p-4">
-        <Text className="text-sm text-ink-muted">Daily searches</Text>
+        <Text className="text-sm text-ink-muted">{t('profile.daily')}</Text>
         <QueryState query={usage}>
           {({ used, cap }) => (
             <View className="gap-2">
-              <View className="h-2 overflow-hidden rounded-full bg-surface-muted" accessibilityLabel={`${used} of ${cap} searches used`}>
+              <View className="h-2 overflow-hidden rounded-full bg-surface-muted" accessibilityLabel={t('profile.usageLabel', { used, cap })}>
                 <View style={{ width: `${Math.min(100, (used / cap) * 100)}%` }} className="h-2 bg-brand" />
               </View>
-              <Text className="text-ink">{used} of {cap} used today</Text>
+              <Text className="text-ink">{t('profile.usage', { used, cap })}</Text>
             </View>
           )}
         </QueryState>
       </View>
-      <Text accessibilityLabel="Environment" className="text-xs text-ink-muted">
-        Environment: {config.appEnv}{config.useMocks ? ' (mock data)' : ''}
+      <Text accessibilityLabel={t('profile.environment', { env: config.appEnv })} className="text-xs text-ink-muted">
+        {t('profile.environment', { env: config.appEnv })}{config.useMocks ? t('profile.mock') : ''}
       </Text>
-      <Button label="Sign out" variant="secondary" onPress={() => void auth.signOut()} />
+      <Button label={t('common.signOut')} variant="secondary" onPress={() => void auth.signOut()} />
     </Screen>
   );
 }
