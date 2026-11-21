@@ -36,6 +36,8 @@ export const buildFlights = (from: string, to: string, date: string, adults: num
       legs: [
         { fromCode: from, toCode: to, departTime: `${date} ${hhmm(t.depart)}`, arriveTime: `${date} ${hhmm(arrive)}`, airline: t.airline, flightNumber: t.flight, durationMin: t.duration },
       ],
+      layovers: t.stops ? [{ code: 'ATH', name: 'Athens International Airport', durationMin: 120 }] : [],
+      emissions: { grams: 250_000 + i * 12_000, typicalGrams: 309_000, diffPercent: -19 + i * 5 },
       handoffUrl: `https://example.com/mock-handoff?offer=${i}`,
     };
   });

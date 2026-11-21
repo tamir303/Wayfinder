@@ -7,6 +7,7 @@ import { JwtVerifier } from '../src/auth/jwt-verifier';
 import { ENV, REDIS } from '../src/common/tokens';
 import { HandoffSigner } from '../src/handoff/handoff-signer';
 import { PrismaService } from '../src/prisma/prisma.service';
+import bookingFixture from './fixtures/google_flights/tlv-cdg-oneway-booking.json';
 import fixture from './fixtures/google_flights/tlv-cdg-oneway.json';
 import { FakeRedis } from './fake-redis';
 import { testEnv } from './test-env';
@@ -21,6 +22,7 @@ describe('GET /flights/search (e2e)', () => {
   let token: string;
   let fetchSpy: jest.SpyInstance;
   const searchLogCreate = jest.fn().mockResolvedValue({});
+  const handoffCreate = jest.fn().mockResolvedValue({});
 
   beforeAll(async () => {
     const keys = await generateKeyPair('ES256');
@@ -35,11 +37,11 @@ describe('GET /flights/search (e2e)', () => {
 
     const moduleRef = await Test.createTestingModule({ imports: [AppModule] })
       .overrideProvider(ENV)
-      .useValue({ ...testEnv, DAILY_CREDIT_CAP: 5 })
+      .useValue({ ...testEnv, DAILY_CREDIT_CAP: 50 })
       .overrideProvider(REDIS)
       .useValue(new FakeRedis())
       .overrideProvider(PrismaService)
-      .useValue({ searchLog: { create: searchLogCreate } })
+      .useValue({ searchLog: { create: searchLogCreate }, handoffClick: { create: handoffCreate } })
       .overrideProvider(JwtVerifier)
       .useValue(new JwtVerifier(async () => keys.publicKey, ISSUER))
       .compile();
@@ -49,7 +51,11 @@ describe('GET /flights/search (e2e)', () => {
 
   beforeEach(() => {
     searchLogCreate.mockClear();
-    fetchSpy = jest.spyOn(global, 'fetch').mockImplementation(async () => new Response(JSON.stringify(fixture), { status: 200 }));
+    handoffCreate.mockClear();
+    fetchSpy = jest.spyOn(global, 'fetch').mockImplementation(async (input) => {
+      const isBooking = new URL(String(input)).searchParams.has('booking_token');
+      return new Response(JSON.stringify(isBooking ? bookingFixture : fixture), { status: 200 });
+    });
   });
   afterEach(() => jest.restoreAllMocks());
   afterAll(async () => app.close());
@@ -118,5 +124,85 @@ describe('GET /flights/search (e2e)', () => {
     const res = await get(`${SEARCH}&adults=5`).expect(502);
     expect(res.body.code).toBe('PROVIDER_DOWN');
     expect((await get('/me/usage').expect(200)).body.used).toBe(before);
+  });
+
+  describe('GET /flights/handoff', () => {
+    const signer = new HandoffSigner(testEnv.HANDOFF_SECRET);
+    const now = () => Math.floor(Date.now() / 1000);
+    const refPayload = { userId: USER_ID, bookingToken: 'TOKEN+/=', from: 'TLV', to: 'CDG', date: FUTURE, adults: 1, cabin: 'economy' };
+    const used = async () => (await get('/me/usage').expect(200)).body.used as number;
+
+    const handoffPath = async (query = '&adults=6') => {
+      const res = await get(`${SEARCH}${query}`).expect(200);
+      const url = new URL(res.body.offers[0].handoffUrl);
+      return url.pathname + url.search;
+    };
+
+    it('is public and shows a chooser when several providers sell the flight', async () => {
+      const path = await handoffPath('&adults=6');
+      const before = await used();
+      const res = await get(path, false).expect(200);
+
+      expect(res.headers['content-type']).toMatch(/text\/html/);
+      expect(res.headers['cache-control']).toBe('no-store');
+      expect(res.headers['content-security-policy']).toContain('form-action https://www.google.com');
+      expect(res.text).toContain('Choose where to book');
+      expect(res.text).toContain('El Al');
+      expect(res.text).toContain('Air France');
+      expect(res.text).toContain('action="https://www.google.com/travel/clk/f"');
+      expect(res.text).not.toContain('<script');
+
+      const lookup = new URL(String(fetchSpy.mock.calls.at(-1)![0]));
+      expect(lookup.searchParams.get('departure_id')).toBe('TLV');
+      expect(lookup.searchParams.get('arrival_id')).toBe('CDG');
+      expect(lookup.searchParams.get('booking_token')).toBeTruthy();
+      expect(await used()).toBe(before + 1);
+      expect(handoffCreate).toHaveBeenCalledWith({
+        data: { userId: USER_ID, kind: 'flight', provider: 'multiple', price: 226, currency: 'USD' },
+      });
+    });
+
+    it('auto-submits the POST when there is a single provider, with a matching nonce', async () => {
+      const path = await handoffPath('&adults=7');
+      const one = { ...bookingFixture, booking_options: [bookingFixture.booking_options[0]] };
+      fetchSpy.mockImplementation(async () => new Response(JSON.stringify(one), { status: 200 }));
+      const res = await get(path, false).expect(200);
+
+      const nonce = /<script nonce="([^"]+)">/.exec(res.text)?.[1];
+      expect(nonce).toBeTruthy();
+      expect(res.headers['content-security-policy']).toContain(`script-src 'nonce-${nonce}'`);
+      expect(res.text).toContain('<form id="go" method="post" action="https://www.google.com/travel/clk/f">');
+      expect(handoffCreate).toHaveBeenCalledWith({
+        data: expect.objectContaining({ provider: 'El Al' }),
+      });
+    });
+
+    it.each([
+      ['a missing ref', '/flights/handoff'],
+      ['a garbage ref', '/flights/handoff?ref=nonsense'],
+      ['a tampered ref', `/flights/handoff?ref=${signer.sign(refPayload, now(), 600).split('.')[0]}.AAAA`],
+    ])('rejects %s with an HTML 400 and spends nothing', async (_n, path) => {
+      const before = await used();
+      const res = await get(path, false).expect(400);
+      expect(res.headers['content-type']).toMatch(/text\/html/);
+      expect(res.text).toContain('We could not open that booking page');
+      expect(await used()).toBe(before);
+      expect(handoffCreate).not.toHaveBeenCalled();
+    });
+
+    it('rejects an expired ref', async () => {
+      const expired = signer.sign(refPayload, now() - 10_000, 60);
+      await get(`/flights/handoff?ref=${expired}`, false).expect(400);
+    });
+
+    it('answers a 502 page and refunds the credit when the provider lookup fails', async () => {
+      const path = await handoffPath('&adults=8');
+      const before = await used();
+      fetchSpy.mockImplementation(async () => new Response(JSON.stringify({ error: 'booking token expired' }), { status: 200 }));
+      const res = await get(path, false).expect(502);
+      expect(res.text).toContain('We could not open that booking page');
+      expect(await used()).toBe(before);
+      expect(handoffCreate).not.toHaveBeenCalled();
+    });
   });
 });

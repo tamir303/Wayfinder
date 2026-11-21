@@ -10,9 +10,10 @@ datasource db {
 }
 
 model Profile {
-  id         String      @id @db.Uuid
-  createdAt  DateTime    @default(now()) @map("created_at")
-  searchLogs SearchLog[]
+  id            String         @id @db.Uuid
+  createdAt     DateTime       @default(now()) @map("created_at")
+  searchLogs    SearchLog[]
+  handoffClicks HandoffClick[]
 
   @@map("profiles")
 }
@@ -28,4 +29,19 @@ model SearchLog {
 
   @@index([userId, createdAt])
   @@map("search_logs")
+}
+
+// One row each time a user is handed off to a provider's booking page ("book this" is an outbound link).
+model HandoffClick {
+  id        String   @id @default(uuid()) @db.Uuid
+  userId    String   @map("user_id") @db.Uuid
+  kind      String // 'flight' for now; 'stay' later
+  provider  String // provider name, or 'multiple' when the user chose on the handoff page
+  price     Int? // indicative price at the time of handoff, in the response currency
+  currency  String?
+  createdAt DateTime @default(now()) @map("created_at")
+  profile   Profile  @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, createdAt])
+  @@map("handoff_clicks")
 }
