@@ -5,6 +5,7 @@ import express from 'express';
 import type { IncomingMessage, ServerResponse } from 'node:http';
 import { AppModule } from '../src/app.module';
 import { applyCors } from '../src/common/cors';
+import { applySwagger } from '../src/common/swagger';
 import { ENV } from '../src/common/tokens';
 import type { Env } from '../src/config/env';
 
@@ -17,6 +18,7 @@ const createServer = async (): Promise<express.Express> => {
     logger: ['error', 'warn'],
   });
   applyCors(app, app.get<Env>(ENV));
+  applySwagger(app);
   await app.init();
   return server;
 };

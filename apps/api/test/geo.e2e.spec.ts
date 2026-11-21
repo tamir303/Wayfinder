@@ -4,6 +4,7 @@ import { generateKeyPair, SignJWT } from 'jose';
 import request from 'supertest';
 import { AppModule } from '../src/app.module';
 import { applyCors } from '../src/common/cors';
+import { applySwagger } from '../src/common/swagger';
 import { JwtVerifier } from '../src/auth/jwt-verifier';
 import { ENV, REDIS } from '../src/common/tokens';
 import { PrismaService } from '../src/prisma/prisma.service';
@@ -44,6 +45,7 @@ describe('GET /geo/suggest (e2e)', () => {
 
     app = moduleRef.createNestApplication();
     applyCors(app, testEnv);
+    applySwagger(app);
     await app.init();
   });
 
@@ -64,6 +66,20 @@ describe('GET /geo/suggest (e2e)', () => {
 
   it('GET /health is public', async () => {
     await get('/health', false).expect(200, { ok: true });
+  });
+
+  it('serves Swagger UI at the root URL without a token', async () => {
+    const res = await get('/', false).expect(200);
+    expect(res.headers['content-type']).toMatch(/html/);
+    expect(res.text.toLowerCase()).toContain('swagger');
+  });
+
+  it('documents the geo endpoint with bearer auth in the OpenAPI JSON', async () => {
+    const res = await get('/openapi.json', false).expect(200);
+    const op = res.body.paths['/geo/suggest'].get;
+    expect(op.security).toEqual([{ bearer: [] }]);
+    expect(op.parameters.map((p: { name: string }) => p.name)).toEqual(expect.arrayContaining(['q']));
+    expect(res.body.paths['/health']).toBeDefined();
   });
 
   it('answers a CORS preflight for the web origin only', async () => {
