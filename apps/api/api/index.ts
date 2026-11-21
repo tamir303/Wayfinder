@@ -5,17 +5,23 @@ import express from 'express';
 import type { IncomingMessage, ServerResponse } from 'node:http';
 import { AppModule } from '../src/app.module';
 
-let cached: express.Express | undefined;
+// Cache the promise, not the result, so concurrent cold-start requests share one app.
+let cached: Promise<express.Express> | undefined;
 
-const getServer = async (): Promise<express.Express> => {
-  if (!cached) {
-    const server = express();
-    const app = await NestFactory.create(AppModule, new ExpressAdapter(server), {
-      logger: ['error', 'warn'],
-    });
-    await app.init();
-    cached = server;
-  }
+const createServer = async (): Promise<express.Express> => {
+  const server = express();
+  const app = await NestFactory.create(AppModule, new ExpressAdapter(server), {
+    logger: ['error', 'warn'],
+  });
+  await app.init();
+  return server;
+};
+
+const getServer = (): Promise<express.Express> => {
+  cached ??= createServer().catch((error) => {
+    cached = undefined; // do not cache a failed boot
+    throw error;
+  });
   return cached;
 };
 

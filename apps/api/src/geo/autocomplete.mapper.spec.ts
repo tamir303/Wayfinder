@@ -67,6 +67,12 @@ describe('mapAutocomplete', () => {
     });
   });
 
+  it('throws PROVIDER_DOWN on any other provider error string, so it is never cached as empty', () => {
+    expect(() => mapAutocomplete({ error: 'Invalid API key. Your API key should be here: ...' })).toThrow(
+      expect.objectContaining({ code: 'PROVIDER_DOWN' }),
+    );
+  });
+
   it('throws PROVIDER_DOWN on an unexpected shape', () => {
     expect(() => mapAutocomplete({ foo: 1 })).toThrow(
       expect.objectContaining({ code: 'PROVIDER_DOWN' }),

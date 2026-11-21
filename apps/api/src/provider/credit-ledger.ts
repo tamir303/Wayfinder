@@ -17,16 +17,18 @@ export class CreditLedger {
     return `credits:${userId}:${new Date().toISOString().slice(0, 10)}`;
   }
 
-  async assertAvailable(userId: string): Promise<void> {
-    const used = Number((await this.redis.get(this.key(userId))) ?? 0);
-    if (used >= this.env.DAILY_CREDIT_CAP) {
+  // Reserve before the paid call: INCR is atomic, so parallel requests cannot overshoot the cap.
+  async reserve(userId: string): Promise<void> {
+    const key = this.key(userId);
+    const used = await this.redis.incr(key);
+    await this.redis.expire(key, TWO_DAYS_SECONDS);
+    if (used > this.env.DAILY_CREDIT_CAP) {
+      await this.redis.decr(key);
       throw new AppError('RATE_LIMITED', 'Daily search limit reached');
     }
   }
 
-  async consume(userId: string): Promise<void> {
-    const key = this.key(userId);
-    const used = await this.redis.incr(key);
-    if (used === 1) await this.redis.expire(key, TWO_DAYS_SECONDS);
+  async refund(userId: string): Promise<void> {
+    await this.redis.decr(this.key(userId));
   }
 }

@@ -121,6 +121,33 @@ describe('SerpApiClient', () => {
     expect(fetchSpy).not.toHaveBeenCalled();
   });
 
+  it('never exceeds the cap under parallel distinct queries', async () => {
+    const { client } = setup(2);
+    fetchSpy.mockImplementation(async () => ok({ n: 1 }));
+    const results = await Promise.allSettled(
+      ['a1', 'b2', 'c3', 'd4', 'e5'].map((q) => call(client, q)),
+    );
+    expect(fetchSpy).toHaveBeenCalledTimes(2);
+    expect(results.filter((r) => r.status === 'rejected')).toHaveLength(3);
+  });
+
+  it('refunds the reserved credit when the provider call fails', async () => {
+    const { client } = setup(1);
+    fetchSpy.mockResolvedValueOnce(status(400));
+    await expect(call(client, 'paris')).rejects.toMatchObject({ code: 'BAD_QUERY' });
+    fetchSpy.mockResolvedValueOnce(ok({ n: 1 }));
+    await expect(call(client, 'london')).resolves.toEqual({ n: 1 });
+  });
+
+  it('treats a corrupt cache entry as a miss and refetches', async () => {
+    const { client, redis } = setup();
+    const key = cacheKey('google_flights_autocomplete', canonicalize({ q: 'tel aviv', hl: 'en' }));
+    await redis.set(key, '{not json');
+    fetchSpy.mockResolvedValue(ok({ fresh: true }));
+    await expect(call(client)).resolves.toEqual({ fresh: true });
+    expect(await redis.get(key)).toBe(JSON.stringify({ fresh: true }));
+  });
+
   it('does not cache or charge when the mapper throws', async () => {
     const { client, redis, searchLog } = setup();
     fetchSpy.mockResolvedValue(ok({ bad: true }));
@@ -128,7 +155,9 @@ describe('SerpApiClient', () => {
       throw new Error('mapper failed');
     };
     await expect(call(client, 'tel aviv', map)).rejects.toThrow('mapper failed');
-    expect(redis.store.size).toBe(0);
+    const entries = [...redis.store.entries()];
+    expect(entries.filter(([k]) => !k.startsWith('credits:'))).toEqual([]);
+    expect(entries.filter(([k]) => k.startsWith('credits:')).map(([, v]) => v)).toEqual(['0']);
     expect(searchLog.record).not.toHaveBeenCalled();
   });
 

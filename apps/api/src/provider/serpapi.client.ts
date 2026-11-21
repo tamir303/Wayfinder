@@ -50,11 +50,16 @@ export class SerpApiClient {
     }
 
     try {
-      await this.ledger.assertAvailable(opts.userId);
-      const raw = await this.fetchWithRetry(opts.engine, canonical);
-      const mapped = this.mapOrLog(opts, raw);
-      await this.redis.set(key, JSON.stringify(mapped), 'EX', opts.ttlSeconds);
-      await this.ledger.consume(opts.userId);
+      await this.ledger.reserve(opts.userId);
+      let mapped: T;
+      try {
+        const raw = await this.fetchWithRetry(opts.engine, canonical);
+        mapped = this.mapOrLog(opts, raw);
+      } catch (error) {
+        await this.ledger.refund(opts.userId);
+        throw error;
+      }
+      await this.writeCache(key, mapped, opts.ttlSeconds);
       await this.searchLog.record({
         userId: opts.userId,
         engine: opts.engine,
@@ -63,7 +68,7 @@ export class SerpApiClient {
       });
       return mapped;
     } finally {
-      if (gotLock) await this.redis.del(lockKey);
+      if (gotLock) await this.releaseLock(lockKey);
     }
   }
 
@@ -77,9 +82,31 @@ export class SerpApiClient {
     return value;
   }
 
+  // A broken cache must never block the request: treat read/parse errors as a miss.
   private async readCache<T>(key: string): Promise<T | undefined> {
-    const raw = await this.redis.get(key);
-    return raw === null ? undefined : (JSON.parse(raw) as T);
+    try {
+      const raw = await this.redis.get(key);
+      return raw === null ? undefined : (JSON.parse(raw) as T);
+    } catch (error) {
+      this.logger.warn(`cache read failed: ${(error as Error).message}`);
+      return undefined;
+    }
+  }
+
+  private async writeCache<T>(key: string, value: T, ttlSeconds: number): Promise<void> {
+    try {
+      await this.redis.set(key, JSON.stringify(value), 'EX', ttlSeconds);
+    } catch (error) {
+      this.logger.warn(`cache write failed: ${(error as Error).message}`);
+    }
+  }
+
+  private async releaseLock(lockKey: string): Promise<void> {
+    try {
+      await this.redis.del(lockKey);
+    } catch (error) {
+      this.logger.warn(`lock release failed: ${(error as Error).message}`);
+    }
   }
 
   private async waitForCache<T>(key: string): Promise<T | undefined> {
