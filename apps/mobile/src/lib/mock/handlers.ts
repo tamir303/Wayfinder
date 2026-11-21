@@ -47,6 +47,9 @@ export const mockRequest = async (path: string, init?: ApiInit): Promise<unknown
   }
 
   switch (url.pathname) {
+    case '/maps/config':
+      // Dev can try the real map by setting EXPO_PUBLIC_MAP_STYLE_URL; otherwise the placeholder is used.
+      return { styleUrl: process.env.EXPO_PUBLIC_MAP_STYLE_URL || null };
     case '/stays/suggest':
       return suggestStays(q);
     case '/me/favorites/stays':

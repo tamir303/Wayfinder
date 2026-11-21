@@ -38,6 +38,16 @@ test('search, sort by price, and switch to the map to select a stay', async ({ p
   await expect(panel.getByRole('button', { name: 'View deal' })).toBeVisible();
 });
 
+test('the map view renders a real MapLibre map with price pins that select a stay', async ({ page }) => {
+  await searchRome(page);
+  await page.getByRole('button', { name: 'Map', exact: true }).click();
+  await expect(page.locator('.maplibregl-canvas')).toBeVisible(); // the real map, not the placeholder
+  const pin = page.getByRole('button', { name: /Map pin Casa Rossa/ });
+  await expect(pin).toBeVisible();
+  await pin.click();
+  await expect(page.getByLabel('Selected stay Casa Rossa')).toBeVisible();
+});
+
 test('save a stay, find it under Saved, and remove it', async ({ page }) => {
   await searchRome(page);
   await page.getByRole('button', { name: 'Save Hotel Eden' }).click();

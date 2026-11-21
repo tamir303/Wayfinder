@@ -2,6 +2,11 @@ import { defineConfig, devices } from '@playwright/test';
 
 const PORT = 4173;
 
+// An offline MapLibre style (a flat background, no tiles) so the real map renders in tests without a network or key.
+const TEST_MAP_STYLE = `data:application/json,${encodeURIComponent(
+  JSON.stringify({ version: 8, name: 'test', sources: {}, layers: [{ id: 'bg', type: 'background', paint: { 'background-color': '#E6F0FB' } }] }),
+)}`;
+
 // Runs against the dev environment build (mock data, no network).
 export default defineConfig({
   testDir: './e2e',
@@ -16,6 +21,7 @@ export default defineConfig({
   webServer: {
     command: `pnpm run export:web && node scripts/serve-dist.mjs ${PORT}`,
     url: `http://localhost:${PORT}`,
+    env: { EXPO_PUBLIC_MAP_STYLE_URL: TEST_MAP_STYLE },
     reuseExistingServer: !process.env.CI,
     timeout: 240_000,
   },

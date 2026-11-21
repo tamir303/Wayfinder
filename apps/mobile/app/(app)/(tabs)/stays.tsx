@@ -12,41 +12,14 @@ import { Input } from '../../../src/components/Input';
 import { QueryState } from '../../../src/components/QueryState';
 import { Screen } from '../../../src/components/Screen';
 import { useFavorites, useStaySearch, useStaySuggest, useToggleFavorite, type StayTrip } from '../../../src/features/stays/hooks';
-import { projectPins, sortStays, type StaySort } from '../../../src/features/stays/map';
-import { addDays, defaultTripDate, formatPrice, isoDate, isValidFutureDate, nightsBetween } from '../../../src/lib/format';
+import { sortStays, type StaySort } from '../../../src/features/stays/map';
+import { StaysMap } from '../../../src/features/stays/StaysMap';
+import { useMapConfig } from '../../../src/features/stays/useMapConfig';
+import { addDays, defaultTripDate, isoDate, isValidFutureDate, nightsBetween } from '../../../src/lib/format';
 
 type View_ = 'list' | 'map' | 'saved';
 const SORTS: StaySort[] = ['recommended', 'cheapest', 'topRated'];
 const MAX_NIGHTS = 30;
-
-// Placeholder map: pins are projected from the stays' real coordinates until MapLibre is wired in.
-const MapPlaceholder = ({ stays, selectedId, onSelect }: { stays: Stay[]; selectedId?: string | undefined; onSelect: (s: Stay) => void }) => {
-  const { t } = useTranslation();
-  const pins = Object.fromEntries(projectPins(stays).map((p) => [p.id, p]));
-  return (
-    <View accessibilityLabel={t('stays.map')} className="relative h-56 overflow-hidden rounded-card bg-brand-soft">
-      <View className="absolute left-[10%] top-0 h-full w-1 bg-surface" />
-      <View className="absolute left-[55%] top-0 h-full w-2 bg-surface" />
-      <View className="absolute left-0 top-[45%] h-2 w-full bg-surface" />
-      {stays.map((s) => {
-        const on = s.id === selectedId;
-        const pin = pins[s.id]!;
-        return (
-          <Pressable
-            key={s.id}
-            accessibilityRole="button"
-            accessibilityLabel={t('stays.pin', { name: s.name, price: formatPrice(s.pricePerNight, s.currency) })}
-            onPress={() => onSelect(s)}
-            style={{ left: `${pin.x}%`, top: `${pin.y}%` }}
-            className={`absolute rounded-full border px-2.5 py-1 ${on ? 'border-brand-dark bg-brand' : 'border-line bg-surface'}`}
-          >
-            <Text className={`text-sm font-bold ${on ? 'text-white' : 'text-ink'}`}>{formatPrice(s.pricePerNight, s.currency)}</Text>
-          </Pressable>
-        );
-      })}
-    </View>
-  );
-};
 
 export default function Stays() {
   const { t } = useTranslation();
@@ -64,6 +37,7 @@ export default function Stays() {
   const suggest = useStaySuggest(picked ? '' : dest);
   const search = useStaySearch(trip);
   const favorites = useFavorites();
+  const mapConfig = useMapConfig();
   const toggle = useToggleFavorite();
 
   const nights = nightsBetween(checkIn, checkOut);
@@ -182,7 +156,7 @@ export default function Stays() {
                     <Chip key={s} label={t(`stays.sort.${s}`)} selected={sort === s} onPress={() => setSort(s)} />
                   ))}
                 </View>
-                {view === 'map' ? <MapPlaceholder stays={sorted} selectedId={selectedId} onSelect={(s) => setSelectedId(s.id)} /> : null}
+                {view === 'map' ? <StaysMap stays={sorted} selectedId={selectedId} styleUrl={mapConfig.data?.styleUrl ?? null} onSelect={(s) => setSelectedId(s.id)} /> : null}
                 {view === 'map' && selected ? (
                   <View className="gap-2 rounded-card border border-brand p-4" accessibilityLabel={t('stays.selected', { name: selected.name })}>
                     <Text className="text-lg font-semibold text-ink">{selected.name}</Text>
