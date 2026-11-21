@@ -97,3 +97,11 @@ export type TripListResponse = z.infer<typeof TripListResponseSchema>;
 
 export const UsageResponseSchema = z.object({ used: z.number(), cap: z.number() });
 export type UsageResponse = z.infer<typeof UsageResponseSchema>;
+
+export const SavedSearchSchema = FlightSearchQuerySchema.extend({
+  id: z.string().uuid(),
+  createdAt: z.string(),
+});
+export type SavedSearch = z.infer<typeof SavedSearchSchema>;
+export const SavedSearchListResponseSchema = z.object({ searches: z.array(SavedSearchSchema) });
+export type SavedSearchListResponse = z.infer<typeof SavedSearchListResponseSchema>;

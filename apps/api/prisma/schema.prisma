@@ -14,6 +14,7 @@ model Profile {
   createdAt     DateTime       @default(now()) @map("created_at")
   searchLogs    SearchLog[]
   handoffClicks HandoffClick[]
+  savedSearches SavedSearch[]
 
   @@map("profiles")
 }
@@ -44,4 +45,20 @@ model HandoffClick {
 
   @@index([userId, createdAt])
   @@map("handoff_clicks")
+}
+
+model SavedSearch {
+  id        String   @id @default(uuid()) @db.Uuid
+  userId    String   @map("user_id") @db.Uuid
+  fromCode  String   @map("from_code")
+  toCode    String   @map("to_code")
+  date      String // YYYY-MM-DD
+  adults    Int
+  cabin     String
+  createdAt DateTime @default(now()) @map("created_at")
+  profile   Profile  @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, fromCode, toCode, date, adults, cabin])
+  @@index([userId, createdAt])
+  @@map("saved_searches")
 }
