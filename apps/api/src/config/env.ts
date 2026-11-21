@@ -7,6 +7,10 @@ const EnvSchema = z.object({
   REDIS_URL: z.string().min(1),
   // dev/staging log at debug with nothing hidden; prod logs at info with request payloads and query strings left out.
   APP_ENV: z.enum(['dev', 'staging', 'prod']).default('dev'),
+  // Signs short-lived handoff links. Keep it long and random; rotating it invalidates open links.
+  HANDOFF_SECRET: z.string().min(32),
+  // Public base URL of this API, used to build absolute handoff links.
+  PUBLIC_API_URL: z.string().url().default('http://localhost:3000'),
   // Requests per minute per client IP, applied to every route.
   RATE_LIMIT_PER_MINUTE: z.coerce.number().int().positive().default(120),
   // Comma-separated browser origins allowed to call the API (web build). Defaults to Expo web dev.

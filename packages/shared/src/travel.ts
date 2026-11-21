@@ -3,7 +3,10 @@ import { z } from 'zod';
 export const FlightSearchQuerySchema = z.object({
   from: z.string().regex(/^[A-Z]{3}$/),
   to: z.string().regex(/^[A-Z]{3}$/),
-  date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
+  date: z
+    .string()
+    .regex(/^\d{4}-\d{2}-\d{2}$/)
+    .refine((d) => !Number.isNaN(Date.parse(d)) && d >= new Date().toISOString().slice(0, 10), 'date must be today or later'),
   adults: z.coerce.number().int().min(1).max(9).default(1),
   cabin: z.enum(['economy', 'premium', 'business', 'first']).default('economy'),
 });
@@ -19,6 +22,14 @@ export const FlightLegSchema = z.object({
   durationMin: z.number(),
 });
 
+export const FlightLayoverSchema = z.object({ code: z.string(), name: z.string(), durationMin: z.number() });
+
+export const FlightEmissionsSchema = z.object({
+  grams: z.number(),
+  typicalGrams: z.number(),
+  diffPercent: z.number(),
+});
+
 export const FlightOfferSchema = z.object({
   id: z.string(),
   group: z.enum(['best', 'other']),
@@ -28,6 +39,8 @@ export const FlightOfferSchema = z.object({
   totalDurationMin: z.number(),
   stops: z.number(),
   legs: z.array(FlightLegSchema),
+  layovers: z.array(FlightLayoverSchema).default([]),
+  emissions: FlightEmissionsSchema.nullable().default(null),
   handoffUrl: z.string(),
 });
 export type FlightOffer = z.infer<typeof FlightOfferSchema>;

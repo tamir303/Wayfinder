@@ -7,6 +7,8 @@ export const testEnv: Env = {
   REDIS_URL: 'redis://test',
   DAILY_CREDIT_CAP: 200,
   APP_ENV: 'dev',
+  HANDOFF_SECRET: 'test-handoff-secret-that-is-long-enough-for-hmac',
+  PUBLIC_API_URL: 'http://api.test',
   RATE_LIMIT_PER_MINUTE: 1000,
   NODE_ENV: 'test',
 };

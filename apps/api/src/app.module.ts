@@ -7,6 +7,7 @@ import { AppExceptionFilter } from './common/app-exception.filter';
 import { ENV } from './common/tokens';
 import type { Env } from './config/env';
 import { ConfigModule } from './config/config.module';
+import { FlightsModule } from './flights/flights.module';
 import { GeoModule } from './geo/geo.module';
 import { MeModule } from './me/me.module';
 import { HealthController } from './health/health.controller';
@@ -24,6 +25,7 @@ import { RedisModule } from './redis/redis.module';
     RedisModule,
     AuthModule,
     GeoModule,
+    FlightsModule,
     MeModule,
   ],
   controllers: [HealthController],
