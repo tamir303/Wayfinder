@@ -5,6 +5,6 @@ import { SerpApiClient } from './serpapi.client';
 
 @Module({
   providers: [CreditLedger, SearchLogService, SerpApiClient],
-  exports: [SerpApiClient],
+  exports: [SerpApiClient, CreditLedger],
 })
 export class ProviderModule {}

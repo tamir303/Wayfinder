@@ -30,6 +30,16 @@ describe('CreditLedger', () => {
     expect(results.filter((r) => r.status === 'fulfilled')).toHaveLength(3);
   });
 
+  it('reports usage and ignores refunds below zero', async () => {
+    const ledger = makeLedger(5);
+    expect(await ledger.usage('u1')).toBe(0);
+    await ledger.reserve('u1');
+    await ledger.reserve('u1');
+    expect(await ledger.usage('u1')).toBe(2);
+    await ledger.refund('u1');
+    expect(await ledger.usage('u1')).toBe(1);
+  });
+
   it('counts each user separately', async () => {
     const ledger = makeLedger(1);
     await ledger.reserve('u1');

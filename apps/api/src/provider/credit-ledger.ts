@@ -28,6 +28,11 @@ export class CreditLedger {
     }
   }
 
+  /** Credits reserved today (UTC). */
+  async usage(userId: string): Promise<number> {
+    return Math.max(0, Number((await this.redis.get(this.key(userId))) ?? 0));
+  }
+
   async refund(userId: string): Promise<void> {
     await this.redis.decr(this.key(userId));
   }

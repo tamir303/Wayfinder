@@ -98,6 +98,11 @@ describe('GET /geo/suggest (e2e)', () => {
     expect(denied.headers['access-control-allow-origin']).toBeUndefined();
   });
 
+  it('GET /me/usage requires a token and starts at zero', async () => {
+    await get('/me/usage', false).expect(401);
+    await get('/me/usage').expect(200, { used: 0, cap: 1 });
+  });
+
   it('returns 401 UNAUTHENTICATED without a token', async () => {
     const res = await get('/geo/suggest?q=tel%20aviv', false).expect(401);
     expect(res.body.code).toBe('UNAUTHENTICATED');
@@ -136,5 +141,9 @@ describe('GET /geo/suggest (e2e)', () => {
     const res = await get('/geo/suggest?q=london').expect(429);
     expect(res.body.code).toBe('RATE_LIMITED');
     expect(fetchSpy).not.toHaveBeenCalled();
+  });
+
+  it('GET /me/usage reflects the credit spent and not the rejected attempt', async () => {
+    await get('/me/usage').expect(200, { used: 1, cap: 1 });
   });
 });
