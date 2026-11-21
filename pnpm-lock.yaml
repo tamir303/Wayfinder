@@ -35,6 +35,9 @@ importers:
       '@nestjs/core':
         specifier: ^11.2.11
         version: 11.2.11(@nestjs/common@11.2.11(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/platform-express@11.2.11)(reflect-metadata@0.2.2)(rxjs@7.8.2)
+      '@nestjs/observe':
+        specifier: ^0.3.27
+        version: 0.3.27(@nestjs/common@11.2.11(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.2.11)(reflect-metadata@0.2.2)(rxjs@7.8.2)
       '@nestjs/platform-express':
         specifier: ^11.2.11
         version: 11.2.11(@nestjs/common@11.2.11(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.2.11)
@@ -224,11 +227,7 @@ importers:
         specifier: ~6.0.3
         version: 6.0.3
 
-  packages/config:
-    dependencies:
-      zod:
-        specifier: ^3.25.76
-        version: 3.25.76
+  packages/config: {}
 
   packages/shared:
     dependencies:
@@ -1621,6 +1620,47 @@ packages:
       class-transformer:
         optional: true
       class-validator:
+        optional: true
+
+  '@nestjs/observe@0.3.27':
+    resolution: {integrity: sha512-PTUNstMh5UnIH3xWdz5S1HXyvPt538nvsLTJp7CIFLmziej6+Y4thj9SBYoUEJauOj/URnb2JVfyjzm5m+YJBQ==}
+    engines: {node: '>= 20.19.0'}
+    hasBin: true
+    peerDependencies:
+      '@nestjs/bull': ^11.0.0 || ^12.0.0
+      '@nestjs/bullmq': ^11.0.0 || ^12.0.0
+      '@nestjs/common': ^11.0.0 || ^12.0.0
+      '@nestjs/core': ^11.0.0 || ^12.0.0
+      '@nestjs/graphql': ^13.0.0 || ^14.0.0
+      '@nestjs/microservices': ^11.0.0 || ^12.0.0
+      '@nestjs/schedule': ^4.0.0 || ^5.0.0 || ^6.0.0 || ^12.0.0
+      '@nestjs/websockets': ^11.0.0 || ^12.0.0
+      '@opentelemetry/api': ^1.0.0
+      '@taskforcesh/bullmq-pro': ^7.0.0
+      bull: ^3.3.0 || ^4.0.0
+      bullmq: ^5.0.0 || ^6.0.0
+      reflect-metadata: ^0.1.12 || ^0.2.0
+      rxjs: ^7.0.0
+    peerDependenciesMeta:
+      '@nestjs/bull':
+        optional: true
+      '@nestjs/bullmq':
+        optional: true
+      '@nestjs/graphql':
+        optional: true
+      '@nestjs/microservices':
+        optional: true
+      '@nestjs/schedule':
+        optional: true
+      '@nestjs/websockets':
+        optional: true
+      '@opentelemetry/api':
+        optional: true
+      '@taskforcesh/bullmq-pro':
+        optional: true
+      bull:
+        optional: true
+      bullmq:
         optional: true
 
   '@nestjs/platform-express@11.2.11':
@@ -8071,6 +8111,14 @@ snapshots:
     dependencies:
       '@nestjs/common': 11.2.11(reflect-metadata@0.2.2)(rxjs@7.8.2)
       reflect-metadata: 0.2.2
+
+  '@nestjs/observe@0.3.27(@nestjs/common@11.2.11(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.2.11)(reflect-metadata@0.2.2)(rxjs@7.8.2)':
+    dependencies:
+      '@jridgewell/trace-mapping': 0.3.31
+      '@nestjs/common': 11.2.11(reflect-metadata@0.2.2)(rxjs@7.8.2)
+      '@nestjs/core': 11.2.11(@nestjs/common@11.2.11(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/platform-express@11.2.11)(reflect-metadata@0.2.2)(rxjs@7.8.2)
+      reflect-metadata: 0.2.2
+      rxjs: 7.8.2
 
   '@nestjs/platform-express@11.2.11(@nestjs/common@11.2.11(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.2.11)':
     dependencies:

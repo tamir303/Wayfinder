@@ -4,7 +4,7 @@ import { createRemoteJWKSet } from 'jose';
 import { ENV } from '../common/tokens';
 import type { Env } from '../config/env';
 import { AuthGuard } from './auth.guard';
-import { JwtVerifier } from './jwt-verifier';
+import { JwtVerifier, MockJwtVerifier } from './jwt-verifier';
 
 @Global()
 @Module({
@@ -13,7 +13,9 @@ import { JwtVerifier } from './jwt-verifier';
       provide: JwtVerifier,
       inject: [ENV],
       useFactory: (env: Env) =>
-        new JwtVerifier(
+        env.MOCK_DATA
+          ? new MockJwtVerifier()
+          : new JwtVerifier(
           createRemoteJWKSet(new URL(`${env.SUPABASE_URL}/auth/v1/.well-known/jwks.json`)),
           `${env.SUPABASE_URL}/auth/v1`,
         ),

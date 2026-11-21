@@ -15,3 +15,14 @@ export class JwtVerifier {
     return { userId: payload.sub };
   }
 }
+
+// Mock backend (dev) only: any non-empty bearer token signs in, and the token is the user id.
+export class MockJwtVerifier extends JwtVerifier {
+  constructor() {
+    super(async () => { throw new Error('unused'); }, 'mock');
+  }
+
+  override async verify(token: string): Promise<{ userId: string }> {
+    return { userId: `dev-${token.slice(0, 40)}` };
+  }
+}

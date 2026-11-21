@@ -4,16 +4,19 @@
   "private": true,
   "scripts": {
     "build": "tsc -p tsconfig.build.json",
-    "dev": "nest start --watch",
+    "dev": "node scripts/with-env.mjs dev nest start --watch",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "lint": "eslint src test api scripts",
     "test": "jest",
     "fixture:refresh": "tsx --env-file=.env scripts/refresh-fixture.ts",
-    "postinstall": "prisma generate"
+    "postinstall": "prisma generate",
+    "dev:staging": "node scripts/with-env.mjs staging nest start --watch",
+    "dev:prod": "node scripts/with-env.mjs prod nest start --watch"
   },
   "dependencies": {
     "@nestjs/common": "^11.2.11",
     "@nestjs/core": "^11.2.11",
+    "@nestjs/observe": "^0.3.27",
     "@nestjs/platform-express": "^11.2.11",
     "@nestjs/swagger": "^11.4.8",
     "@nestjs/throttler": "^6",

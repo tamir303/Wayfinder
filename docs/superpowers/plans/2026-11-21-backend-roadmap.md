@@ -25,7 +25,8 @@ Done = lint, typecheck, tests green; Swagger documents it; no secrets in logs; p
 - Environment-aware logging: `APP_ENV` = dev | staging | prod. staging logs at debug with nothing hidden; prod logs at info with tokens, emails and keys redacted. Request-id on every log line.
 - Per-IP rate limit on public routes (`@nestjs/throttler`), applied to `/flights/handoff` and `/health`.
 - Staging environment: separate Supabase project, Upstash database, SerpAPI key and Vercel project; `.env.staging` / CI secrets; migration promotion runbook.
-- Observability: Sentry (errors, no PII), uptime check on `/health`.
+- Observability: NestJS Observe instead of Sentry (DONE: enabled only with keys, per-environment project), uptime check on `/health`.
+- Environments: dev = mock backend (DONE), staging and prod = real services (config in place; separate projects still to create).
 Exit: staging and prod exist with the same code and different config; the frontend profile meter is real.
 
 ## B1: Flights (frontend Q1 2027)

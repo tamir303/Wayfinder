@@ -9,6 +9,7 @@ import { parseEnv } from '../src/config/env';
 import { applyCors } from '../src/common/cors';
 import { applySwagger } from '../src/common/swagger';
 import { ENV } from '../src/common/tokens';
+import { ObserveInstrument } from '../src/observe';
 import type { Env } from '../src/config/env';
 
 // Cache the promise, not the result, so concurrent cold-start requests share one app.
@@ -20,6 +21,7 @@ const createServer = async (): Promise<express.Express> => {
   const env = parseEnv(process.env);
   const app = await NestFactory.create(AppModule, new ExpressAdapter(server), {
     logger: logLevelsFor(env.APP_ENV),
+    instrument: ObserveInstrument,
   });
   app.use(requestLogger(env.APP_ENV));
   applyCors(app, app.get<Env>(ENV));

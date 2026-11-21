@@ -134,7 +134,7 @@ export class SerpApiClient {
     }
   }
 
-  private async fetchWithRetry(engine: string, canonical: Record<string, string>): Promise<unknown> {
+  protected async fetchWithRetry(engine: string, canonical: Record<string, string>): Promise<unknown> {
     const url = new URL(SERPAPI_URL);
     url.search = new URLSearchParams({ ...canonical, engine, api_key: this.env.SERPAPI_KEY }).toString();
 

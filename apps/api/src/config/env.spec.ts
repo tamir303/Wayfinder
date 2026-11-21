@@ -6,6 +6,7 @@ const valid = {
   DATABASE_URL: 'postgresql://x',
   REDIS_URL: 'redis://x',
   HANDOFF_SECRET: 'x'.repeat(40),
+  MOCK_DATA: 'false',
 };
 
 describe('parseEnv', () => {
@@ -48,5 +49,26 @@ describe('parseEnv', () => {
       expect(message).toContain('SUPABASE_URL');
       expect(message).not.toContain('not-a-url');
     }
+  });
+
+  describe('mock backend (dev)', () => {
+    it('needs no secrets in dev', () => {
+      const env = parseEnv({});
+      expect(env.MOCK_DATA).toBe(true);
+      expect(env.HANDOFF_SECRET.length).toBeGreaterThanOrEqual(32);
+    });
+
+    it('is off for staging and prod, which still require every secret', () => {
+      expect(() => parseEnv({ APP_ENV: 'staging' })).toThrow('SERPAPI_KEY');
+      expect(() => parseEnv({ APP_ENV: 'prod' })).toThrow('SERPAPI_KEY');
+    });
+
+    it('can be switched off in dev to use real services', () => {
+      expect(() => parseEnv({ MOCK_DATA: 'false' })).toThrow('SERPAPI_KEY');
+    });
+
+    it('refuses to run under NODE_ENV=production', () => {
+      expect(() => parseEnv({ NODE_ENV: 'production' })).toThrow('MOCK_DATA');
+    });
   });
 });
