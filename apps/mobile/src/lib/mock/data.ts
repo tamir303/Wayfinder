@@ -38,6 +38,7 @@ export const buildFlights = (from: string, to: string, date: string, adults: num
       ],
       layovers: t.stops ? [{ code: 'ATH', name: 'Athens International Airport', durationMin: 120 }] : [],
       emissions: { grams: 250_000 + i * 12_000, typicalGrams: 309_000, diffPercent: -19 + i * 5 },
+      returnToken: null,
       handoffUrl: `https://example.com/mock-handoff?offer=${i}`,
     };
   });
