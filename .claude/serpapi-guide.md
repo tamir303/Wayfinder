@@ -61,7 +61,7 @@ Use this to run the **fewest, cheapest** SerpAPI calls when working on Wayfinder
 - Booking.com engine: without dates there are no prices. The stay is capped at 90 nights.
 - Google Maps: `ll`, `location`, and `lat`/`lon` are mutually exclusive. `place_id` and `data_cid` can't be combined. Page with `start` in steps of 20, and stop around 100.
 - Tripadvisor: `ssrc=v` (vacation rentals) is discontinued. `offset` and `lat`/`lon` may not work for every query.
-- Response field names (`best_flights`, `other_flights`, `properties`, and so on) are **not** in the engine resources. Confirm them from the first real response and record them in the mapper and fixtures.
+- `google_flights_autocomplete` returns `{ suggestions: [{ position, name, type: 'city' | 'region', description?, id, airports?: [{ name, id (IATA), city, city_id, distance }] }] }`. Cities carry `airports[]`. Regions have none. Other engines' field names are still unconfirmed, so confirm them from the first real response.
 
 ## Workflow when asked to "try a query"
 

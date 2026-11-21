@@ -1,0 +1,5 @@
+{
+  "installCommand": "cd ../.. && pnpm install --frozen-lockfile",
+  "buildCommand": "cd ../.. && pnpm --filter @wayfinder/shared build && pnpm --filter @wayfinder/api exec prisma generate",
+  "rewrites": [{ "source": "/(.*)", "destination": "/api" }]
+}
