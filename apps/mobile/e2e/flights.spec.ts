@@ -15,7 +15,7 @@ test('search TLV to CDG, open an offer, see the provider handoff and the no-paym
   await expect(page.getByText('Best flights')).toBeVisible();
   await expect(page.getByLabel('Price insight')).toContainText('low');
 
-  await page.getByRole('button', { name: /^El Al/ }).click();
+  await page.getByRole('button', { name: /^El Al,.*\$\d/ }).click();
   await expect(page.getByText('El Al LY 325')).toBeVisible();
   await expect(page.getByRole('button', { name: 'Continue to provider' })).toBeVisible();
   await expect(page.getByText(/does not process payments/)).toBeVisible();

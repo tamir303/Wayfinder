@@ -5,9 +5,10 @@ import { errorMessage } from '../features/geo/suggest-ui-state';
 import i18n from '../i18n';
 import { ApiClientError } from '../lib/api-error';
 
-type Props<T> = { query: UseQueryResult<T>; children: (data: T) => ReactNode };
+type Props<T> = { query: UseQueryResult<T>; children: (data: T) => ReactNode; /** Shown instead of the spinner while loading. */ skeleton?: ReactNode };
 
-export function QueryState<T>({ query, children }: Props<T>) {
+export function QueryState<T>({ query, children, skeleton }: Props<T>) {
+  if (query.isPending && skeleton) return <>{skeleton}</>;
   if (query.isPending) {
     return (
       <View className="items-center py-8" accessibilityLabel={i18n.t('common.loading')}>

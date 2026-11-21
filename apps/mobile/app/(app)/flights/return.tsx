@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { Text } from 'react-native';
 import { Button } from '../../../src/components/Button';
 import { QueryState } from '../../../src/components/QueryState';
+import { FlightListSkeleton } from '../../../src/components/Skeleton';
 import { Screen } from '../../../src/components/Screen';
 import { FlightList } from '../../../src/features/travel/FlightList';
 import { useFlightOffers } from '../../../src/features/travel/hooks';
@@ -39,7 +40,7 @@ function Return({ query }: { query: Query }) {
     >
       <Button label={t('flights.backToResults')} variant="secondary" onPress={() => router.back()} />
       <Text accessibilityRole="header" className="text-base font-semibold text-ink">{t('flights.chooseReturn')}</Text>
-      <QueryState query={result}>
+      <QueryState query={result} skeleton={<FlightListSkeleton />}>
         {(data) => (
           <FlightList
             data={data}

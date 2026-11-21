@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { Text, View } from 'react-native';
 import { Button } from '../../../src/components/Button';
 import { QueryState } from '../../../src/components/QueryState';
+import { FlightListSkeleton } from '../../../src/components/Skeleton';
 import { Screen } from '../../../src/components/Screen';
 import { FlightList } from '../../../src/features/travel/FlightList';
 import { sameSearch, useDeleteSavedSearch, useSavedSearches, useSaveSearch } from '../../../src/features/flights/saved';
@@ -65,7 +66,7 @@ function Results({ query }: { query: Query }) {
         />
       )}
       {roundTrip ? <Text accessibilityRole="header" className="text-base font-semibold text-ink">{t('flights.chooseOutbound')}</Text> : null}
-      <QueryState query={result}>
+      <QueryState query={result} skeleton={<FlightListSkeleton />}>
         {(data) => (
           <FlightList
             data={data}

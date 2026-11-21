@@ -18,12 +18,12 @@ test('round trip: choose an outbound, then a return flight, then continue to the
   await expect(page).toHaveURL(/\/flights\/results\?.*returnDate=/);
   await expect(page.getByText('Choose your outbound flight')).toBeVisible();
   await expect(page.getByText('round trip total').first()).toBeVisible();
-  await page.getByRole('button', { name: /^El Al/ }).click();
+  await page.getByRole('button', { name: /^El Al,.*\$\d/ }).click();
 
   await expect(page).toHaveURL(/\/flights\/return\?.*token=rt-0/);
   await expect(page.getByText('Choose your return flight')).toBeVisible();
   await expect(page.getByRole('heading', { name: /CDG .* TLV/ })).toBeVisible();
-  await page.getByRole('button', { name: /^El Al/ }).click();
+  await page.getByRole('button', { name: /^El Al,.*\$\d/ }).click();
 
   await expect(page).toHaveURL(/\/flights\/detail\?.*token=rt-0/);
   await expect(page.getByText('round trip total').last()).toBeVisible();
@@ -43,7 +43,7 @@ test('results can be sorted by price and filtered to direct flights', async ({ p
 
   await page.getByRole('button', { name: 'Direct only' }).click();
   await expect(page.getByRole('button', { name: /\$\d/ })).toHaveCount(3);
-  await expect(page.getByRole('button', { name: /^Aegean/ })).toBeHidden();
+  await expect(page.getByRole('button', { name: /^Aegean,.*\$\d/ })).toBeHidden();
   await expect(page.getByRole('button', { name: /\$\d/ }).first()).toContainText('Wizz Air');
 });
 
