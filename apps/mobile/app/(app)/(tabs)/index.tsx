@@ -11,6 +11,7 @@ import { Screen } from '../../../src/components/Screen';
 import { SuggestionRow } from '../../../src/components/SuggestionRow';
 import { toSuggestUiState } from '../../../src/features/geo/suggest-ui-state';
 import { useGeoSuggest } from '../../../src/features/geo/useGeoSuggest';
+import { useDeleteSavedSearch, useSavedSearches } from '../../../src/features/flights/saved';
 import { useRecentAirports, useRecentSearches, type RecentSearch } from '../../../src/features/flights/useRecents';
 import { arrow } from '../../../src/i18n';
 import { addDays, defaultTripDate, isoDate, isValidFutureDate } from '../../../src/lib/format';
@@ -67,6 +68,8 @@ export default function FlightSearch() {
   const [cabin, setCabin] = useState<(typeof CABINS)[number]>('economy');
   const recentAirports = useRecentAirports();
   const recentSearches = useRecentSearches();
+  const savedSearches = useSavedSearches();
+  const deleteSaved = useDeleteSavedSearch();
 
   const dateOk = isValidFutureDate(date);
   const sameAirport = !!from && !!to && from.code === to.code;
@@ -145,6 +148,29 @@ export default function FlightSearch() {
           router.push({ pathname: '/flights/results', params: { from: from!.code, to: to!.code, date, ...(roundTrip ? { returnDate } : {}), adults: String(adults), cabin } });
         }}
       />
+      {(savedSearches.data?.searches.length ?? 0) > 0 ? (
+        <View className="gap-2 pt-2">
+          <Text accessibilityRole="header" className="text-lg font-semibold text-ink">{t('flights.savedSearches')}</Text>
+          {savedSearches.data!.searches.map((s) => (
+            <View key={s.id} className="flex-row items-center rounded-card border border-line">
+              <Pressable
+                accessibilityRole="button"
+                accessibilityLabel={`${t('flights.savedSearches')}: ${s.from} ${s.to} ${s.date}`}
+                onPress={() =>
+                  applyRecent({ from: { code: s.from, name: s.from, city: s.from }, to: { code: s.to, name: s.to, city: s.to }, date: s.date, adults: s.adults, cabin: s.cabin })
+                }
+                className="flex-1 px-4 py-3"
+              >
+                <Text className="text-base text-ink">{s.from} {arrow()} {s.to}</Text>
+                <Text className="text-sm text-ink-muted">{s.date} · {t('flights.passengerCount', { count: s.adults })}</Text>
+              </Pressable>
+              <Pressable accessibilityRole="button" accessibilityLabel={t('flights.deleteSaved', { route: `${s.from} ${s.to}` })} onPress={() => deleteSaved.mutate(s.id)} className="px-4 py-3">
+                <Text className="text-brand">✕</Text>
+              </Pressable>
+            </View>
+          ))}
+        </View>
+      ) : null}
       {recentSearches.items.length > 0 ? (
         <View className="gap-2 pt-2">
           <Text accessibilityRole="header" className="text-lg font-semibold text-ink">{t('flights.recentSearches')}</Text>

@@ -1,5 +1,6 @@
 import type { ApiInit } from '../api';
 import { ApiClientError } from '../api-error';
+import { createSaved, listSaved, removeSaved, resetSaved } from './saved';
 import { buildStayDetail, listFavorites, putFavorite, removeFavorite, resetFavorites, stayCalendar, stayReviews, suggestStays } from './stays';
 import { AIRPORTS, ATTRACTIONS, buildCalendar, buildFlights, buildOutbound, buildReturn, STAYS, TRIPS } from './data';
 
@@ -18,7 +19,10 @@ const MOCK_INSIGHTS = () => ({
 const sleep = (ms: number) => new Promise<void>((resolve) => setTimeout(resolve, ms));
 
 // dev only. Special queries make error states easy to see: q=limit (rate limited), q=down (provider down), q=zzz (empty).
-export const resetMockState = (): void => resetFavorites();
+export const resetMockState = (): void => {
+  resetFavorites();
+  resetSaved();
+};
 
 export const mockRequest = async (path: string, init?: ApiInit): Promise<unknown> => {
   await sleep(LATENCY_MS);
@@ -33,6 +37,8 @@ export const mockRequest = async (path: string, init?: ApiInit): Promise<unknown
     if (stayMatch[2] === 'calendar') return stayCalendar(id, url.searchParams.get('start') ?? '', url.searchParams.get('end') ?? '');
     return buildStayDetail(id);
   }
+  const savedMatch = /^\/me\/saved-searches\/([^/]+)$/.exec(url.pathname);
+  if (savedMatch && init?.method === 'DELETE') return removeSaved(decodeURIComponent(savedMatch[1]!));
   const favMatch = /^\/me\/favorites\/stays\/([^/]+)$/.exec(url.pathname);
   if (favMatch) {
     const id = decodeURIComponent(favMatch[1]!);
@@ -45,6 +51,8 @@ export const mockRequest = async (path: string, init?: ApiInit): Promise<unknown
       return suggestStays(q);
     case '/me/favorites/stays':
       return listFavorites();
+    case '/me/saved-searches':
+      return init?.method === 'POST' ? createSaved(init.body as never) : listSaved();
     case '/geo/suggest': {
       if (q === 'limit') throw new ApiClientError('RATE_LIMITED', 'Daily search limit reached', 429);
       if (q === 'down') throw new ApiClientError('PROVIDER_DOWN', 'Provider request failed', 502);

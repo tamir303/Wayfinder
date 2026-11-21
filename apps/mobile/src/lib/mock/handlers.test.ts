@@ -140,4 +140,26 @@ describe('mockRequest (dev, no network)', () => {
       expect(await p).toMatchObject({ code: 'NOT_FOUND' });
     });
   });
+
+  describe('saved flight searches', () => {
+    const body = { from: 'TLV', to: 'CDG', date: '2027-03-10', adults: 2, cabin: 'business' };
+
+    it('starts empty, saves (idempotently), lists newest first and deletes', async () => {
+      expect(await call('/me/saved-searches')).toEqual({ searches: [] });
+      const created = (await call('/me/saved-searches', { method: 'POST', body })) as { id: string };
+      expect(created.id).toMatch(/^[0-9a-f-]{36}$/);
+      await call('/me/saved-searches', { method: 'POST', body });
+      await call('/me/saved-searches', { method: 'POST', body: { ...body, to: 'LHR' } });
+      const list = (await call('/me/saved-searches')) as { searches: { id: string; to: string }[] };
+      expect(list.searches.map((s) => s.to)).toEqual(['LHR', 'CDG']);
+      await call(`/me/saved-searches/${created.id}`, { method: 'DELETE' });
+      expect(((await call('/me/saved-searches')) as { searches: unknown[] }).searches).toHaveLength(1);
+    });
+
+    it('answers NOT_FOUND when deleting something that is not saved', async () => {
+      const p = mockRequest('/me/saved-searches/00000000-0000-4000-8000-000000000999', { method: 'DELETE' }).then(() => null, (e: unknown) => e);
+      await jest.advanceTimersByTimeAsync(300);
+      expect(await p).toMatchObject({ code: 'NOT_FOUND' });
+    });
+  });
 });

@@ -6,6 +6,7 @@ import { Button } from '../../../src/components/Button';
 import { QueryState } from '../../../src/components/QueryState';
 import { Screen } from '../../../src/components/Screen';
 import { FlightList } from '../../../src/features/travel/FlightList';
+import { sameSearch, useDeleteSavedSearch, useSavedSearches, useSaveSearch } from '../../../src/features/flights/saved';
 import { useFlightOffers } from '../../../src/features/travel/hooks';
 import { arrow } from '../../../src/i18n';
 
@@ -41,6 +42,10 @@ function Results({ query }: { query: Query }) {
   const { t } = useTranslation();
   const router = useRouter();
   const result = useFlightOffers(query);
+  const saved = useSavedSearches();
+  const save = useSaveSearch();
+  const remove = useDeleteSavedSearch();
+  const existing = (saved.data?.searches ?? []).find((s) => sameSearch(s, query));
   const roundTrip = !!query.returnDate;
   const cabin = t(`flights.cabin.${query.cabin}`);
   const subtitle = t('flights.summary', { date: roundTrip ? `${query.date} – ${query.returnDate}` : query.date, count: query.adults, cabin });
@@ -51,6 +56,14 @@ function Results({ query }: { query: Query }) {
         <View className="flex-1"><Button label={t('flights.changeSearch')} variant="secondary" onPress={() => router.replace('/')} /></View>
         <View className="flex-1"><Button label={t('flights.flexible')} variant="secondary" onPress={() => router.push({ pathname: '/flights/calendar', params: toParams(query) })} /></View>
       </View>
+      {roundTrip ? null : (
+        <Button
+          label={existing ? t('flights.unsaveSearch') : t('flights.saveSearch')}
+          variant="secondary"
+          busy={save.isPending || remove.isPending}
+          onPress={() => (existing ? remove.mutate(existing.id) : save.mutate({ from: query.from, to: query.to, date: query.date, adults: query.adults, cabin: query.cabin }))}
+        />
+      )}
       {roundTrip ? <Text accessibilityRole="header" className="text-base font-semibold text-ink">{t('flights.chooseOutbound')}</Text> : null}
       <QueryState query={result}>
         {(data) => (
