@@ -5,6 +5,8 @@ const EnvSchema = z.object({
   SUPABASE_URL: z.string().url(),
   DATABASE_URL: z.string().min(1),
   REDIS_URL: z.string().min(1),
+  // Comma-separated browser origins allowed to call the API (web build). Defaults to Expo web dev.
+  CORS_ORIGINS: z.string().optional(),
   DAILY_CREDIT_CAP: z.coerce.number().int().positive().default(200),
   NODE_ENV: z.enum(['development', 'test', 'production']).default('development'),
 });

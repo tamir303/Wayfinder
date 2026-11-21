@@ -3,6 +3,7 @@ import { Test } from '@nestjs/testing';
 import { generateKeyPair, SignJWT } from 'jose';
 import request from 'supertest';
 import { AppModule } from '../src/app.module';
+import { applyCors } from '../src/common/cors';
 import { JwtVerifier } from '../src/auth/jwt-verifier';
 import { ENV, REDIS } from '../src/common/tokens';
 import { PrismaService } from '../src/prisma/prisma.service';
@@ -42,6 +43,7 @@ describe('GET /geo/suggest (e2e)', () => {
       .compile();
 
     app = moduleRef.createNestApplication();
+    applyCors(app, testEnv);
     await app.init();
   });
 
@@ -62,6 +64,22 @@ describe('GET /geo/suggest (e2e)', () => {
 
   it('GET /health is public', async () => {
     await get('/health', false).expect(200, { ok: true });
+  });
+
+  it('answers a CORS preflight for the web origin only', async () => {
+    const allowed = await request(app.getHttpServer())
+      .options('/geo/suggest')
+      .set('Origin', 'http://localhost:8081')
+      .set('Access-Control-Request-Method', 'GET')
+      .set('Access-Control-Request-Headers', 'authorization');
+    expect(allowed.status).toBe(204);
+    expect(allowed.headers['access-control-allow-origin']).toBe('http://localhost:8081');
+
+    const denied = await request(app.getHttpServer())
+      .options('/geo/suggest')
+      .set('Origin', 'https://evil.example')
+      .set('Access-Control-Request-Method', 'GET');
+    expect(denied.headers['access-control-allow-origin']).toBeUndefined();
   });
 
   it('returns 401 UNAUTHENTICATED without a token', async () => {

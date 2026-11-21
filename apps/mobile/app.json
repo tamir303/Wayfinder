@@ -19,6 +19,7 @@
       "expo-secure-store",
       "expo-status-bar"
     ],
+    "web": { "bundler": "metro", "output": "single" },
     "experiments": {
       "typedRoutes": true
     }

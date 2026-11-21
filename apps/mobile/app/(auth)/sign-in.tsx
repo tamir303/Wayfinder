@@ -15,7 +15,7 @@ export default function SignIn() {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  if (session) return <Redirect href="/(app)/index" />;
+  if (session) return <Redirect href="/" />;
 
   const sendCode = async () => {
     setBusy(true);
