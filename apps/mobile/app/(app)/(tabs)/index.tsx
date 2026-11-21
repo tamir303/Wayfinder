@@ -11,13 +11,15 @@ import { Screen } from '../../../src/components/Screen';
 import { SuggestionRow } from '../../../src/components/SuggestionRow';
 import { toSuggestUiState } from '../../../src/features/geo/suggest-ui-state';
 import { useGeoSuggest } from '../../../src/features/geo/useGeoSuggest';
+import { useRecentAirports, useRecentSearches, type RecentSearch } from '../../../src/features/flights/useRecents';
+import { arrow } from '../../../src/i18n';
 import { addDays, defaultTripDate, isoDate, isValidFutureDate } from '../../../src/lib/format';
 
 const CABINS = ['economy', 'premium', 'business', 'first'] as const;
 
-type FieldProps = { label: string; value: GeoSuggestion | null; onChange: (v: GeoSuggestion | null) => void };
+type FieldProps = { label: string; value: GeoSuggestion | null; onChange: (v: GeoSuggestion | null) => void; recents: GeoSuggestion[] };
 
-const AirportField = ({ label, value, onChange }: FieldProps) => {
+const AirportField = ({ label, value, onChange, recents }: FieldProps) => {
   const { t } = useTranslation();
   const [text, setText] = useState('');
   const query = useGeoSuggest(text);
@@ -40,6 +42,13 @@ const AirportField = ({ label, value, onChange }: FieldProps) => {
           ))}
         </View>
       ) : null}
+      {!value && text.trim() === '' && recents.length > 0 ? (
+        <View className="flex-row flex-wrap gap-2 pt-2" accessibilityLabel={t('flights.recentAirports')}>
+          {recents.map((a) => (
+            <Chip key={a.code} label={`${a.code} · ${a.city}`} onPress={() => onChange(a)} />
+          ))}
+        </View>
+      ) : null}
       {!value && state.kind === 'error' ? <Text className="pt-1 text-danger">{state.message}</Text> : null}
       {!value && state.kind === 'empty' ? <Text className="pt-1 text-ink-muted">{t('flights.noAirports')}</Text> : null}
     </View>
@@ -56,12 +65,27 @@ export default function FlightSearch() {
   const [returnDate, setReturnDate] = useState(addDays(defaultTripDate(), 7));
   const [adults, setAdults] = useState(1);
   const [cabin, setCabin] = useState<(typeof CABINS)[number]>('economy');
+  const recentAirports = useRecentAirports();
+  const recentSearches = useRecentSearches();
 
   const dateOk = isValidFutureDate(date);
   const sameAirport = !!from && !!to && from.code === to.code;
   const roundTrip = tripType === 'roundTrip';
   const returnOk = !roundTrip || (isValidFutureDate(returnDate) && returnDate > date);
   const canSearch = !!from && !!to && dateOk && returnOk && !sameAirport;
+
+  // Re-use a past search. Dates that have passed fall back to the defaults so the form stays valid.
+  const applyRecent = (r: RecentSearch) => {
+    const today = isoDate(new Date());
+    const nextDate = r.date >= today ? r.date : defaultTripDate();
+    setFrom(r.from);
+    setTo(r.to);
+    setAdults(r.adults);
+    setCabin(r.cabin);
+    setDate(nextDate);
+    setTripType(r.returnDate ? 'roundTrip' : 'oneWay');
+    setReturnDate(r.returnDate && r.returnDate > nextDate ? r.returnDate : addDays(nextDate, 7));
+  };
 
   return (
     <Screen title={t('flights.title')} subtitle={t('flights.subtitle')}>
@@ -70,8 +94,20 @@ export default function FlightSearch() {
           <Chip key={k} label={t(`flights.tripType.${k}`)} selected={tripType === k} onPress={() => setTripType(k)} />
         ))}
       </View>
-      <AirportField label={t('flights.from')} value={from} onChange={setFrom} />
-      <AirportField label={t('flights.to')} value={to} onChange={setTo} />
+      <AirportField label={t('flights.from')} value={from} onChange={setFrom} recents={recentAirports.items} />
+      <Pressable
+        accessibilityRole="button"
+        accessibilityLabel={t('flights.swap')}
+        disabled={!from && !to}
+        onPress={() => {
+          setFrom(to);
+          setTo(from);
+        }}
+        className="self-center rounded-full border border-line px-4 py-1"
+      >
+        <Text className="text-lg text-brand">⇅</Text>
+      </Pressable>
+      <AirportField label={t('flights.to')} value={to} onChange={setTo} recents={recentAirports.items} />
       <DatePicker
         testID="flight-date"
         label={t('flights.dateLabel')}
@@ -102,8 +138,30 @@ export default function FlightSearch() {
       <Button
         label={t('flights.search')}
         disabled={!canSearch}
-        onPress={() => router.push({ pathname: '/flights/results', params: { from: from!.code, to: to!.code, date, ...(roundTrip ? { returnDate } : {}), adults: String(adults), cabin } })}
+        onPress={() => {
+          recentAirports.add(to!);
+          recentAirports.add(from!);
+          recentSearches.add({ from: from!, to: to!, date, returnDate: roundTrip ? returnDate : undefined, adults, cabin });
+          router.push({ pathname: '/flights/results', params: { from: from!.code, to: to!.code, date, ...(roundTrip ? { returnDate } : {}), adults: String(adults), cabin } });
+        }}
       />
+      {recentSearches.items.length > 0 ? (
+        <View className="gap-2 pt-2">
+          <Text accessibilityRole="header" className="text-lg font-semibold text-ink">{t('flights.recentSearches')}</Text>
+          {recentSearches.items.map((r) => (
+            <Pressable
+              key={`${r.from.code}-${r.to.code}-${r.date}-${r.returnDate ?? ''}`}
+              accessibilityRole="button"
+              accessibilityLabel={`${r.from.code} ${r.to.code} ${r.date}${r.returnDate ? ` ${r.returnDate}` : ''}`}
+              onPress={() => applyRecent(r)}
+              className="rounded-card border border-line px-4 py-3"
+            >
+              <Text className="text-base text-ink">{r.from.code} {arrow()} {r.to.code}</Text>
+              <Text className="text-sm text-ink-muted">{r.date}{r.returnDate ? ` – ${r.returnDate}` : ''} · {t('flights.passengerCount', { count: r.adults })}</Text>
+            </Pressable>
+          ))}
+        </View>
+      ) : null}
     </Screen>
   );
 }
