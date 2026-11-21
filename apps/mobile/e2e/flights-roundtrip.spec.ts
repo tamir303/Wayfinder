@@ -69,6 +69,6 @@ test('flexible dates: show a price per day, highlight the lowest, and search the
   const label = (await lowest.getAttribute('aria-label'))!;
   const picked = label.slice(0, 10);
   await lowest.click();
-  await expect(page).toHaveURL(new RegExp(`/flights/results\?.*date=${picked}`));
+  await expect(page).toHaveURL(new RegExp(`/flights/results\\?.*date=${picked}`));
   await expect(page.getByText('Best flights').last()).toBeVisible();
 });
